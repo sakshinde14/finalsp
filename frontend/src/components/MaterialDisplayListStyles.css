@@ -1,0 +1,125 @@
+.material-display-list-container {
+    max-width: 1000px;
+    margin: 30px auto;
+    padding: 25px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.material-display-list-container h3 {
+    text-align: center;
+    font-size: 2em;
+    color: #0056b3;
+    margin-bottom: 25px;
+}
+
+.material-filters {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.material-filters label {
+    font-weight: 600;
+    color: #333;
+    margin-right: 8px;
+}
+
+.material-filters select {
+    padding: 10px 15px;
+    font-size: 1em;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.material-filters select:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+    outline: none;
+}
+
+.no-materials-found {
+    text-align: center;
+    background-color: #fff3cd;
+    color: #856404;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #ffeeba;
+    margin-top: 20px;
+    font-size: 1.1em;
+}
+
+.material-items-grid {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.material-item-card {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.material-item-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+}
+
+.material-item-card h4 {
+    font-size: 1.2em;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.material-item-card a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.material-item-card a:hover {
+    text-decoration: underline;
+}
+
+.material-text-content {
+    background-color: #fff;
+    padding: 10px 15px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    margin-top: 10px;
+}
+
+.material-text-content p {
+    margin: 5px 0;
+    color: #333;
+    font-size: 0.95em;
+}
+
+.material-info {
+    font-size: 0.9em;
+    color: #666;
+    margin-top: 5px;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    .material-filters {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .material-items-grid {
+        grid-template-columns: 1fr;
+    }
+}

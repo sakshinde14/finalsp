@@ -1,0 +1,58 @@
+/* SearchResultsListStyles.css */
+
+.search-results-container {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    
+    /* --- ADD THESE TWO LINES --- */
+    max-height: 400px; /* Adjust this value as needed, e.g., 300px, 500px */
+    overflow-y: auto;  /* Adds a vertical scrollbar if content exceeds max-height */
+    /* -------------------------- */
+}
+
+.search-results-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.search-result-item {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.search-result-item:hover {
+    background-color: #eef;
+}
+
+.subject-name {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.course-details {
+    font-size: 0.9em;
+    color: #666;
+}
+
+.no-results-message {
+    text-align: center;
+    padding: 20px;
+    color: #888;
+}
+
+.error-message {
+    color: red;
+    font-weight: bold;
+    text-align: center;
+    padding: 20px;
+}

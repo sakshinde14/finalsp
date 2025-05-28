@@ -1,0 +1,287 @@
+/* DashboardStyles.css */
+
+/* Light Purple Theme */
+:root {
+    --primary-color: #a8dadc; /* Light cyan/blue for primary elements */
+    --secondary-color: #457b9d; /* Darker blue for accents */
+    --background-light: #f1faee; /* Very light green/white for light backgrounds */
+    --text-primary: #1d3557; /* Dark blue for primary text */
+    --text-secondary: #6c757d; /* Gray for secondary text */
+    --accent-color: #e63946; /* Red/pink for important accents */
+    --hover-color: #cce5ed; /* Lighter cyan/blue for hover effects */
+}
+
+body {
+    font-family: sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--background-light);
+    color: var(--text-primary);
+}
+
+.dashboard-container {
+    max-width: none !important;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: var(--background-light); /* Light background */
+}
+
+.dashboard-content {
+    display: flex;
+    flex: 1;
+    background-color: var(--background-light); /* Light background */
+}
+
+.main-content {
+    flex: 1;
+    padding: 20px;
+    background-color: var(--background-light); /* Light background */
+    /* Assuming your TopNavigation has a height of, say, 60px */
+    padding-top: 80px; /* Adjust this value to be slightly more than your nav bar's height + any desired space */
+    /* Add any other styling for your main content area */
+}
+
+
+.top-navigation {
+    background-color: var(--primary-color); /* Light purple/blue navigation */
+    border-bottom: 1px solid var(--secondary-color);
+    position: fixed; /* Makes the element fixed relative to the viewport */
+    top: 0;          /* Positions it at the very top */
+    left: 0;         /* Positions it at the very left */
+    width: 100%;     /* Makes it span the full width of the screen */
+    z-index: 1000;   /* Ensures it stays on top of other content (choose a high number) */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Optional: add a subtle shadow for separation */
+    /* Add any other styling like padding, height, etc. */
+    padding: 10px 20px; /* Example padding */
+    height: 60px; /* Example fixed height for calculations below */
+    display: flex; /* Example to align content inside */
+    align-items: center;
+    justify-content: space-between;
+}
+
+
+.top-navigation a {
+    color: var(--text-primary);
+    text-decoration: none;
+    margin-left: 15px;
+}
+
+.top-navigation a:hover {
+    color: var(--accent-color);
+}
+
+.course {
+    margin-top: 40px;
+}
+
+.ppl {
+    color: var(--text-primary); /* Ensure text color is readable */
+}
+
+.welcome-message {
+    margin-bottom: 10px;
+    text-align: center;
+    font-size: 1.8em;
+    color: var(--text-primary);
+}
+
+.search-bar-container {
+    /*padding: 10px;*/
+    background-color: var(--background-light);
+    border-bottom: 1px solid var(--secondary-color);
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.search-input {
+    width: 80%; /* Adjust width as needed */
+    padding: 10px;
+    border: 1px solid var(--secondary-color);
+    border-radius: 5px;
+    font-size: 1em;
+    color: var(--text-primary);
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--accent-color); /* Highlight on focus */
+    box-shadow: 0 0 5px rgba(69, 123, 157, 0.5);
+}
+
+.course-list {
+    margin-top: 20px;
+    padding: 0 20px;
+}
+
+.course-button {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 8px;
+    border: 1px solid var(--secondary-color);
+    border-radius: 5px;
+    text-align: left;
+    cursor: pointer;
+    background-color: var(--primary-color);
+    color: var(--text-primary);
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+}
+
+.course-button:hover {
+    background-color: var(--hover-color);
+}
+
+.year-list,
+.semester-list,
+.subject-list {
+    margin-top: 20px;
+    padding: 0 20px;
+}
+
+.year-list h2,
+.semester-list h2,
+.subject-list h2 {
+    color: var(--secondary-color);
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.year-button,
+.semester-button {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 8px;
+    border: 1px solid var(--secondary-color);
+    border-radius: 5px;
+    text-align: center;
+    cursor: pointer;
+    background-color: var(--primary-color);
+    color: var(--text-primary);
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+}
+
+.year-button:hover,
+.semester-button:hover {
+    background-color: var(--hover-color);
+}
+
+.subject-list div {
+    padding: 10px;
+    margin-bottom: 5px;
+    border-bottom: 1px solid var(--secondary-color);
+}
+
+.subject-list div:last-child {
+    border-bottom: none;
+}
+
+.subject-list button { /* Back to Course Selection button */
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    margin-bottom: 15px;
+    transition: background-color 0.3s ease;
+}
+
+.subject-list button:hover {
+    background-color: #d32f2f; /* Darker red */
+}
+
+/* Add these styles to your DashboardStyles.css or TopNavigation's dedicated CSS file */
+
+.nav-links {
+    /* Ensure this container is also participating in stacking context */
+    position: relative; /* This is important for z-index of children sometimes */
+    z-index: 1001; /* A slightly higher z-index than its parent, just in case */
+    display: flex; /* Assuming it's a flex container for the links */
+    gap: 20px; /* Adds space between "Profile" and "Logout" */
+    align-items: center; /* Vertically align items in the middle */
+}
+
+.nav-links span { /* These styles apply to your 'Profile' and 'Logout' spans */
+    cursor: pointer; /* Makes it visually clear they are clickable */
+    padding: 5px 10px; /* Gives a slightly larger area to click on */
+    user-select: none; /* Prevents text from being highlighted on rapid clicks */
+    color: var(--text-primary); /* Use your theme variable for text color */
+    font-weight: bold; /* Example style */
+    transition: color 0.2s ease; /* Smooth transition on hover */
+}
+
+.nav-links span:hover {
+    color: var(--accent-color); /* Change color on hover, like your 'a:hover' */
+}*/
+
+/* In DashboardStyles.css */
+
+.logout-alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    text-align: center;
+    opacity: 1;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.logout-alert.success {
+    background-color: #d4edda; /* Light green */
+    color: #155724; /* Dark green text */
+    border: 1px solid #c3e6cb;
+}
+
+.logout-alert.error {
+    background-color: #f8d7da; /* Light red */
+    color: #721c24; /* Dark red text */
+    border: 1px solid #f5c6cb;
+}
+
+/* DashboardStyles.css */
+
+/* ... (your existing styles) ... */
+
+/* Styles for the Logout success/error message popup */
+.logout-popup {
+    position: fixed; /* Fixed position relative to the viewport */
+    top: 13.5%; /* Just below your navigation bar (adjust if nav height changes) */
+    left: 50%; /* Center horizontally */
+    transform: translateX(-50%); /* Adjust for perfect centering */
+    padding: 15px 25px;
+    border-radius: 8px;
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #fff;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    z-index: 1000; /* Ensure it's above other content */
+    opacity: 0; /* Start hidden */
+    animation: fadeInOut 2.5s forwards; /* Animation for fade in and fade out */
+}
+
+/* Specific styles for success message */
+.logout-popup.success {
+    background-color: #b950b9; /* Green for success */
+}
+
+/* Specific styles for error message */
+.logout-popup.error {
+    background-color: #f44336; /* Red for error */
+}
+
+/* Fade In/Out Animation */
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translateX(-50%) translateY(-20px); } /* Start slightly above and transparent */
+    10% { opacity: 1; transform: translateX(-50%) translateY(0); } /* Fade in and move to position */
+    90% { opacity: 1; transform: translateX(-50%) translateY(0); } /* Stay visible for most of the duration */
+    100% { opacity: 0; transform: translateX(-50%) translateY(-20px); } /* Fade out and move up */
+}

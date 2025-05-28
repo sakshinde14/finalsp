@@ -1,0 +1,150 @@
+/* Reset padding/margin */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Segoe UI', sans-serif;
+  
+}
+
+.auth-layout {
+  display: flex;
+  width: 100vw;
+  height: 100vh; /* Fill entire screen height */
+}
+
+.auth-visual-side {
+  width: 40%;
+  background-color: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.auth-visual-side img {
+  width: 600%;
+  max-height: 100%;
+  
+}
+
+.auth-form-side {
+  flex: 1;
+  background: #fdfdfd;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+}
+
+.auth-container {
+  width: 100%;
+  max-width: 400px;
+}
+
+.auth-title {
+  font-size: 28px;
+  margin-bottom: 24px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.form-group {
+  margin-bottom: 18px;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.form-input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.form-button {
+  width: 100%;
+  padding: 12px;
+  background-color: #88bbbd;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+.form-button:hover {
+  background-color: #457b9d; 
+;
+}
+
+.toggle-link-container {
+  text-align: center;
+  margin-top: 14px;
+}
+
+.toggle-link {
+  color: #457b9d; /* Darker blue for accents */
+;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.toggle-link:hover {
+  text-decoration: underline;
+}
+
+.auth-toggle-corner {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+/* AuthStyles.css */
+
+/* ... (your existing styles for .auth-layout, .auth-visual-side, etc.) ... */
+
+/* Styles for a general authentication success/error message popup */
+.auth-popup {
+    position: fixed; /* Fixed position relative to the viewport */
+    top: 10%; /* Center vertically */
+    left: 50%; /* Center horizontally */
+    transform: translate(-50%, -50%); /* Adjust for perfect centering */
+    padding: 15px 25px;
+    border-radius: 8px;
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #fff;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    z-index: 1000; /* Ensure it's above other content */
+    opacity: 0; /* Start hidden */
+    animation: fadeInOut 2.5s forwards; /* Animation for fade in and fade out */
+}
+
+/* Specific styles for success message */
+.auth-popup.success {
+    background-color: #b950b9; /* Green for success */
+}
+
+/* Specific styles for error message */
+.auth-popup.error {
+    background-color: #f44336; /* Red for error */
+}
+
+/* Fade In/Out Animation */
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translate(-50%, -70%); } /* Start slightly above and transparent */
+    10% { opacity: 1; transform: translate(-50%, -50%); } /* Fade in and move to position */
+    90% { opacity: 1; transform: translate(-50%, -50%); } /* Stay visible for most of the duration */
+    100% { opacity: 0; transform: translate(-50%, -70%); } /* Fade out and move up */
+}
