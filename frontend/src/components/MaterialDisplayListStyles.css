@@ -1,6 +1,8 @@
 .material-display-list-container {
+    /*margin-top: 100px;*/
     max-width: 1000px;
-    margin: 30px auto;
+    max-height: 1000px;
+    margin: 10px auto;
     padding: 25px;
     background-color: #ffffff;
     border-radius: 12px;
@@ -12,8 +14,9 @@
     text-align: center;
     font-size: 2em;
     color: #0056b3;
-    margin-bottom: 25px;
+    margin: 10px;
 }
+
 
 .material-filters {
     display: flex;
@@ -63,7 +66,7 @@
 }
 
 .material-item-card {
-    background-color: #f9f9f9;
+    background-color: #cfdffc;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
@@ -72,7 +75,7 @@
 
 .material-item-card:hover {
     transform: translateY(-3px);
-    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 8px 18px rgba(200, 220, 247, 0.616);
 }
 
 .material-item-card h4 {
@@ -122,4 +125,16 @@
     .material-items-grid {
         grid-template-columns: 1fr;
     }
+}
+
+.add-to-fav-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    transition: transform 0.2s;
+}
+
+.add-to-fav-button:hover {
+    transform: scale(1.2);
 }

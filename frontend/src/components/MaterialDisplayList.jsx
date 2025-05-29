@@ -36,7 +36,7 @@ function MaterialDisplayList({ materials }) {
                     <option value="All">All</option>
                     <option value="Syllabus">Syllabus</option>
                     <option value="Notes">Notes</option>
-                    <option value="Papers">Papers</option>
+                    <option value="Paper">Papers</option>
                 </select>
 
                 <label htmlFor="format" style={{ marginLeft: '15px' }}>Material Format:</label>

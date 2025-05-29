@@ -270,9 +270,9 @@ function DashboardLayout() {
                             <div className="error-message">Error fetching materials: {materialsError}</div>
                         ) : (
                             <MaterialDisplayList
-                            materials={currentMaterials}
-                            selectedType={selectedMaterialType}
-                            onTypeChange={setSelectedMaterialType}
+                                materials={currentMaterials}
+                                selectedType={selectedMaterialType}
+                                onTypeChange={setSelectedMaterialType}
                             />
 
                         )}

@@ -207,7 +207,7 @@ def admin_add_material():
         return jsonify({'message': 'Missing required fields'}), 400
 
     if material_category not in ['syllabus', 'notes', 'paper']:
-        return jsonify({'message': 'Invalid material type. Must be one of: syllabus, notes, paper'}), 400
+        return jsonify({'message': 'Invalid material Category. Must be one of: syllabus, notes, paper'}), 400
 
     material_doc = {
         'courseCode': course_code,

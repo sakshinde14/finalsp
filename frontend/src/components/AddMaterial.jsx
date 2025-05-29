@@ -144,7 +144,7 @@ function AddMaterial({ onMaterialAdded, onCancelAdd, selectedContext }) {
                                     <option value="">Select Category</option>
                                     <option value="syllabus">Syllabus</option>
                                     <option value="notes">Notes</option>
-                                    <option value="papers">Papers</option>
+                                    <option value="paper">Papers</option>
                             </select>
                         </div>
 
