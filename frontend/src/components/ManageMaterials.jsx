@@ -1,150 +1,154 @@
-// src/components/ManageMaterials.jsx
+// frontend/src/components/ManageMaterials.jsx
 import React, { useState, useEffect } from 'react';
-//import './TableStyles.css'; // You'll need to create this CSS file or integrate
+import EditMaterialForm from './EditMaterialForm'; // Assuming you have this
+import './ManageMaterialsStyles.css'; // Add your styles here
 
-function ManageMaterials() {
+function ManageMaterials({ selectedContext, onMaterialManaged, onCancelManage }) {
     const [materials, setMaterials] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState('');
-    const [editMaterialId, setEditMaterialId] = useState(null); // State to hold ID of material being edited
-    const [editFormData, setEditFormData] = useState({}); // State for form data during editing
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [editingMaterial, setEditingMaterial] = useState(null); // Material being edited
+    const [message, setMessage] = useState(''); // For success/error messages within this component
+    const [refreshTrigger, setRefreshTrigger] = useState(0); // To re-fetch materials
 
     useEffect(() => {
-        fetchMaterials();
-    }, []);
-
-    const fetchMaterials = async () => {
-        setLoading(true);
-        setError('');
-        try {
-            // This API endpoint needs to be created on your backend
-            const response = await fetch('http://localhost:5000/api/admin/materials');
-            if (!response.ok) {
-                throw new Error('Failed to fetch materials');
+        const fetchAdminMaterials = async () => {
+            if (!selectedContext || !selectedContext.subject) {
+                setMaterials([]);
+                setMessage("Please select a subject to manage materials.");
+                setLoading(false); // Ensure loading is false if no context
+                return;
             }
-            const data = await response.json();
-            setMaterials(data);
-        } catch (err) {
-            console.error("Error fetching materials:", err);
-            setError(err.message);
-        } finally {
-            setLoading(false);
-        }
-    };
 
-    const handleDelete = async (id) => {
-        if (!window.confirm('Are you sure you want to delete this material?')) {
-            return;
-        }
-        try {
-            const response = await fetch(`http://localhost:5000/api/admin/materials/${id}`, {
-                method: 'DELETE',
-            });
-            if (!response.ok) {
-                throw new Error('Failed to delete material');
+            setLoading(true);
+            setError(null);
+            setMessage(''); // Clear previous messages
+
+            try {
+                // *** THIS IS THE CRITICAL PART: Ensure these variables are correctly destructured ***
+                const { courseCode, year, semester, subject } = selectedContext;
+                const encodedSubject = encodeURIComponent(subject);
+
+                // Fetch materials for the selected subject
+                const response = await fetch(
+                    // *** VERIFY THIS URL CONSTRUCTION ***
+                    `http://localhost:5000/api/admin/materials?courseCode=${courseCode}&year=${year}&semester=${semester}&subject=${encodedSubject}`,
+                    { credentials: 'include' }
+                );
+
+                if (!response.ok) {
+                    if (response.status === 403) {
+                         throw new Error('Forbidden: Admin access required.');
+                    }
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                setMaterials(data);
+            } catch (e) {
+                console.error("Error fetching admin materials:", e);
+                setError(e.message);
+            } finally {
+                setLoading(false);
             }
-            setMaterials(materials.filter(material => material._id !== id));
-            alert('Material deleted successfully!');
-        } catch (err) {
-            console.error("Error deleting material:", err);
-            setError(err.message);
+        };
+
+
+        fetchAdminMaterials();
+    }, [selectedContext, refreshTrigger]); // Re-fetch when context changes or refreshTrigger is incremented
+
+    const handleDelete = async (materialId) => {
+        if (window.confirm("Are you sure you want to delete this material?")) {
+            setLoading(true); // Set loading while deleting
+            setMessage('');
+            setError(null);
+            try {
+                const response = await fetch(`http://localhost:5000/api/admin/materials/${materialId}`, {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include'
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                setMessage(result.message || 'Material deleted successfully!');
+                onMaterialManaged('Material deleted successfully!'); // Notify parent
+                setRefreshTrigger(prev => prev + 1); // Trigger re-fetch
+            } catch (e) {
+                console.error("Error deleting material:", e);
+                setError(`Failed to delete material: ${e.message}`);
+            } finally {
+                setLoading(false);
+            }
         }
     };
 
     const handleEditClick = (material) => {
-        setEditMaterialId(material._id);
-        setEditFormData({
-            title: material.title,
-            description: material.description,
-            courseCode: material.courseCode,
-            year: material.year,
-            semester: material.semester,
-            subject: material.subject,
-            // Add other fields as needed for editing
-        });
+        setEditingMaterial(material);
+        setMessage('');
+        setError(null);
     };
 
-    const handleEditChange = (e) => {
-        const { name, value } = e.target;
-        setEditFormData(prev => ({ ...prev, [name]: value }));
+    const handleUpdate = (updatedMaterial) => {
+        // This material is already updated on the backend via EditMaterialForm.
+        // Just refresh the list and clear editing state.
+        setEditingMaterial(null);
+        setRefreshTrigger(prev => prev + 1); // Trigger re-fetch to show latest data
+        onMaterialManaged('Material updated successfully!'); // Notify parent
+        setMessage('Material updated successfully!');
+        setTimeout(() => setMessage(''), 3000); // Clear local message
     };
 
-    const handleUpdate = async (id) => {
-        try {
-            const response = await fetch(`http://localhost:5000/api/admin/materials/${id}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(editFormData),
-            });
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Failed to update material');
-            }
-            // Refresh the list after update
-            fetchMaterials();
-            setEditMaterialId(null); // Exit edit mode
-            alert('Material updated successfully!');
-        } catch (err) {
-            console.error("Error updating material:", err);
-            setError(err.message);
-        }
+    const handleCancelEdit = () => {
+        setEditingMaterial(null);
     };
-
-    if (loading) return <div className="loading-message">Loading materials...</div>;
-    if (error) return <div className="error-message">Error: {error}</div>;
 
     return (
         <div className="manage-materials-container">
-            <h2>Manage Study Materials</h2>
-            {materials.length === 0 ? (
-                <p>No study materials found. Add some using the "Add New Material" tool.</p>
+            <h2 className="manage-materials-header">
+                Manage Materials for: {selectedContext?.subject} ({selectedContext?.courseCode}, Year {selectedContext?.year}, Sem {selectedContext?.semester})
+            </h2>
+
+            {loading && <div className="loading-message">Loading materials...</div>}
+            {error && <div className="error-message">Error: {error}</div>}
+            {message && <div className={`system-message ${message.includes('successfully') ? 'success' : 'error'}`}>{message}</div>}
+
+
+            {editingMaterial ? (
+                <EditMaterialForm
+                    material={editingMaterial}
+                    onUpdate={handleUpdate}
+                    onCancel={handleCancelEdit}
+                />
             ) : (
-                <table className="materials-table">
-                    <thead>
-                        <tr>
-                            <th>Title</th>
-                            <th>Course</th>
-                            <th>Year</th>
-                            <th>Semester</th>
-                            <th>Subject</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {materials.map(material => (
-                            <tr key={material._id}>
-                                {editMaterialId === material._id ? (
-                                    <>
-                                        <td><input type="text" name="title" value={editFormData.title} onChange={handleEditChange} /></td>
-                                        <td><input type="text" name="courseCode" value={editFormData.courseCode} onChange={handleEditChange} /></td>
-                                        <td><input type="number" name="year" value={editFormData.year} onChange={handleEditChange} /></td>
-                                        <td><input type="number" name="semester" value={editFormData.semester} onChange={handleEditChange} /></td>
-                                        <td><input type="text" name="subject" value={editFormData.subject} onChange={handleEditChange} /></td>
-                                        <td>
-                                            <button onClick={() => handleUpdate(material._id)} className="action-button edit-button">Save</button>
-                                            <button onClick={() => setEditMaterialId(null)} className="action-button cancel-button">Cancel</button>
-                                        </td>
-                                    </>
-                                ) : (
-                                    <>
-                                        <td>{material.title}</td>
-                                        <td>{material.courseCode}</td>
-                                        <td>{material.year}</td>
-                                        <td>{material.semester}</td>
-                                        <td>{material.subject}</td>
-                                        <td>
-                                            <button onClick={() => handleEditClick(material)} className="action-button edit-button">Edit</button>
-                                            <button onClick={() => handleDelete(material._id)} className="action-button delete-button">Delete</button>
-                                        </td>
-                                    </>
-                                )}
-                            </tr>
+                <>
+                    {materials.length === 0 && !loading && !error && (
+                        <p className="no-materials-message">No materials found for this subject.</p>
+                    )}
+                    <ul className="materials-list">
+                        {materials.map((material) => (
+                            <li key={material._id} className="material-item">
+                                <div className="material-details">
+                                    <h4>{material.title || material.subject} ({material.materialCategory})</h4>
+                                    <p>Format: {material.materialFormat}</p>
+                                    {material.contentUrl && <p>URL: <a href={material.contentUrl} target="_blank" rel="noopener noreferrer">{material.contentUrl}</a></p>}
+                                    {material.textContent && <p>Content: {material.textContent.substring(0, 100)}...</p>}
+                                    <p>Uploaded by: {material.uploadedBy} on {new Date(material.uploadedAt).toLocaleDateString()}</p>
+                                </div>
+                                <div className="material-actions">
+                                    <button onClick={() => handleEditClick(material)} className="edit-button">Edit</button>
+                                    <button onClick={() => handleDelete(material._id)} className="delete-button">Delete</button>
+                                </div>
+                            </li>
                         ))}
-                    </tbody>
-                </table>
+                    </ul>
+                </>
             )}
+
+            <button onClick={onCancelManage} className="back-button">Back to Study material view</button>
         </div>
     );
 }

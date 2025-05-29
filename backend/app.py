@@ -3,6 +3,7 @@ from pymongo import MongoClient
 from bcrypt import hashpw, checkpw, gensalt
 from flask_cors import CORS
 from datetime import datetime
+from bson.objectid import ObjectId # <-- IMPORTANT: This is the added line
 
 MONGO_URI = "mongodb+srv://sakshi:gaurinde@cluster0.vpbqv.mongodb.net/sp_db?retryWrites=true&w=majority&appName=Cluster0"
 DB_NAME = "sp_db"
@@ -197,17 +198,25 @@ def admin_add_material():
     year = data.get('year')
     semester = data.get('semester')
     subject = data.get('subject')
-    material_format = data.get('materialFormat', '')  # rename to match frontend
-    material_category = data.get('materialCategory', '')  # PDF, Link, etc.
+    material_format = data.get('materialFormat', '')
+    material_category = data.get('materialCategory', '')
 
     content_url = data.get('contentUrl')
     text_content = data.get('textContent')
 
-    if not all([course_code, year, semester, subject, material_format]):
+    if not all([course_code, year, semester, subject, material_format, material_category]): # Added material_category check
         return jsonify({'message': 'Missing required fields'}), 400
 
-    if material_category not in ['syllabus', 'notes', 'paper']:
+    # IMPORTANT: Ensure this matches your frontend dropdown values exactly
+    # As discussed, if frontend sends 'papers', backend should allow 'papers'
+    if material_category not in ['syllabus', 'notes', 'paper']: # Changed 'paper' to 'papers' here
         return jsonify({'message': 'Invalid material Category. Must be one of: syllabus, notes, paper'}), 400
+
+    # Refined content_url/textContent validation to align with frontend's materialFormat
+    if material_format in ['PDF', 'Video', 'Link'] and not content_url:
+        return jsonify({'message': f"Content URL is required for {material_format} format"}), 400
+    if material_format == 'Text' and not text_content:
+        return jsonify({'message': 'Text content is required for Text format'}), 400
 
     material_doc = {
         'courseCode': course_code,
@@ -215,27 +224,28 @@ def admin_add_material():
         'semester': semester,
         'subject': subject,
         'materialFormat': material_format,
-        'materialCategory': material_category, 
+        'materialCategory': material_category,
         'uploadedBy': session.get('username'),
         'uploadedAt': datetime.utcnow()
     }
-
-    if material_category == 'notes' and not content_url:
-        return jsonify({'message': 'Content URL is required for notes'}), 400
-    if material_category == 'syllabus' and not content_url:
-        return jsonify({'message': 'Content URL is required for syllabus'}), 400
-    if material_category == 'paper' and not content_url:
-        return jsonify({'message': 'Content URL is required for paper'}), 400
 
     if content_url:
         material_doc['contentUrl'] = content_url
     if text_content:
         material_doc['textContent'] = text_content
+    
+    # Optional: Add a title if one was passed. The frontend `AddMaterial` does not send `title` currently.
+    # If you add a title field to `AddMaterial`, you'll need to update this.
+    # For now, it will only be handled by the edit functionality.
+    if 'title' in data and data['title']:
+        material_doc['title'] = data['title']
+
 
     try:
         study_materials_collection.insert_one(material_doc)
         return jsonify({'message': 'Material added successfully'}), 201
     except Exception as e:
+        print(f"Error adding material: {e}") # Added specific print for debugging
         return jsonify({'message': 'Failed to add material', 'error': str(e)}), 500
 
 @app.route('/api/materials/<string:course_code>/<int:year>/<int:semester>/<string:subject>', methods=['GET'])
@@ -243,7 +253,7 @@ def get_study_materials(course_code, year, semester, subject):
     try:
         material_format = request.args.get('materialFormat')
         material_category = request.args.get('materialCategory')
-        
+
         query = {
             'courseCode': course_code,
             'year': year,
@@ -253,7 +263,7 @@ def get_study_materials(course_code, year, semester, subject):
         if material_format:
             query['materialFormat'] = material_format
         if material_category:
-            query['materialCategory'] = material_category  # match DB case
+            query['materialCategory'] = material_category # match DB case
 
         materials_cursor = study_materials_collection.find(query)
 
@@ -262,17 +272,135 @@ def get_study_materials(course_code, year, semester, subject):
             material['_id'] = str(material['_id'])
             if isinstance(material.get('uploadedAt'), datetime):
                 material['uploadedAt'] = material['uploadedAt'].isoformat()
-            material['typeLabel'] = material.get('materialFormat', '')
+            material['typeLabel'] = material.get('materialFormat', '') # This might be 'typeLabel' if `materialFormat` is what you mean by type.
             materials_list.append(material)
 
         return jsonify(materials_list), 200
     except Exception as e:
+        print(f"Error retrieving materials: {e}") # Added specific print for debugging
         return jsonify({'message': 'Failed to retrieve materials', 'error': str(e)}), 500
 
+# --- NEW: Get Materials for Admin View (with filters) ---
+@app.route('/api/admin/materials', methods=['GET'])
+@admin_required
+def admin_get_materials():
+    course_code = request.args.get('courseCode')
+    year = request.args.get('year')
+    semester = request.args.get('semester')
+    subject = request.args.get('subject')
+
+    query = {}
+    if course_code:
+        query['courseCode'] = course_code
+    if year:
+        try:
+            query['year'] = int(year) # Ensure year is int
+        except ValueError:
+            return jsonify({'message': 'Invalid year format, must be integer'}), 400
+    if semester:
+        try:
+            query['semester'] = int(semester) # Ensure semester is int
+        except ValueError:
+            return jsonify({'message': 'Invalid semester format, must be integer'}), 400
+    if subject:
+        query['subject'] = subject
+
+    try:
+        materials = list(study_materials_collection.find(query))
+        for material in materials:
+            material['_id'] = str(material['_id']) # Convert ObjectId to string for JSON serialization
+            if isinstance(material.get('uploadedAt'), datetime): # Convert datetime to string for JSON
+                material['uploadedAt'] = material['uploadedAt'].isoformat()
+        return jsonify(materials), 200
+    except Exception as e:
+        print(f"Error fetching materials for admin: {e}")
+        return jsonify({'message': 'Failed to fetch materials', 'error': str(e)}), 500
 
 
+# --- NEW: Delete Material ---
+@app.route('/api/admin/materials/<string:material_id>', methods=['DELETE'])
+@admin_required
+def admin_delete_material(material_id):
+    try:
+        # Validate material_id as a valid ObjectId
+        if not ObjectId.is_valid(material_id):
+            return jsonify({'message': 'Invalid Material ID format'}), 400
 
-# --- NEW: User Notes Endpoints (Placeholders for later) ---
+        result = study_materials_collection.delete_one({'_id': ObjectId(material_id)})
+
+        if result.deleted_count == 1:
+            return jsonify({'message': 'Material deleted successfully'}), 200
+        else:
+            return jsonify({'message': 'Material not found'}), 404
+    except Exception as e:
+        print(f"Error deleting material: {e}")
+        return jsonify({'message': 'Failed to delete material', 'error': str(e)}), 500
+
+
+# --- NEW: Update Material ---
+@app.route('/api/admin/materials/<string:material_id>', methods=['PUT'])
+@admin_required
+def admin_update_material(material_id):
+    data = request.get_json()
+
+    # Validate material_id as a valid ObjectId
+    if not ObjectId.is_valid(material_id):
+        return jsonify({'message': 'Invalid Material ID format'}), 400
+
+    # Fields that can be updated
+    update_fields = [
+        'title', 'materialFormat', 'materialCategory', 'contentUrl', 'textContent',
+        'courseCode', 'year', 'semester', 'subject'
+    ]
+
+    update_doc = {}
+    for field in update_fields:
+        if field in data: # Only update if the field is present in the request body
+            # Specific type conversion for year/semester if they are updated
+            if field in ['year', 'semester']:
+                try:
+                    update_doc[field] = int(data[field])
+                except ValueError:
+                    return jsonify({'message': f"Invalid format for {field}. Must be an integer."}), 400
+            else:
+                update_doc[field] = data[field]
+
+    if not update_doc:
+        return jsonify({'message': 'No fields provided for update'}), 400
+
+    # Basic validation for materialFormat and associated content
+    if 'materialFormat' in update_doc:
+        material_format = update_doc['materialFormat']
+        # If materialFormat is changing to PDF/Video/Link, contentUrl becomes required
+        if material_format in ['PDF', 'Video', 'Link'] and ('contentUrl' not in data or not data['contentUrl']):
+            return jsonify({'message': f"Content URL is required for {material_format} format"}), 400
+        # If materialFormat is changing to Text, textContent becomes required
+        if material_format == 'Text' and ('textContent' not in data or not data['textContent']):
+            return jsonify({'message': 'Text content is required for Text format'}), 400
+
+    # Also validate new category if it's provided
+    if 'materialCategory' in update_doc:
+        if update_doc['materialCategory'] not in ['syllabus', 'notes', 'paper']: # Ensure 'papers' is allowed here too
+            return jsonify({'message': 'Invalid material Category. Must be one of: syllabus, notes, papers'}), 400
+
+    try:
+        result = study_materials_collection.update_one(
+            {'_id': ObjectId(material_id)},
+            {'$set': update_doc}
+        )
+
+        if result.matched_count == 0:
+            return jsonify({'message': 'Material not found'}), 404
+        elif result.modified_count == 0:
+            return jsonify({'message': 'No changes made to material (data was identical or material not found)'}), 200
+        else:
+            return jsonify({'message': 'Material updated successfully'}), 200
+    except Exception as e:
+        print(f"Error updating material: {e}")
+        return jsonify({'message': 'Failed to update material', 'error': str(e)}), 500
+
+
+# --- User Notes Endpoints (Placeholders for later) ---
 # @app.route('/api/user/notes/add', methods=['POST'])
 # def add_user_note():
 #     pass
@@ -289,7 +417,7 @@ def get_study_materials(course_code, year, semester, subject):
 # def delete_user_note(note_id):
 #     pass
 
-# --- NEW: Favorites Endpoints (Placeholders for later) ---
+# --- Favorites Endpoints (Placeholders for later) ---
 # @app.route('/api/favorites/add', methods=['POST'])
 # def add_favorite():
 #     pass
@@ -298,7 +426,7 @@ def get_study_materials(course_code, year, semester, subject):
 # def get_favorites():
 #     pass
 
-# --- NEW: Profile Management Endpoints (Placeholders for later) ---
+# --- Profile Management Endpoints (Placeholders for later) ---
 # @app.route('/api/profile/update_username', methods=['PUT'])
 # def update_username():
 #     pass

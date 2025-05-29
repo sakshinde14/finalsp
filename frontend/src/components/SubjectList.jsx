@@ -53,7 +53,6 @@ function SubjectList({ courseCode, year, semester, onSubjectSelect, onReset }) {
                     </li>
                 ))}
             </ul>
-            <button onClick={onReset} className="back-button">Back to Courses</button>
         </div>
     );
 }

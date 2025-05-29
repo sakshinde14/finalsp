@@ -6,14 +6,16 @@ import CourseList from './CourseList';
 import WelcomeMessage from './WelcomeMessage';
 import YearList from './YearList';
 import SemesterList from './SemesterList';
-import SubjectList from './SubjectList'; // This will be updated to pass subject context
+import SubjectList from './SubjectList';
 import SearchResultsList from './SearchResultsList';
 
-// NEW IMPORTS FOR MATERIAL MANAGEMENT
+// IMPORTS FOR MATERIAL MANAGEMENT
 import AddMaterial from './AddMaterial';
-import MaterialDisplayList from './MaterialDisplayList';
+import MaterialDisplayList from './MaterialDisplayList'; // For student/Browse view
+import ManageMaterials from './ManageMaterials';       // For admin management view
 
 import './DashboardStyles.css';
+import './AdminDashboardStyles.css'; // Assuming you have this for admin-specific styling
 
 function AdminDashboardLayout() {
     const navigate = useNavigate();
@@ -22,46 +24,51 @@ function AdminDashboardLayout() {
     const [selectedCourse, setSelectedCourse] = useState(null);
     const [selectedYear, setSelectedYear] = useState(null);
     const [selectedSemester, setSelectedSemester] = useState(null);
-    const [selectedSubject, setSelectedSubject] = useState(null); // NEW: State for selected subject
+    const [selectedSubject, setSelectedSubject] = useState(null);
     const [searchResults, setSearchResults] = useState([]);
     const [showSearchResults, setShowSearchResults] = useState(false);
     const [searchLoading, setSearchLoading] = useState(false);
     const [searchError, setSearchError] = useState(null);
 
-    const [adminLogoutMessage, setAdminLogoutMessage] = useState('');
+    const [adminMessage, setAdminMessage] = useState(''); // Unified message state
 
-    // NEW STATES FOR MATERIAL MANAGEMENT VIEW
+    // States to control which admin panel is visible
     const [showAddMaterialForm, setShowAddMaterialForm] = useState(false);
-    const [currentMaterials, setCurrentMaterials] = useState([]); // Stores materials fetched for a subject
+    const [showManageMaterialsPanel, setShowManageMaterialsPanel] = useState(false);
+
+    // States for displaying materials (for the general Browse/student view, not admin management)
+    const [currentMaterials, setCurrentMaterials] = useState([]);
     const [materialsLoading, setMaterialsLoading] = useState(false);
     const [materialsError, setMaterialsError] = useState(null);
-    const [materialRefreshKey, setMaterialRefreshKey] = useState(0);
+    const [materialRefreshKey, setMaterialRefreshKey] = useState(0); // To force re-fetching materials
 
-    // NEW: Context for AddMaterial and MaterialDisplayList
+    // This context object is crucial for passing selected navigation state to other components
     const selectedContext = selectedCourse && selectedYear && selectedSemester && selectedSubject
         ? {
               courseCode: selectedCourse.code,
-              courseName: selectedCourse.title, // Pass courseName for display
+              courseName: selectedCourse.title,
               year: selectedYear,
               semester: selectedSemester,
               subject: selectedSubject
           }
         : null;
 
+    // Effect for Subject Search
     useEffect(() => {
         const delaySearch = setTimeout(async () => {
             if (searchTerm.trim().length > 0) {
                 setSearchLoading(true);
                 setSearchError(null);
                 setShowSearchResults(true);
-
-                // Reset selections when searching
-                setSelectedCourse(null);
+                // When searching, clear current selections and hide admin panels
+                // We keep selectedContext intact here as search might lead to a new context
+                setSelectedCourse(null); // Clear navigation selection to prioritize search results
                 setSelectedYear(null);
                 setSelectedSemester(null);
-                setSelectedSubject(null); // NEW: Reset selected subject
-                setShowAddMaterialForm(false); // NEW: Hide add material form
-                setCurrentMaterials([]); // NEW: Clear materials
+                setSelectedSubject(null);
+                setShowAddMaterialForm(false);
+                setShowManageMaterialsPanel(false);
+                setCurrentMaterials([]);
 
                 try {
                     const response = await fetch(`http://localhost:5000/api/search/subjects?q=${encodeURIComponent(searchTerm.trim())}`);
@@ -80,118 +87,127 @@ function AdminDashboardLayout() {
                 setShowSearchResults(false);
                 setSearchResults([]);
                 setSearchError(null);
+                // Do NOT reset navigation if search term becomes empty, let previous selection persist
             }
         }, 500);
 
         return () => clearTimeout(delaySearch);
     }, [searchTerm]);
 
-    // NEW: Effect to fetch materials when a subject context is fully selected
+    // Effect to fetch materials for the Browse/student view
     useEffect(() => {
-    const fetchMaterials = async () => {
-        console.log("FETCH MATERIALS useEffect triggered for:", selectedContext);
-        console.log("Current materialRefreshKey:", materialRefreshKey);
+        const fetchMaterialsForBrowse = async () => {
+            // Only fetch materials for Browse if a subject is selected AND no admin panel is active
+            if (selectedContext && selectedContext.subject && !showAddMaterialForm && !showManageMaterialsPanel) {
+                setMaterialsLoading(true);
+                setMaterialsError(null);
+                try {
+                    const encodedSubject = encodeURIComponent(selectedContext.subject);
+                    const response = await fetch(`http://localhost:5000/api/materials/${selectedContext.courseCode}/${selectedContext.year}/${selectedContext.semester}/${encodedSubject}`);
 
-        if (selectedContext && selectedContext.subject) {
-            setMaterialsLoading(true);
-            setMaterialsError(null);
-            try {
-                const encodedSubject = encodeURIComponent(selectedContext.subject);
-                console.log("DEBUG: selectedContext.subject =", selectedContext.subject);
-                console.log("DEBUG: encodedSubject =", encodedSubject);
-                console.log("DEBUG: Full URL to fetch =", `http://localhost:5000/api/materials/${selectedContext.courseCode}/${selectedContext.year}/${selectedContext.semester}/${encodedSubject}`);
-                const response = await fetch(`http://localhost:5000/api/materials/${selectedContext.courseCode}/${selectedContext.year}/${selectedContext.semester}/${encodedSubject}`);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                    const data = await response.json();
+                    setCurrentMaterials(data);
+                } catch (e) {
+                    console.error("Error fetching materials for display:", e);
+                    setMaterialsError(`Error fetching materials: ${e.message}`);
+                } finally {
+                    setMaterialsLoading(false);
                 }
-
-                const data = await response.json();
-                setCurrentMaterials(data);
-            } catch (e) {
-                console.error("Error fetching materials:", e);
-                //setMaterialsError('Error fetching materials: {e.message}');
-            } finally {
-                setMaterialsLoading(false);
+            } else {
+                setCurrentMaterials([]); // Clear materials if context is incomplete or admin form is active
             }
-        } else {
-            setCurrentMaterials([]);
-        }
+        };
+
+        fetchMaterialsForBrowse();
+    }, [
+        selectedContext?.courseCode,
+        selectedContext?.year,
+        selectedContext?.semester,
+        selectedContext?.subject,
+        materialRefreshKey, // Trigger refresh if materials are added/managed
+        showAddMaterialForm, // Re-evaluate when add form is hidden
+        showManageMaterialsPanel // Re-evaluate when manage panel is hidden
+    ]);
+
+    // Helper to reset all navigation and admin form states to initial dashboard state (CourseList)
+    const resetToCourseList = () => {
+        setSelectedCourse(null);
+        setSelectedYear(null);
+        setSelectedSemester(null);
+        setSelectedSubject(null);
+        setShowSearchResults(false);
+        setSearchTerm('');
+        setSearchResults([]);
+        setShowAddMaterialForm(false);
+        setShowManageMaterialsPanel(false);
+        setCurrentMaterials([]);
+        setAdminMessage(''); // Clear messages on full reset
     };
 
-    fetchMaterials();
-}, [
-    selectedContext?.courseCode,
-    selectedContext?.year,
-    selectedContext?.semester,
-    selectedContext?.subject,
-    materialRefreshKey
-]);
-
+    // Handlers for navigation clicks
     const handleSearchChange = (event) => {
         setSearchTerm(event.target.value);
+        setShowAddMaterialForm(false); // Hide admin forms when typing in search
+        setShowManageMaterialsPanel(false);
     };
 
     const handleCourseSelect = (course) => {
         setSelectedCourse(course);
         setSelectedYear(null);
         setSelectedSemester(null);
-        setSelectedSubject(null); // NEW: Reset subject
-        setShowSearchResults(false);
-        setSearchTerm('');
-        setSearchResults([]);
-        setShowAddMaterialForm(false); // NEW: Hide add material form
-        setCurrentMaterials([]); // NEW: Clear materials
+        setSelectedSubject(null);
+        setShowSearchResults(false); // Hide search results if navigating
+        setShowAddMaterialForm(false); // Hide admin forms
+        setShowManageMaterialsPanel(false);
+        setSearchTerm(''); // Clear search bar
+        setCurrentMaterials([]);
     };
 
     const handleYearSelect = (year) => {
         setSelectedYear(year);
         setSelectedSemester(null);
-        setSelectedSubject(null); // NEW: Reset subject
+        setSelectedSubject(null);
         setShowSearchResults(false);
-        setSearchTerm('');
-        setSearchResults([]);
-        setShowAddMaterialForm(false); // NEW: Hide add material form
-        setCurrentMaterials([]); // NEW: Clear materials
+        setShowAddMaterialForm(false);
+        setShowManageMaterialsPanel(false);
+        setCurrentMaterials([]);
     };
 
     const handleSemesterSelect = (semester) => {
         setSelectedSemester(semester);
-        setSelectedSubject(null); // NEW: Reset subject
+        setSelectedSubject(null);
+        setShowSearchResults(false);
+        setShowAddMaterialForm(false);
+        setShowManageMaterialsPanel(false);
+        setCurrentMaterials([]);
+    };
+
+    const handleSubjectSelect = (subjectName) => {
+        setSelectedSubject(subjectName);
         setShowSearchResults(false);
         setSearchTerm('');
         setSearchResults([]);
-        setShowAddMaterialForm(false); // NEW: Hide add material form
-        setCurrentMaterials([]); // NEW: Clear materials
-    };
-
-    // NEW: Handler for when a subject is clicked from SubjectList or SearchResults
-    const handleSubjectSelect = (subjectName) => {
-        setSelectedSubject(subjectName);
-        setShowSearchResults(false); // Hide search results if navigating from there
-        setSearchTerm(''); // Clear search term
-        setSearchResults([]); // Clear search results
-        setShowAddMaterialForm(false); // Ensure add material form is hidden
+        setShowAddMaterialForm(false); // Hide admin forms initially
+        setShowManageMaterialsPanel(false);
         // Materials will be fetched by useEffect based on selectedContext
     };
 
     const handleSearchResultClick = (subjectDetails) => {
+        // Set all relevant states based on search result
         setSelectedCourse({ code: subjectDetails.courseCode, title: subjectDetails.courseName });
         setSelectedYear(subjectDetails.year);
         setSelectedSemester(subjectDetails.semester);
-        handleSubjectSelect(subjectDetails.subjectName); // Use the new handler
-    };
-
-    const resetSelection = () => {
-        setSelectedCourse(null);
-        setSelectedYear(null);
-        setSelectedSemester(null);
-        setSelectedSubject(null); // NEW: Reset subject
-        setShowSearchResults(false);
-        setSearchTerm('');
-        setSearchResults([]);
-        setShowAddMaterialForm(false); // NEW: Hide add material form
-        setCurrentMaterials([]); // NEW: Clear materials
+        setSelectedSubject(subjectDetails.subjectName); // Directly select subject
+        setShowSearchResults(false); // Hide search results
+        setSearchTerm(''); // Clear search term
+        setSearchResults([]); // Clear search results
+        setShowAddMaterialForm(false); // Hide any open admin forms
+        setShowManageMaterialsPanel(false);
+        // materials will be fetched by useEffect
     };
 
     const handleAdminLogout = async () => {
@@ -206,149 +222,210 @@ function AdminDashboardLayout() {
 
             if (response.ok) {
                 console.log("Admin successfully logged out");
-                setAdminLogoutMessage("Admin Successfully Logged Out!");
-                localStorage.removeItem('userRole'); // Clear user role
-                sessionStorage.clear(); // Clear session storage for robustness
-                resetSelection();
+                setAdminMessage("Admin Successfully Logged Out!");
+                localStorage.removeItem('userRole');
+                sessionStorage.clear();
+                resetToCourseList(); // Full reset on logout
                 setTimeout(() => {
-                    setAdminLogoutMessage('');
+                    setAdminMessage('');
                     navigate('/login/admin');
                 }, 2000);
             } else {
                 const errorData = await response.json();
                 console.error("Admin Logout failed:", errorData);
-                setAdminLogoutMessage("Logout Failed: errorData.message || 'Unknown error'}");
+                setAdminMessage(`Logout Failed: ${errorData.message || 'Unknown error'}`);
                 setTimeout(() => {
-                    setAdminLogoutMessage('');
+                    setAdminMessage('');
                 }, 3000);
             }
         } catch (error) {
             console.error("Error during admin logout:", error);
-            setAdminLogoutMessage(`Network Error: ${error.message}`);
+            setAdminMessage(`Network Error: ${error.message}`);
             setTimeout(() => {
-                setAdminLogoutMessage('');
+                setAdminMessage('');
             }, 3000);
         }
     };
 
-    // NEW: Handlers for AddMaterial form
+    // Handlers for admin action buttons
     const handleAddMaterialClick = () => {
         if (!selectedContext || !selectedContext.subject) {
-            setAdminLogoutMessage('Please select a Course, Year, Semester, and Subject first.');
-            setTimeout(() => setAdminLogoutMessage(''), 3000);
+            setAdminMessage('Please select a Course, Year, Semester, and Subject first.');
+            setTimeout(() => setAdminMessage(''), 3000);
             return;
         }
         setShowAddMaterialForm(true);
-        setCurrentMaterials([]); // Hide materials list when showing form
+        setShowManageMaterialsPanel(false); // Hide other admin panels
+        setAdminMessage(''); // Clear any previous messages
     };
 
+    const handleManageMaterialsClick = () => {
+        if (!selectedContext || !selectedContext.subject) {
+            setAdminMessage('Please select a Course, Year, Semester, and Subject first to manage materials.');
+            setTimeout(() => setAdminMessage(''), 3000);
+            return;
+        }
+        setShowManageMaterialsPanel(true);
+        setShowAddMaterialForm(false); // Hide other admin panels
+        setAdminMessage(''); // Clear any previous messages
+    };
+
+    // Callbacks from AddMaterial / ManageMaterials components
     const handleMaterialAdded = () => {
-    setShowAddMaterialForm(false); // Hide form after successful addition
-    // Re-fetch materials for the current subject to update the list
-    // This will be triggered by the useEffect that depends on selectedContext
-    setMaterialRefreshKey(prevKey => prevKey + 1); // This is now the ONLY trigger for re-fetching
-    // Forcing a re-fetch means we don't need to manually update currentMaterials here
-};
+        setShowAddMaterialForm(false); // Hide form after successful addition
+        setMaterialRefreshKey(prevKey => prevKey + 1); // Trigger re-fetch for Browse mode and ManageMaterials
+        setAdminMessage('Material added successfully!');
+        setTimeout(() => setAdminMessage(''), 3000);
+    };
+
+    const handleMaterialManaged = (message) => {
+        // We keep the ManageMaterialsPanel open usually after an action
+        setMaterialRefreshKey(prevKey => prevKey + 1); // Trigger re-fetch for Browse mode and ManageMaterials
+        setAdminMessage(message || 'Material managed successfully!');
+        setTimeout(() => setAdminMessage(''), 3000);
+    };
 
     const handleCancelAddMaterial = () => {
         setShowAddMaterialForm(false);
-        // If materials were previously displayed, they should reappear
-        // This will be handled by useEffect when selectedSubject is still set.
+        // materials will re-appear if selectedSubject is still set, via useEffect
+    };
+
+    const handleCancelManageMaterials = () => {
+        setShowManageMaterialsPanel(false);
+        // materials will re-appear if selectedSubject is still set, via useEffect
+    };
+
+    // Determine what to display based on current state
+    const renderContent = () => {
+        if (showSearchResults) {
+            return searchLoading ? (
+                <div className="loading-message">Searching...</div>
+            ) : searchError ? (
+                <div className="error-message">Error during search: {searchError}</div>
+            ) : (
+                <SearchResultsList
+                    results={searchResults}
+                    onResultClick={handleSearchResultClick}
+                />
+            );
+        } else if (showAddMaterialForm) {
+            return (
+                <AddMaterial
+                    onMaterialAdded={handleMaterialAdded}
+                    onCancelAdd={handleCancelAddMaterial}
+                    selectedContext={selectedContext}
+                />
+            );
+        } else if (showManageMaterialsPanel) {
+            return (
+                <ManageMaterials
+                    onMaterialManaged={handleMaterialManaged}
+                    onCancelManage={handleCancelManageMaterials}
+                    selectedContext={selectedContext} // Pass selected context for filtering
+                />
+            );
+        } else if (selectedContext && selectedContext.subject) {
+            // Display materials for the selected subject (Browse view for student/admin)
+            return (
+                <div className="subject-materials-view">
+                    <h3 className="subject-title-header">
+                        Materials for: {selectedContext.subject} ({selectedContext.courseCode}, Year {selectedContext.year}, Sem {selectedContext.semester})
+                    </h3>
+                    {materialsLoading ? (
+                        <div className="loading-message">Loading materials...</div>
+                    ) : materialsError ? (
+                        <div className="error-message">Error fetching materials: {materialsError}</div>
+                    ) : (
+                        <MaterialDisplayList materials={currentMaterials} />
+                    )}
+                    {/* BACK BUTTON for Study Material -> Subject List */}
+                    <button onClick={() => setSelectedSubject(null)} className="back-button">Back to Subject Selection</button>
+                </div>
+            );
+        } else {
+            // Default navigation flow (Courses -> Years -> Semesters -> Subjects)
+            return (
+                <div className="navigation-section">
+                    {!selectedCourse ? (
+                        <CourseList onCourseSelect={handleCourseSelect} />
+                    ) : !selectedYear ? (
+                        <>
+                            <YearList courseCode={selectedCourse.code} onYearSelect={handleYearSelect} />
+                            {/* BACK BUTTON for Year List -> Course List */}
+                            <button onClick={() => setSelectedCourse(null)} className="back-button">Back to Courses</button>
+                        </>
+                    ) : !selectedSemester ? (
+                        <>
+                            <SemesterList
+                                onSemesterSelect={handleSemesterSelect}
+                                courseCode={selectedCourse.code}
+                                selectedYear={selectedYear}
+                            />
+                            {/* BACK BUTTON for Semester List -> Year List */}
+                            <button onClick={() => setSelectedYear(null)} className="back-button">Back to Year</button>
+                        </>
+                    ) : ( // When course, year, semester are selected, show subjects
+                        <>
+                            <SubjectList
+                                courseCode={selectedCourse.code}
+                                year={selectedYear}
+                                semester={selectedSemester}
+                                onSubjectSelect={handleSubjectSelect}
+                                // onReset prop for SubjectList is now handled by the specific back button below
+                            />
+                            {/* BACK BUTTON for Subject List -> Semester List */}
+                            <button onClick={() => setSelectedSemester(null)} className="back-button">Back to Semester</button>
+                        </>
+                    )}
+                </div>
+            );
+        }
     };
 
     return (
         <div className="dashboard-container">
             <TopNavigation onLogout={handleAdminLogout} />
             <main className="main-content">
-                {adminLogoutMessage && (
-                    <div className={`logout-popup ${adminLogoutMessage.includes('Failed') || adminLogoutMessage.includes('Error') ? 'error' : 'success'}`}>
-                        {adminLogoutMessage}
+                {adminMessage && (
+                    <div className={`system-message ${adminMessage.includes('Failed') || adminMessage.includes('Error') ? 'error' : 'success'}`}>
+                        {adminMessage}
                     </div>
                 )}
 
-                {/* Welcome message and Search Bar */}
-                {!showSearchResults && !selectedContext && !showAddMaterialForm && (
-                    <WelcomeMessage message="Welcome, Admin! Manage Study Materials." />
+                {/* Welcome message */}
+                {(!showSearchResults && !showAddMaterialForm && !showManageMaterialsPanel && !selectedContext) && (
+                    <WelcomeMessage message="Welcome, Admin! Navigate or search to manage materials." />
                 )}
 
                 <div className="search-bar-container">
                     <input
                         type="text"
-                        placeholder="Search for subjects or study materials..."
+                        placeholder="Search for subjects..."
                         value={searchTerm}
                         onChange={handleSearchChange}
                         className="search-input"
                     />
                 </div>
 
-                {/* Conditional Rendering based on state */}
-                {showSearchResults ? (
-                    searchLoading ? (
-                        <div className="loading-message">Searching...</div>
-                    ) : searchError ? (
-                        <div className="error-message">Error during search: {searchError}</div>
-                    ) : (
-                        <SearchResultsList
-                            results={searchResults}
-                            onResultClick={handleSearchResultClick}
-                        />
-                    )
-                ) : showAddMaterialForm ? (
-                    <AddMaterial
-                        onMaterialAdded={handleMaterialAdded}
-                        onCancelAdd={handleCancelAddMaterial}
-                        selectedContext={selectedContext}
-                    />
-                ) : selectedContext && selectedContext.subject ? (
-                    // Display materials for the selected subject
-                    <div className="subject-materials-view">
-                        <h3 className="subject-title-header">Materials for: {selectedContext.subject} ({selectedContext.courseCode}, Year {selectedContext.year}, Sem {selectedContext.semester})</h3>
-                        {materialsLoading ? (
-                            <div className="loading-message">Loading materials...</div>
-                        ) : materialsError ? (
-                            <div className="error-message">Error fetching materials: {materialsError}</div>
-                        ) : (
-                            <MaterialDisplayList materials={currentMaterials} />
-                        )}
-                        <button onClick={resetSelection} className="back-button">Back to Courses</button>
-                    </div>
-                ) : (
-                    // Default navigation flow (Courses -> Years -> Semesters -> Subjects)
-                    !selectedCourse ? (
-                        <CourseList onCourseSelect={handleCourseSelect} />
-                    ) : !selectedYear ? (
-                        <YearList courseCode={selectedCourse.code} onYearSelect={handleYearSelect} />
-                    ) : !selectedSemester ? (
-                        <SemesterList
-                            onSemesterSelect={handleSemesterSelect}
-                            courseCode={selectedCourse.code}
-                            selectedYear={selectedYear}
-                        />
-                    ) : (
-                        <SubjectList
-                            courseCode={selectedCourse.code}
-                            year={selectedYear}
-                            semester={selectedSemester}
-                            onSubjectSelect={handleSubjectSelect} // NEW: Pass handler
-                            onReset={resetSelection}
-                        />
-                    )
-                )}
+                {/* Render the appropriate content based on state */}
+                {renderContent()}
 
-                {/* Admin-specific management tools */}
-                <div className="admin-management-section">
-                    <h3>Admin Tools:</h3>
-                    {selectedContext && selectedContext.subject ? (
-                        <button className="form-button" onClick={handleAddMaterialClick} style={{ marginRight: '10px' }}>
+                {/* Admin-specific action buttons - now moved down */}
+                {selectedContext && selectedContext.subject && !showAddMaterialForm && !showManageMaterialsPanel && (
+                    <div className="admin-actions-bottom">
+                        <button
+                            className="admin-action-button"
+                            onClick={handleAddMaterialClick}  >
                             Add New Material for {selectedContext.subject}
                         </button>
-                    ) : (
-                        <button className="form-button" onClick={handleAddMaterialClick} style={{ marginRight: '10px' }} disabled>
-                            Select Subject to Add Material
+                        
+                        <button
+                            className="admin-action-button"
+                            onClick={handleManageMaterialsClick} >
+                            Manage Materials for {selectedContext.subject}
                         </button>
-                    )}
-                    <button className="form-button" disabled>Manage Existing Materials (Coming Soon)</button>
-                </div>
+                    </div>
+                )}
             </main>
         </div>
     );

@@ -1,3 +1,5 @@
+/* frontend/src/components/AddMaterialStyles.css */
+
 .add-material-container {
     max-width: 600px;
     margin: 30px auto;
@@ -44,6 +46,8 @@
     font-size: 1em;
 }
 
+/* MODIFICATION START */
+.add-material-form input[type="text"], /* ADDED THIS LINE */
 .add-material-form input[type="url"],
 .add-material-form textarea,
 .add-material-form select {
@@ -58,6 +62,7 @@
     background-color: #fff;
 }
 
+.add-material-form input[type="text"]:focus, /* ADDED THIS LINE */
 .add-material-form input[type="url"]:focus,
 .add-material-form textarea:focus,
 .add-material-form select:focus {
@@ -65,6 +70,7 @@
     box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
     outline: none;
 }
+/* MODIFICATION END */
 
 .add-material-form select:disabled {
     background-color: #f1f1f1;

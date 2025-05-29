@@ -1,8 +1,13 @@
 // frontend/src/components/AddMaterial.jsx
+
 import React, { useState, useEffect } from 'react';
+
 import './AddMaterialStyles.css'; // We will create this CSS file next
 
 function AddMaterial({ onMaterialAdded, onCancelAdd, selectedContext }) {
+    // NEW STATE: For the title of the material
+    const [title, setTitle] = useState('');
+
     const [materialFormat, setMaterialFormat] = useState('');
     const [materialCategory, setMaterialCategory] = useState('');
     const [contentUrl, setContentUrl] = useState('');
@@ -28,13 +33,28 @@ function AddMaterial({ onMaterialAdded, onCancelAdd, selectedContext }) {
         e.preventDefault();
         setMessage(''); // Clear previous messages
 
+        // Validate title
+        if (!title.trim()) {
+            setMessage('Please enter a title for the material.');
+            setMessageType('error');
+            return;
+        }
+
         if (!materialFormat) {
             setMessage('Please select a material type.');
             setMessageType('error');
             return;
         }
 
+        if (!materialCategory) { // NEW: Validate category as well
+            setMessage('Please select a material category.');
+            setMessageType('error');
+            return;
+        }
+
+
         const materialData = {
+            title: title.trim(), // Include title in materialData
             courseCode: courseCode,
             year: year,
             semester: semester,
@@ -82,6 +102,7 @@ function AddMaterial({ onMaterialAdded, onCancelAdd, selectedContext }) {
                 setMessage('Material added successfully!');
                 setMessageType('success');
                 // Clear form fields
+                setTitle(''); // Clear title after submission
                 setMaterialFormat('');
                 setMaterialCategory('');
                 setContentUrl('');
@@ -94,6 +115,7 @@ function AddMaterial({ onMaterialAdded, onCancelAdd, selectedContext }) {
                 setMessage(`Error: ${errorData.message || 'Failed to add material.'}`);
                 setMessageType('error');
             }
+
         } catch (error) {
             console.error('Network or server error:', error);
             setMessage('Network error. Could not connect to server.');
@@ -109,6 +131,19 @@ function AddMaterial({ onMaterialAdded, onCancelAdd, selectedContext }) {
             {message && <div className={`message ${messageType}`}>{message}</div>}
 
             <form onSubmit={handleSubmit} className="add-material-form">
+                {/* NEW: Title input field */}
+                <div className="form-group">
+                    <label htmlFor="title">Material Title:</label>
+                    <input
+                        type="text"
+                        id="title"
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                        placeholder="e.g., C++ Programming Notes"
+                        required
+                    />
+                </div>
+
                 <div className="form-group">
                     <label htmlFor="materialFormat">Material Type:</label>
                     <select
@@ -116,7 +151,6 @@ function AddMaterial({ onMaterialAdded, onCancelAdd, selectedContext }) {
                         value={materialFormat}
                         onChange={(e) => {
                             setMaterialFormat(e.target.value);
-                            setMaterialCategory('');
                             setContentUrl(''); // Clear URL/Text when type changes
                             setTextContent('');
                         }}
@@ -129,24 +163,23 @@ function AddMaterial({ onMaterialAdded, onCancelAdd, selectedContext }) {
                         <option value="Text">Text Content</option>
                     </select>
                 </div>
+
                 <div className="form-group">
-                            <label htmlFor="materialCategory">Material Category:</label>
-                            <select
-                                id="materialCategory"
-                                value={materialCategory}
-                                onChange={(e) => {
-                                    setMaterialCategory(e.target.value);
-                                    setContentUrl(''); // Clear URL/Text when type changes
-                                    setTextContent('');
-                                }}
-                            required
-                            >
-                                    <option value="">Select Category</option>
-                                    <option value="syllabus">Syllabus</option>
-                                    <option value="notes">Notes</option>
-                                    <option value="paper">Papers</option>
-                            </select>
-                        </div>
+                    <label htmlFor="materialCategory">Material Category:</label>
+                    <select
+                        id="materialCategory"
+                        value={materialCategory}
+                        onChange={(e) => {
+                            setMaterialCategory(e.target.value);
+                        }}
+                        required
+                    >
+                        <option value="">Select Category</option>
+                        <option value="syllabus">Syllabus</option>
+                        <option value="notes">Notes</option>
+                        <option value="paper">Papers</option>
+                    </select>
+                </div>
 
                 {materialFormat && materialFormat !== 'Text' && (
                     <div className="form-group">

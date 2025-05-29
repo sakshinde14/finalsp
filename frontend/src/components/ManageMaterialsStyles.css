@@ -1,0 +1,168 @@
+/* frontend/src/components/ManageMaterialsStyles.css */
+
+.manage-materials-container {
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin: 20px auto;
+    width: 1000px;
+    margin-top: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    
+    /* --- ADD THESE TWO LINES --- */
+    max-height: 400px; /* Adjust this value as needed, e.g., 300px, 500px */
+    overflow-y: auto;  /* Adds a vertical scrollbar if content exceeds max-height */
+    /* -------------------------- */
+} 
+
+.manage-materials-header {
+    color: #333;
+    margin-bottom: 25px;
+    text-align: center;
+    font-size: 1.8em;
+}
+
+.materials-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.material-item {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap; /* Allow wrapping for smaller screens */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.material-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.material-details {
+    flex-grow: 1;
+    padding-right: 15px;
+}
+
+.material-details h4 {
+    margin: 0 0 8px 0;
+    color: #007bff;
+    font-size: 1.2em;
+}
+
+.material-details p {
+    margin: 4px 0;
+    font-size: 0.95em;
+    color: #555;
+}
+
+.material-details a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.material-details a:hover {
+    text-decoration: underline;
+}
+
+.material-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px; /* For smaller screens where wrapping occurs */
+}
+
+.material-actions button {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.edit-button {
+    background-color: #28a745; /* Green */
+    color: white;
+}
+
+.edit-button:hover {
+    background-color: #218838;
+    transform: translateY(-1px);
+}
+
+.delete-button {
+    background-color: #dc3545; /* Red */
+    color: white;
+}
+
+.delete-button:hover {
+    background-color: #c82333;
+    transform: translateY(-1px);
+}
+
+.no-materials-message {
+    text-align: center;
+    color: #777;
+    font-style: italic;
+    margin-top: 30px;
+}
+
+/* General loading and error messages (can be reused from DashboardStyles.css) */
+.loading-message {
+    text-align: center;
+    font-size: 1.1em;
+    color: #007bff;
+    margin: 20px 0;
+}
+
+.error-message {
+    text-align: center;
+    font-size: 1.1em;
+    color: #dc3545;
+    margin: 20px 0;
+}
+
+.system-message {
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.system-message.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.system-message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.back-button {
+    display: block;
+    width: fit-content;
+    margin: 25px auto 10px auto;
+    padding: 10px 20px;
+    background-color: #6c757d; /* Grey */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.back-button:hover {
+    background-color: #5a6268;
+}

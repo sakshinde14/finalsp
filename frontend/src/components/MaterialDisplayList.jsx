@@ -58,7 +58,10 @@ function MaterialDisplayList({ materials }) {
                 <ul className="material-items-grid">
                     {filteredMaterials.map((material) => (
                         <li key={material._id || material.contentUrl || material.textContent} className="material-item-card">
-                            <h4>{material.subject} - {material.materialCategory?.charAt(0).toUpperCase() + material.materialCategory?.slice(1)}</h4>
+                            <h4>{material.materialCategory.toUpperCase()}</h4>
+
+                            <h3>{material.title}</h3>
+
 
                             {material.materialFormat === 'PDF' && material.contentUrl && (
                                 <p><a href={material.contentUrl} target="_blank" rel="noopener noreferrer">View PDF Document</a></p>
@@ -76,7 +79,12 @@ function MaterialDisplayList({ materials }) {
                                 </div>
                             )}
 
-                            <p className="material-info">Course: {material.courseCode}, Year: {material.year}, Semester: {material.semester}</p>
+                            
+
+                            
+
+
+
                             {material.uploadedBy && (
                                 <p className="material-info">Uploaded By: {material.uploadedBy}</p>
                             )}

@@ -21,7 +21,6 @@ body {
 
 .dashboard-container {
     max-width: none !important;
-    width: 100vw;
     display: flex;
     flex-direction: column;
     min-height: 100vh;
@@ -36,6 +35,9 @@ body {
 
 .main-content {
     flex: 1;
+  /*position: fixed;
+    margin-top: 20px;*/
+    width: 100vw;
     padding: 20px;
     background-color: var(--background-light); /* Light background */
     /* Assuming your TopNavigation has a height of, say, 60px */
@@ -81,7 +83,7 @@ body {
 }
 
 .welcome-message {
-    margin-bottom: 10px;
+    margin: 5px;
     text-align: center;
     font-size: 1.8em;
     color: var(--text-primary);
@@ -94,7 +96,7 @@ body {
     display: flex;
     justify-content: center;
     padding: 20px;
-    margin-top: 80px;
+    margin: 20px;
 }
 
 .search-input {
