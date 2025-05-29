@@ -28,7 +28,8 @@ function MaterialDisplayList({ materials }) {
 
     return (
         <div className="material-display-list-container">
-            <h3>Study Materials</h3>
+            
+            <h4>Study Materials</h4>
 
             <div className="material-filters">
                 <label htmlFor="category">Material Category:</label>
@@ -60,7 +61,7 @@ function MaterialDisplayList({ materials }) {
                         <li key={material._id || material.contentUrl || material.textContent} className="material-item-card">
                             <h4>{material.materialCategory.toUpperCase()}</h4>
 
-                            <h3>{material.title}</h3>
+                            {material.title}
 
 
                             {material.materialFormat === 'PDF' && material.contentUrl && (

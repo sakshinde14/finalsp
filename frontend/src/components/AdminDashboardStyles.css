@@ -77,6 +77,11 @@
     outline: none;
 }
   
+.subject-title-header {
+    text-align: center;
+    color: #d3046b;
+    font-size: 30px;
+}
 
 /* Styles for the admin action buttons at the bottom */
 .admin-actions-bottom {

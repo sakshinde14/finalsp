@@ -328,7 +328,7 @@ function AdminDashboardLayout() {
             // Display materials for the selected subject (Browse view for student/admin)
             return (
                 <div className="subject-materials-view">
-                    <h3 className="subject-title-header">
+                    <h3 className="subject-title-header" >
                         Materials for: {selectedContext.subject} ({selectedContext.courseCode}, Year {selectedContext.year}, Sem {selectedContext.semester})
                     </h3>
                     {materialsLoading ? (
