@@ -30,7 +30,7 @@ function AdminDashboardLayout() {
     const [searchLoading, setSearchLoading] = useState(false);
     const [searchError, setSearchError] = useState(null);
 
-    const [adminMessage, setAdminMessage] = useState(''); // Unified message state
+    const [logoutMessage, setLogoutMessage] = useState(''); // Unified message state
 
     // States to control which admin panel is visible
     const [showAddMaterialForm, setShowAddMaterialForm] = useState(false);
@@ -221,28 +221,28 @@ function AdminDashboardLayout() {
             });
 
             if (response.ok) {
-                console.log("Admin successfully logged out");
-                setAdminMessage("Admin Successfully Logged Out!");
-                localStorage.removeItem('userRole');
-                sessionStorage.clear();
-                resetToCourseList(); // Full reset on logout
+                console.log("Successfully logged out");
+                setLogoutMessage("Successfully Logged Out!"); // Set success message
+                //resetSelection(); // Clear dashboard selections
+                
+                // Delay redirection to show the message
                 setTimeout(() => {
-                    setAdminMessage('');
-                    navigate('/login/admin');
-                }, 2000);
+                    setLogoutMessage(''); // Clear message after it has been seen
+                    navigate('/login/admin'); // Redirect
+                }, 2000); // Display message for 2 seconds (2000 milliseconds)
             } else {
                 const errorData = await response.json();
-                console.error("Admin Logout failed:", errorData);
-                setAdminMessage(`Logout Failed: ${errorData.message || 'Unknown error'}`);
+                console.error("Logout failed:", errorData);
+                setLogoutMessage(`Logout Failed: ${errorData.message || 'Unknown error'}`); // Set error message
                 setTimeout(() => {
-                    setAdminMessage('');
-                }, 3000);
+                    setLogoutMessage(''); // Clear message after a delay even on error
+                }, 3000); // Show error message a bit longer
             }
-        } catch (error) {
-            console.error("Error during admin logout:", error);
-            setAdminMessage(`Network Error: ${error.message}`);
+         } catch (error) {
+            console.error("Error during logout:", error);
+            setLogoutMessage(`Network Error: ${error.message}`); // Set network error message
             setTimeout(() => {
-                setAdminMessage('');
+                setLogoutMessage('');
             }, 3000);
         }
     };
@@ -386,11 +386,13 @@ function AdminDashboardLayout() {
         <div className="dashboard-container">
             <TopNavigation onLogout={handleAdminLogout} />
             <main className="main-content">
-                {adminMessage && (
-                    <div className={`system-message ${adminMessage.includes('Failed') || adminMessage.includes('Error') ? 'error' : 'success'}`}>
-                        {adminMessage}
+                {/* --- NEW: Display logout message --- */}
+                {logoutMessage && (
+                    <div className={`logout-popup ${logoutMessage.includes('Failed') || logoutMessage.includes('Error') ? 'error' : 'success'}`}>
+                        {logoutMessage}
                     </div>
                 )}
+                {/* --- End NEW --- */}
 
                 {/* Welcome message */}
                 {(!showSearchResults && !showAddMaterialForm && !showManageMaterialsPanel && !selectedContext) && (

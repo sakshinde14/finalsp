@@ -1,0 +1,110 @@
+/* frontend/src/components/TopNavigationStyles.css */
+
+.top-navigation {
+    background-color: var(--primary-color); /* Light purple/blue navigation */
+    border-bottom: 1px solid var(--secondary-color);
+    position: fixed; /* Makes the element fixed relative to the viewport */
+    top: 0;          /* Positions it at the very top */
+    left: 0;         /* Positions it at the very left */
+    width: 100%;     /* Makes it span the full width of the screen */
+    z-index: 1000;   /* Ensures it stays on top of other content (choose a high number) */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Optional: add a subtle shadow for separation */
+    /* Add any other styling like padding, height, etc. */
+    padding: 10px 20px; /* Example padding */
+    height: 60px; /* Example fixed height for calculations below */
+    display: flex; /* Example to align content inside */
+    align-items: center;
+    justify-content: space-between;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+
+
+.nav-left .nav-link {
+    font-size: 1.6em;
+    font-weight: bold;
+    color: white;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.nav-left .nav-link:hover {
+    color: #000000; /* Lighter blue on hover */
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 25px; /* Space between nav items */
+}
+
+.nav-link {
+    color: white;
+    text-decoration: none;
+    font-size: 1.1em;
+    padding: 5px 0; /* Add padding for click area */
+    transition: color 0.2s ease, border-bottom 0.2s ease;
+}
+
+.nav-link:hover {
+    color: #000000;
+}
+
+.logout-link {
+    cursor: pointer; /* Indicate it's clickable */
+}
+
+/* NEW STYLES FOR PROFILE DROPDOWN */
+.nav-profile-dropdown {
+    position: relative; /* Establishes positioning context for its children */
+    cursor: pointer; /* Indicate it's clickable */
+}
+
+
+
+
+/* The container for the ProfileManagement component */
+.profile-options-container {
+    /* These styles make it appear as a dropdown directly below "Profile" */
+    position: absolute;
+    top: calc(100% + 10px); /* Position 10px below the bottom of .profile-toggle */
+    right: 0; /* Align to the right edge of the .nav-profile-dropdown parent */
+    /* The actual styling of the dropdown box (background, shadow etc.) will be in ProfileManagementStyles.css */
+    /* This container mainly helps with positioning in relation to the nav bar */
+}
+
+/* Optional: Adjustments for smaller screens */
+@media (max-width: 768px) {
+    .top-navigation {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 10px 20px;
+    }
+
+    .nav-right {
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+    .nav-link {
+        width: 100%;
+        text-align: left;
+        padding: 5px 0;
+    }
+
+    .nav-profile-dropdown {
+        width: 100%;
+    }
+
+    .profile-options-container {
+        /* On small screens, you might want it to fill more width or be a modal */
+        width: 100%;
+        left: 0; /* Align left */
+        right: auto; /* Remove right alignment */
+        top: calc(100% + 5px); /* Keep it just below the toggle */
+        /* If you want it as a full-screen modal, more complex positioning would be needed */
+    }
+}

@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify, session
+from werkzeug.security import check_password_hash, generate_password_hash
 from pymongo import MongoClient
 from bcrypt import hashpw, checkpw, gensalt
 from flask_cors import CORS
@@ -398,6 +399,100 @@ def admin_update_material(material_id):
     except Exception as e:
         print(f"Error updating material: {e}")
         return jsonify({'message': 'Failed to update material', 'error': str(e)}), 500
+
+
+@app.route('/api/admin/change-password', methods=['POST'])
+@admin_required # Your admin login decorator
+def change_password():
+    data = request.get_json()
+    current_password = data.get('currentPassword')
+    new_password = data.get('newPassword')
+
+    if not current_password or not new_password:
+        return jsonify({'message': 'Missing password fields'}), 400
+
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({'message': 'Unauthorized'}), 401
+
+    try:
+        # Assuming user IDs in session are strings, convert to ObjectId for MongoDB lookup
+        user = admins_collection.find_one({'_id': ObjectId(user_id)})
+    except Exception as e:
+        # Log the error for debugging purposes
+        print(f"Error fetching user in change_password: {e}")
+        return jsonify({'message': 'Internal server error while fetching user data.'}), 500
+
+    if not user:
+        return jsonify({'message': 'User not found'}), 404
+
+    stored_password_hash = user.get('password') # Use .get() for safety
+
+    # --- THE CRITICAL FIX FOR TypeError ---
+    if stored_password_hash is None:
+        return jsonify({'message': 'Password hash not found for user.'}), 500 # Or indicate a problem
+    if isinstance(stored_password_hash, str):
+        # Encode the stored hash to bytes if it's a string, as check_password_hash expects bytes
+        stored_password_hash_bytes = stored_password_hash.encode('utf-8')
+    elif isinstance(stored_password_hash, bytes):
+        # If it's already bytes (which is ideal for check_password_hash), use it directly
+        stored_password_hash_bytes = stored_password_hash
+    else:
+        # Handle unexpected types (e.g., if it's an int, list, etc. by mistake)
+        print(f"Unexpected type for stored password hash: {type(stored_password_hash)}")
+        return jsonify({'message': 'Invalid stored password hash format.'}), 500
+    # --- END CRITICAL FIX ---
+
+
+    # Verify current password using the bytes-encoded hash
+    if not check_password_hash(stored_password_hash_bytes, current_password):
+        return jsonify({'message': 'Incorrect current password'}), 403
+
+    # Basic new password validation (you might have more robust frontend validation)
+    if len(new_password) < 6: # Example: Minimum password length
+        return jsonify({'message': 'New password must be at least 6 characters long.'}), 400
+
+    # Hash the new password using werkzeug.security.generate_password_hash
+    # and then decode it to store as a string in the database
+    hashed_new_password = generate_password_hash(new_password).decode('utf-8')
+
+    try:
+        admins_collection.update_one(
+            {'_id': ObjectId(user_id)},
+            {'$set': {'password': hashed_new_password}}
+        )
+        return jsonify({'message': 'Password changed successfully'}), 200
+    except Exception as e:
+        print(f"Error updating password in change_password: {e}") # Log the error
+        return jsonify({'message': 'Internal server error while updating password.'}), 500
+
+@app.route('/api/admin/change-username', methods=['POST'])
+@admin_required # Your admin login decorator
+def change_username():
+    data = request.get_json()
+    new_username = data.get('newUsername')
+
+    if not new_username:
+        return jsonify({'message': 'Missing new username'}), 400
+
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({'message': 'Unauthorized'}), 401
+
+    user = admins_collection.find_one({'_id': ObjectId(user_id)})
+    if not user:
+        return jsonify({'message': 'User not found'}), 404
+
+    # Check if username already exists (optional but recommended)
+    if admins_collection.find_one({'username': new_username, '_id': {'$ne': ObjectId(user_id)}}):
+        return jsonify({'message': 'Username already taken'}), 409
+
+    # Update username
+    admins_collection.update_one(
+        {'_id': ObjectId(user_id)},
+        {'$set': {'username': new_username}}
+    )
+    return jsonify({'message': 'Username updated successfully'}), 200
 
 
 # --- User Notes Endpoints (Placeholders for later) ---

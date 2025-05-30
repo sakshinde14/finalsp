@@ -196,7 +196,7 @@ function DashboardLayout() {
             if (response.ok) {
                 console.log("Successfully logged out");
                 setLogoutMessage("Successfully Logged Out!"); // Set success message
-                resetSelection(); // Clear dashboard selections
+                //resetSelection(); // Clear dashboard selections
                 
                 // Delay redirection to show the message
                 setTimeout(() => {
@@ -276,28 +276,42 @@ function DashboardLayout() {
                             />
 
                         )}
-                        <button onClick={resetSelection} className="back-button">Back to Courses</button>
+                        {/* BACK BUTTON for Study Material -> Subject List */}
+                    <button onClick={() => setSelectedSubject(null)} className="back-button">Back to Subject Selection</button>
+                
                     </div>
                 ) : (
                     // Default navigation flow (Courses -> Years -> Semesters -> Subjects)
                     !selectedCourse ? (
                         <CourseList onCourseSelect={handleCourseSelect} />
                     ) : !selectedYear ? (
+                        <>
                         <YearList courseCode={selectedCourse.code} onYearSelect={handleYearSelect} />
+                        {/* BACK BUTTON for Year List -> Course List */}
+                        <button onClick={() => setSelectedCourse(null)} className="back-button">Back to Courses</button>
+                        </>
                     ) : !selectedSemester ? (
-                        <SemesterList
-                            onSemesterSelect={handleSemesterSelect}
-                            courseCode={selectedCourse.code}
-                            selectedYear={selectedYear}
-                        />
+                        <>
+                            <SemesterList
+                                onSemesterSelect={handleSemesterSelect}
+                                courseCode={selectedCourse.code}
+                                selectedYear={selectedYear}
+                            />
+                            {/* BACK BUTTON for Semester List -> Year List */}
+                            <button onClick={() => setSelectedYear(null)} className="back-button">Back to Year</button>
+                        </>
                     ) : (
-                        <SubjectList
-                            courseCode={selectedCourse.code}
-                            year={selectedYear}
-                            semester={selectedSemester}
-                            onSubjectSelect={handleSubjectSelect} // NEW: Pass handler
-                            onReset={resetSelection}
-                        />
+                        <>
+                            <SubjectList
+                                courseCode={selectedCourse.code}
+                                year={selectedYear}
+                                semester={selectedSemester}
+                                onSubjectSelect={handleSubjectSelect}
+                                // onReset prop for SubjectList is now handled by the specific back button below
+                            />
+                            {/* BACK BUTTON for Subject List -> Semester List */}
+                            <button onClick={() => setSelectedSemester(null)} className="back-button">Back to Semester</button>
+                        </>
                     )
                 )}
             </main>

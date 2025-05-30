@@ -1,0 +1,123 @@
+/* frontend/src/components/ProfileManagementStyles.css */
+
+.profile-management-container {
+    position: absolute; /* Position relative to .nav-profile-dropdown */
+    top: calc(100% + 5px); /* Just below the "Profile" link */
+    right: 0; /* Align to the right of the dropdown toggle */
+    width: 350px; /* Adjust width as needed */
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    padding: 20px;
+    z-index: 1000; /* Ensure it's above other content */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.profile-management-container .close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    cursor: pointer;
+    color: #666;
+}
+
+.profile-management-container .close-button:hover {
+    color: #333;
+}
+
+.profile-management-container h3 {
+    text-align: center;
+    color: #0056b3;
+    margin-bottom: 20px;
+    font-size: 1.6em;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+.profile-section {
+    margin-bottom: 25px;
+    padding-top: 15px;
+    border-top: 1px solid #eee; /* Separator between sections */
+}
+
+.profile-section:first-of-type {
+    border-top: none; /* No top border for the first section */
+    padding-top: 0;
+}
+
+.profile-section h4 {
+    color: #007bff;
+    margin-bottom: 15px;
+    font-size: 1.2em;
+}
+
+.profile-management-container .form-group {
+    margin-bottom: 15px;
+}
+
+.profile-management-container label {
+    display: block;
+    margin-bottom: 8px;
+    color: #333;
+    font-weight: 500;
+}
+
+.profile-management-container input[type="text"],
+.profile-management-container input[type="password"] {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.profile-management-container input[type="text"]:focus,
+.profile-management-container input[type="password"]:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+    outline: none;
+}
+
+.profile-submit-button {
+    width: 100%;
+    padding: 10px 15px;
+    background-color: #28a745; /* Green for update/change actions */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: 600;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.profile-submit-button:hover {
+    background-color: #218838;
+    transform: translateY(-1px);
+}
+
+.profile-message {
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.profile-message.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.profile-message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
