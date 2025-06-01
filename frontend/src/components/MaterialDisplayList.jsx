@@ -1,9 +1,13 @@
+// frontend/src/components/MaterialDisplayList.jsx
 import React, { useState } from 'react';
 import './MaterialDisplayListStyles.css';
 
 function MaterialDisplayList({ materials }) {
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [selectedFormat, setSelectedFormat] = useState('All');
+
+    // Define your backend's base URL
+    const BASE_URL = 'http://localhost:5000';
 
     const handleCategoryChange = (e) => {
         setSelectedCategory(e.target.value);
@@ -44,9 +48,11 @@ function MaterialDisplayList({ materials }) {
                 <select id="format" value={selectedFormat} onChange={handleFormatChange}>
                     <option value="All">All</option>
                     <option value="PDF">PDF</option>
+                    <option value="Image">Image</option> {/* Added Image filter option */}
+                    <option value="Document">Document</option> {/* Added Document filter option */}
                     <option value="Video">Video</option>
                     <option value="Link">Link</option>
-                    <option value="Text">Text</option>
+                    {/* Removed Text filter option */}
                 </select>
             </div>
 
@@ -60,32 +66,29 @@ function MaterialDisplayList({ materials }) {
                     {filteredMaterials.map((material) => (
                         <li key={material._id || material.contentUrl || material.textContent} className="material-item-card">
                             <h4>{material.materialCategory.toUpperCase()}</h4>
+                            <p className="material-title">{material.title}</p> {/* Added a class for title */}
 
-                            {material.title}
-
-
+                            {/* Conditional rendering for different material formats */}
                             {material.materialFormat === 'PDF' && material.contentUrl && (
-                                <p><a href={material.contentUrl} target="_blank" rel="noopener noreferrer">View PDF Document</a></p>
+                                <p><a href={`${BASE_URL}${material.contentUrl}`} target="_blank" rel="noopener noreferrer" className="material-action-link">View PDF Document</a></p>
                             )}
+
+                            {material.materialFormat === 'Image' && material.contentUrl && (
+                            <p><a href={`${BASE_URL}${material.contentUrl}`} target="_blank" rel="noopener noreferrer" className="material-action-link">View Image in New Tab</a></p>
+                            )}
+
+                            {material.materialFormat === 'Document' && material.contentUrl && (
+                                <p><a href={`${BASE_URL}${material.contentUrl}`} target="_blank" rel="noopener noreferrer" className="material-action-link">View Document</a></p>
+                            )}
+
                             {material.materialFormat === 'Video' && material.contentUrl && (
-                                <p><a href={material.contentUrl} target="_blank" rel="noopener noreferrer">Watch Video</a></p>
+                                <p><a href={material.contentUrl} target="_blank" rel="noopener noreferrer" className="material-action-link">Watch Video</a></p>
                             )}
+
                             {material.materialFormat === 'Link' && material.contentUrl && (
-                                <p><a href={material.contentUrl} target="_blank" rel="noopener noreferrer">Visit Link</a></p>
+                                <p><a href={material.contentUrl} target="_blank" rel="noopener noreferrer" className="material-action-link">Visit Link</a></p>
                             )}
-                            {material.materialFormat === 'Text' && material.textContent && (
-                                <div className="material-text-content">
-                                    <p><strong>Content:</strong></p>
-                                    <p>{material.textContent}</p>
-                                </div>
-                            )}
-
                             
-
-                            
-
-
-
                             {material.uploadedBy && (
                                 <p className="material-info">Uploaded By: {material.uploadedBy}</p>
                             )}

@@ -1,11 +1,17 @@
-from flask import Flask, request, jsonify, session
+from flask import Flask, request, jsonify, session, send_from_directory
 from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.utils import secure_filename # NEW: Import for secure file uploads
 from pymongo import MongoClient
 from bcrypt import hashpw, checkpw, gensalt
+from bson.binary import Binary
 from flask_cors import CORS
 from datetime import datetime
-from bson.objectid import ObjectId # <-- IMPORTANT: This is the added line
+from bson.objectid import ObjectId
+import os # NEW: Import for file system operations
+from functools import wraps # NEW: Import for decorators
+import uuid
 
+# --- Configuration ---
 MONGO_URI = "mongodb+srv://sakshi:gaurinde@cluster0.vpbqv.mongodb.net/sp_db?retryWrites=true&w=majority&appName=Cluster0"
 DB_NAME = "sp_db"
 STUDENT_COLLECTION = "students"
@@ -18,6 +24,24 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'a_very_long_and_random_secret_key_here_that_is_unique_and_not_guessable'
 CORS(app, resources={r"/api/*": {"origins": "http://localhost:5173"}}, supports_credentials=True)
 
+# --- File Upload Configuration for Admin Materials ---
+# Define the upload folder. It's good practice to place it within a static directory.
+# Ensure this directory exists! Example: your_project_root/static/uploads/admin_materials
+UPLOAD_MATERIALS_FOLDER = os.path.join(app.root_path, 'static', 'uploads', 'admin_materials')
+# Create the upload folder if it doesn't exist
+if not os.path.exists(UPLOAD_MATERIALS_FOLDER):
+    os.makedirs(UPLOAD_MATERIALS_FOLDER)
+app.config['UPLOAD_MATERIALS_FOLDER'] = UPLOAD_MATERIALS_FOLDER
+
+# Allowed extensions for admin-uploaded materials
+ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg', 'gif', 'doc', 'docx', 'txt'} # Added document extensions
+
+
+# Helper function to check allowed file extensions
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 client = MongoClient(MONGO_URI)
 db = client.get_database(DB_NAME)
 
@@ -25,7 +49,7 @@ students_collection = db[STUDENT_COLLECTION]
 admins_collection = db[ADMIN_COLLECTION]
 courses_collection = db[COURSE_COLLECTION]
 study_materials_collection = db[STUDY_MATERIALS_COLLECTION]
-user_notes_collection = db[USER_NOTES_COLLECTION]
+user_notes_collection = db[USER_NOTES_COLLECTION] # Not used in this app.py, but kept for consistency
 
 @app.route('/')
 def hello_world():
@@ -184,71 +208,138 @@ def is_admin():
     return session.get('role') == 'admin'
 
 def admin_required(f):
+    @wraps(f) # Use @wraps to preserve function metadata
     def wrapper(*args, **kwargs):
         if not is_admin():
             return jsonify({'message': 'Forbidden: Admin access required'}), 403
         return f(*args, **kwargs)
-    wrapper.__name__ = f.__name__
     return wrapper
 
+# --- Admin Material Management ---
 @app.route('/api/admin/materials/add', methods=['POST'])
 @admin_required
 def admin_add_material():
     data = request.get_json()
+    title = data.get('title')
     course_code = data.get('courseCode')
     year = data.get('year')
     semester = data.get('semester')
     subject = data.get('subject')
     material_format = data.get('materialFormat', '')
     material_category = data.get('materialCategory', '')
-
     content_url = data.get('contentUrl')
-    text_content = data.get('textContent')
 
-    if not all([course_code, year, semester, subject, material_format, material_category]): # Added material_category check
+    if not all([title, course_code, year, semester, subject, material_format, material_category]):
         return jsonify({'message': 'Missing required fields'}), 400
 
-    # IMPORTANT: Ensure this matches your frontend dropdown values exactly
-    # As discussed, if frontend sends 'papers', backend should allow 'papers'
-    if material_category not in ['syllabus', 'notes', 'paper']: # Changed 'paper' to 'papers' here
+    # Ensure material_category is valid
+    if material_category not in ['syllabus', 'notes', 'paper']:
         return jsonify({'message': 'Invalid material Category. Must be one of: syllabus, notes, paper'}), 400
 
-    # Refined content_url/textContent validation to align with frontend's materialFormat
-    if material_format in ['PDF', 'Video', 'Link'] and not content_url:
+    # This endpoint now handles only URL-based formats (Video, Link)
+    if material_format not in ['Video', 'Link']:
+        return jsonify({'message': 'Invalid material format for this endpoint. Use /api/admin/materials/upload for files.'}), 400
+
+    if not content_url:
         return jsonify({'message': f"Content URL is required for {material_format} format"}), 400
-    if material_format == 'Text' and not text_content:
-        return jsonify({'message': 'Text content is required for Text format'}), 400
+
+    # Basic validation for year and semester if they are expected as integers
+    try:
+        year = int(year)
+        semester = int(semester)
+    except ValueError:
+        return jsonify({'message': 'Year and Semester must be valid numbers.'}), 400
 
     material_doc = {
+        'title': title,
         'courseCode': course_code,
         'year': year,
         'semester': semester,
         'subject': subject,
         'materialFormat': material_format,
         'materialCategory': material_category,
+        'contentUrl': content_url,
         'uploadedBy': session.get('username'),
         'uploadedAt': datetime.utcnow()
     }
-
-    if content_url:
-        material_doc['contentUrl'] = content_url
-    if text_content:
-        material_doc['textContent'] = text_content
-    
-    # Optional: Add a title if one was passed. The frontend `AddMaterial` does not send `title` currently.
-    # If you add a title field to `AddMaterial`, you'll need to update this.
-    # For now, it will only be handled by the edit functionality.
-    if 'title' in data and data['title']:
-        material_doc['title'] = data['title']
-
 
     try:
         study_materials_collection.insert_one(material_doc)
         return jsonify({'message': 'Material added successfully'}), 201
     except Exception as e:
-        print(f"Error adding material: {e}") # Added specific print for debugging
+        print(f"Error adding material: {e}")
         return jsonify({'message': 'Failed to add material', 'error': str(e)}), 500
 
+# --- REINSTATED: Admin Material Upload Endpoint ---
+@app.route('/api/admin/materials/upload', methods=['POST'])
+@admin_required
+def upload_admin_material():
+    # Check if a file was sent
+    if 'file' not in request.files:
+        return jsonify({'message': 'No file part in the request'}), 400
+
+    file = request.files['file']
+    # If the user does not select a file, the browser submits an empty file without a filename.
+    if file.filename == '':
+        return jsonify({'message': 'No selected file'}), 400
+
+    # Ensure file is allowed and process it
+    if file and allowed_file(file.filename):
+        try:
+            # Get other form data
+            title = request.form.get('title')
+            course_code = request.form.get('courseCode')
+            year = request.form.get('year')
+            semester = request.form.get('semester')
+            subject = request.form.get('subject')
+            material_format = request.form.get('materialFormat')
+            material_category = request.form.get('materialCategory')
+
+            if not all([title, course_code, year, semester, subject, material_format, material_category]):
+                return jsonify({'message': 'Missing required form data for material'}), 400
+
+            if material_category not in ['syllabus', 'notes', 'paper']: # Validate category for uploads too
+                return jsonify({'message': 'Invalid material Category. Must be one of: syllabus, notes, paper'}), 400
+
+            # Secure the filename before saving
+            filename = f"{uuid.uuid4().hex}_{secure_filename(file.filename)}"
+            file_path = os.path.join(app.config['UPLOAD_MATERIALS_FOLDER'], filename)
+            file.save(file_path)
+
+            # Construct the URL to access the uploaded file
+            content_url = f"/static/uploads/admin_materials/{filename}"
+
+            # Save material data to MongoDB
+            material_entry = {
+                'title': title,
+                'courseCode': course_code,
+                'year': int(year), # Ensure year is stored as int
+                'semester': int(semester), # Ensure semester is stored as int
+                'subject': subject,
+                'materialFormat': material_format,
+                'materialCategory': material_category,
+                'contentUrl': content_url, # Store the URL to the uploaded file
+                'fileName': filename, # Store original filename for potential future use (e.g., deletion)
+                'uploadedBy': session.get('username'), # Assuming admin username is in session
+                'uploadedAt': datetime.utcnow()
+            }
+            
+            inserted_result = study_materials_collection.insert_one(material_entry)
+            
+            material_entry['_id'] = str(inserted_result.inserted_id) # Convert ObjectId to string for JSON serialization
+
+            return jsonify({'message': 'Material uploaded and added successfully', 'material': material_entry}), 201
+
+        except ValueError as ve: # Catch specific ValueError for int conversion
+            print(f"Validation error: {ve}")
+            return jsonify({'message': f'Invalid data provided: {ve}'}), 400
+        except Exception as e:
+            print(f"Error uploading material: {e}")
+            return jsonify({'message': 'Server error during file upload', 'error': str(e)}), 500
+    else:
+        return jsonify({'message': 'File type not allowed or no file provided'}), 400
+
+# --- Get Materials for Student View ---
 @app.route('/api/materials/<string:course_code>/<int:year>/<int:semester>/<string:subject>', methods=['GET'])
 def get_study_materials(course_code, year, semester, subject):
     try:
@@ -273,15 +364,14 @@ def get_study_materials(course_code, year, semester, subject):
             material['_id'] = str(material['_id'])
             if isinstance(material.get('uploadedAt'), datetime):
                 material['uploadedAt'] = material['uploadedAt'].isoformat()
-            material['typeLabel'] = material.get('materialFormat', '') # This might be 'typeLabel' if `materialFormat` is what you mean by type.
             materials_list.append(material)
 
         return jsonify(materials_list), 200
     except Exception as e:
-        print(f"Error retrieving materials: {e}") # Added specific print for debugging
+        print(f"Error retrieving materials: {e}")
         return jsonify({'message': 'Failed to retrieve materials', 'error': str(e)}), 500
 
-# --- NEW: Get Materials for Admin View (with filters) ---
+# --- Get Materials for Admin View (with filters) ---
 @app.route('/api/admin/materials', methods=['GET'])
 @admin_required
 def admin_get_materials():
@@ -317,8 +407,7 @@ def admin_get_materials():
         print(f"Error fetching materials for admin: {e}")
         return jsonify({'message': 'Failed to fetch materials', 'error': str(e)}), 500
 
-
-# --- NEW: Delete Material ---
+# --- Delete Material ---
 @app.route('/api/admin/materials/<string:material_id>', methods=['DELETE'])
 @admin_required
 def admin_delete_material(material_id):
@@ -326,6 +415,18 @@ def admin_delete_material(material_id):
         # Validate material_id as a valid ObjectId
         if not ObjectId.is_valid(material_id):
             return jsonify({'message': 'Invalid Material ID format'}), 400
+
+        # Before deleting from DB, check if it's a file and delete the file from server
+        material_doc = study_materials_collection.find_one({'_id': ObjectId(material_id)})
+        if material_doc and 'fileName' in material_doc and material_doc.get('materialFormat') in ['PDF', 'Image', 'Document']:
+            file_to_delete_path = os.path.join(app.config['UPLOAD_MATERIALS_FOLDER'], material_doc['fileName'])
+            if os.path.exists(file_to_delete_path):
+                try:
+                    os.remove(file_to_delete_path)
+                    print(f"Deleted file from server: {file_to_delete_path}")
+                except Exception as e:
+                    print(f"Error deleting file from server: {e}")
+                    # Log error but proceed with DB deletion
 
         result = study_materials_collection.delete_one({'_id': ObjectId(material_id)})
 
@@ -338,7 +439,7 @@ def admin_delete_material(material_id):
         return jsonify({'message': 'Failed to delete material', 'error': str(e)}), 500
 
 
-# --- NEW: Update Material ---
+# --- Update Material ---
 @app.route('/api/admin/materials/<string:material_id>', methods=['PUT'])
 @admin_required
 def admin_update_material(material_id):
@@ -350,7 +451,7 @@ def admin_update_material(material_id):
 
     # Fields that can be updated
     update_fields = [
-        'title', 'materialFormat', 'materialCategory', 'contentUrl', 'textContent',
+        'title', 'materialFormat', 'materialCategory', 'contentUrl',
         'courseCode', 'year', 'semester', 'subject'
     ]
 
@@ -372,17 +473,21 @@ def admin_update_material(material_id):
     # Basic validation for materialFormat and associated content
     if 'materialFormat' in update_doc:
         material_format = update_doc['materialFormat']
-        # If materialFormat is changing to PDF/Video/Link, contentUrl becomes required
-        if material_format in ['PDF', 'Video', 'Link'] and ('contentUrl' not in data or not data['contentUrl']):
+        # If materialFormat is changing to a URL-based type, contentUrl becomes required
+        if material_format in ['Video', 'Link'] and ('contentUrl' not in data or not data['contentUrl']):
             return jsonify({'message': f"Content URL is required for {material_format} format"}), 400
-        # If materialFormat is changing to Text, textContent becomes required
-        if material_format == 'Text' and ('textContent' not in data or not data['textContent']):
-            return jsonify({'message': 'Text content is required for Text format'}), 400
+        # If materialFormat is changing to a file-based type, ensure 'fileName' is handled in the future if updates are made through PUT
+        # For now, PUT is expected to update metadata, not re-upload files.
+        if material_format in ['PDF', 'Image', 'Document'] and 'contentUrl' not in data:
+            # If a file-based material is being updated, it should retain its contentUrl.
+            # If the user wants to *change* the file, they'd need a separate upload mechanism.
+            # Here, we assume contentUrl won't be empty for these types if it's not being changed
+            pass # No strict validation for contentUrl on file types if it's not being changed
 
     # Also validate new category if it's provided
     if 'materialCategory' in update_doc:
-        if update_doc['materialCategory'] not in ['syllabus', 'notes', 'paper']: # Ensure 'papers' is allowed here too
-            return jsonify({'message': 'Invalid material Category. Must be one of: syllabus, notes, papers'}), 400
+        if update_doc['materialCategory'] not in ['syllabus', 'notes', 'paper']:
+            return jsonify({'message': 'Invalid material Category. Must be one of: syllabus, notes, paper'}), 400
 
     try:
         result = study_materials_collection.update_one(
@@ -400,7 +505,21 @@ def admin_update_material(material_id):
         print(f"Error updating material: {e}")
         return jsonify({'message': 'Failed to update material', 'error': str(e)}), 500
 
+# --- Static File Serving ---
+@app.route('/static/uploads/admin_materials/<filename>')
+def serve_admin_material_file(filename):
+    # This route serves files from the UPLOAD_MATERIALS_FOLDER
+    # Ensure this folder is correctly configured and accessible
+    print(f"Attempting to serve file: {filename} from {app.config['UPLOAD_MATERIALS_FOLDER']}")
+    try:
+        return send_from_directory(app.config['UPLOAD_MATERIALS_FOLDER'], filename)
+    except FileNotFoundError:
+        print(f"File not found: {filename} in {app.config['UPLOAD_MATERIALS_FOLDER']}")
+        # You might want to log this or return a more specific error,
+        # or handle it with an @app.errorhandler(404) if it should redirect.
+        return jsonify({'message': 'File not found'}), 404
 
+#PASSWORD CHANGE
 @app.route('/api/admin/change-password', methods=['POST'])
 @admin_required # Your admin login decorator
 def change_password():
@@ -428,33 +547,26 @@ def change_password():
 
     stored_password_hash = user.get('password') # Use .get() for safety
 
-    # --- THE CRITICAL FIX FOR TypeError ---
     if stored_password_hash is None:
-        return jsonify({'message': 'Password hash not found for user.'}), 500 # Or indicate a problem
+        return jsonify({'message': 'Password hash not found for user.'}), 500
     if isinstance(stored_password_hash, str):
-        # Encode the stored hash to bytes if it's a string, as check_password_hash expects bytes
         stored_password_hash_bytes = stored_password_hash.encode('utf-8')
     elif isinstance(stored_password_hash, bytes):
-        # If it's already bytes (which is ideal for check_password_hash), use it directly
         stored_password_hash_bytes = stored_password_hash
     else:
-        # Handle unexpected types (e.g., if it's an int, list, etc. by mistake)
         print(f"Unexpected type for stored password hash: {type(stored_password_hash)}")
         return jsonify({'message': 'Invalid stored password hash format.'}), 500
-    # --- END CRITICAL FIX ---
 
-
-    # Verify current password using the bytes-encoded hash
-    if not check_password_hash(stored_password_hash_bytes, current_password):
+    # Verify current password using bcrypt.checkpw
+    if not checkpw(current_password.encode('utf-8'), stored_password_hash_bytes):
         return jsonify({'message': 'Incorrect current password'}), 403
 
     # Basic new password validation (you might have more robust frontend validation)
     if len(new_password) < 6: # Example: Minimum password length
         return jsonify({'message': 'New password must be at least 6 characters long.'}), 400
 
-    # Hash the new password using werkzeug.security.generate_password_hash
-    # and then decode it to store as a string in the database
-    hashed_new_password = generate_password_hash(new_password).decode('utf-8')
+    # Hash the new password using bcrypt.hashpw
+    hashed_new_password = Binary(hashpw(new_password.encode('utf-8'), gensalt()))
 
     try:
         admins_collection.update_one(
@@ -463,9 +575,11 @@ def change_password():
         )
         return jsonify({'message': 'Password changed successfully'}), 200
     except Exception as e:
-        print(f"Error updating password in change_password: {e}") # Log the error
+        print(f"Error updating password in change_password: {e}")
         return jsonify({'message': 'Internal server error while updating password.'}), 500
 
+
+#USERNAME CHANGE
 @app.route('/api/admin/change-username', methods=['POST'])
 @admin_required # Your admin login decorator
 def change_username():
@@ -495,41 +609,6 @@ def change_username():
     return jsonify({'message': 'Username updated successfully'}), 200
 
 
-# --- User Notes Endpoints (Placeholders for later) ---
-# @app.route('/api/user/notes/add', methods=['POST'])
-# def add_user_note():
-#     pass
-
-# @app.route('/api/user/notes', methods=['GET'])
-# def get_user_notes():
-#     pass
-
-# @app.route('/api/user/notes/<string:note_id>', methods=['PUT'])
-# def update_user_note(note_id):
-#     pass
-
-# @app.route('/api/user/notes/<string:note_id>', methods=['DELETE'])
-# def delete_user_note(note_id):
-#     pass
-
-# --- Favorites Endpoints (Placeholders for later) ---
-# @app.route('/api/favorites/add', methods=['POST'])
-# def add_favorite():
-#     pass
-
-# @app.route('/api/favorites', methods=['GET'])
-# def get_favorites():
-#     pass
-
-# --- Profile Management Endpoints (Placeholders for later) ---
-# @app.route('/api/profile/update_username', methods=['PUT'])
-# def update_username():
-#     pass
-
-# @app.route('/api/profile/update_password', methods=['PUT'])
-# def update_password():
-#     pass
-
-
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0') # Make it accessible from your frontend
+

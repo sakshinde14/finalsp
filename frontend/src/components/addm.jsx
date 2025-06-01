@@ -364,3 +364,85 @@ function AddMaterial({ onMaterialAdded, onCancelAdd, selectedContext }) {
 }
 
 export default AddMaterial;
+
+
+
+
+
+@app.route('/api/admin/change-password', methods=['POST'])
+@admin_required
+def change_password():
+    data = request.get_json()
+    current_password = data.get('currentPassword')
+    new_password = data.get('newPassword')
+
+    if not current_password or not new_password:
+        return jsonify({'message': 'Missing password fields'}), 400
+
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({'message': 'Unauthorized'}), 401
+
+    try:
+        user = admins_collection.find_one({'_id': ObjectId(user_id)})
+    except Exception as e:
+        print(f"Error fetching user in change_password: {e}")
+        return jsonify({'message': 'Internal server error while fetching user data.'}), 500
+
+    if not user:
+        return jsonify({'message': 'User not found'}), 404
+
+    stored_password_hash = user.get('password')
+
+    # IMPORTANT: Use bcrypt.checkpw here if admin passwords are hashed with bcrypt
+    # Your current login_admin uses bcrypt, so this should too for consistency.
+    if stored_password_hash is None or not isinstance(stored_password_hash, bytes):
+        print(f"Password hash not found or invalid type for user {user_id}. Type: {type(stored_password_hash)}")
+        return jsonify({'message': 'Invalid stored password format for admin.'}), 500
+
+    # Verify current password using bcrypt
+    if not checkpw(current_password.encode('utf-8'), stored_password_hash):
+        return jsonify({'message': 'Incorrect current password'}), 403
+
+    if len(new_password) < 6:
+        return jsonify({'message': 'New password must be at least 6 characters long.'}), 400
+
+    # Hash the new password using bcrypt
+    hashed_new_password = hashpw(new_password.encode('utf-8'), gensalt())
+
+    try:
+        admins_collection.update_one(
+            {'_id': ObjectId(user_id)},
+            {'$set': {'password': hashed_new_password}}
+        )
+        return jsonify({'message': 'Password changed successfully'}), 200
+    except Exception as e:
+        print(f"Error updating password in change_password: {e}")
+        return jsonify({'message': 'Internal server error while updating password.'}), 500
+
+@app.route('/api/admin/change-username', methods=['POST'])
+@admin_required
+def change_username():
+    data = request.get_json()
+    new_username = data.get('newUsername')
+
+    if not new_username:
+        return jsonify({'message': 'Missing new username'}), 400
+
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({'message': 'Unauthorized'}), 401
+
+    user = admins_collection.find_one({'_id': ObjectId(user_id)})
+    if not user:
+        return jsonify({'message': 'User not found'}), 404
+
+    if admins_collection.find_one({'username': new_username, '_id': {'$ne': ObjectId(user_id)}}):
+        return jsonify({'message': 'Username already taken'}), 409
+
+    admins_collection.update_one(
+        {'_id': ObjectId(user_id)},
+        {'$set': {'username': new_username}}
+    )
+    return jsonify({'message': 'Username updated successfully'}), 200
+

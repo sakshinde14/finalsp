@@ -11,12 +11,17 @@ import AdminDashboardLayout from './components/AdminDashboardLayout'; // Admin D
 import AddMaterial from './components/AddMaterial';
 import ManageMaterials from './components/ManageMaterials';
 
+// NEW: My Notes feature for students
+import MyNotesDashboard from './components/MyNotesDashboard'; // Assuming MyNotesDashboard is in 'pages' folder
+
+
 // Import the ProtectedRoute component from its separate file
 import ProtectedRoute from './components/ProtectedRoute'; // <--- MODIFIED: Import ProtectedRoute
 
 // Import CSS files
 import './components/AuthStyles.css';
 import './components/DashboardStyles.css';
+import './components/MyNotesDashboardStyles.css';
 
 // --- INLINE AuthLayout Component ---
 // This component provides the common layout for login/signup pages
@@ -62,6 +67,20 @@ function App() {
                 {/* Accessible by both students and admins to view study materials */}
                 <Route path="/dashboard" element={ <ProtectedRoute allowedRoles={['student', 'admin']}> <DashboardLayout /> </ProtectedRoute> } />
                 
+                
+                {/* NEW: Protected My Notes Route for Students */}
+                    <Route
+                        path="/my-notes"
+                        element={
+                            <ProtectedRoute allowedRoles={['student']}> {/* Only students can access their notes */}
+                                {/*<AuthLayout>*/}
+                                    <MyNotesDashboard />
+                                {/*</AuthLayout>*/}
+                            </ProtectedRoute>
+                        }
+                    />
+
+
                 {/* Protected Admin Dashboard Route */}
                 {/* Accessible only by admins for management tasks */}
                 <Route path="/admin/dashboard" element={ <ProtectedRoute allowedRoles={['admin']}> <AdminDashboardLayout /> </ProtectedRoute>} />

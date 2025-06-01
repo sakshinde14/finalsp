@@ -145,7 +145,7 @@ function AdminDashboardLayout() {
         setShowAddMaterialForm(false);
         setShowManageMaterialsPanel(false);
         setCurrentMaterials([]);
-        setAdminMessage(''); // Clear messages on full reset
+        setLogoutMessage(''); // Clear messages on full reset
     };
 
     // Handlers for navigation clicks
@@ -223,7 +223,7 @@ function AdminDashboardLayout() {
             if (response.ok) {
                 console.log("Successfully logged out");
                 setLogoutMessage("Successfully Logged Out!"); // Set success message
-                //resetSelection(); // Clear dashboard selections
+                resetSelection(); // Clear dashboard selections
                 
                 // Delay redirection to show the message
                 setTimeout(() => {
@@ -238,9 +238,9 @@ function AdminDashboardLayout() {
                     setLogoutMessage(''); // Clear message after a delay even on error
                 }, 3000); // Show error message a bit longer
             }
-         } catch (error) {
-            console.error("Error during logout:", error);
-            setLogoutMessage(`Network Error: ${error.message}`); // Set network error message
+        } catch (error) {
+            console.error("Error during admin logout:", error);
+            setLogoutMessage(`Network Error: ${error.message}`);
             setTimeout(() => {
                 setLogoutMessage('');
             }, 3000);
@@ -250,39 +250,39 @@ function AdminDashboardLayout() {
     // Handlers for admin action buttons
     const handleAddMaterialClick = () => {
         if (!selectedContext || !selectedContext.subject) {
-            setAdminMessage('Please select a Course, Year, Semester, and Subject first.');
-            setTimeout(() => setAdminMessage(''), 3000);
+            setLogoutMessage('Please select a Course, Year, Semester, and Subject first.');
+            setTimeout(() => setLogoutMessage(''), 3000);
             return;
         }
         setShowAddMaterialForm(true);
         setShowManageMaterialsPanel(false); // Hide other admin panels
-        setAdminMessage(''); // Clear any previous messages
+        setLogoutMessage(''); // Clear any previous messages
     };
 
     const handleManageMaterialsClick = () => {
         if (!selectedContext || !selectedContext.subject) {
-            setAdminMessage('Please select a Course, Year, Semester, and Subject first to manage materials.');
-            setTimeout(() => setAdminMessage(''), 3000);
+            setLogoutMessage('Please select a Course, Year, Semester, and Subject first to manage materials.');
+            setTimeout(() => setLogoutMessage(''), 3000);
             return;
         }
         setShowManageMaterialsPanel(true);
         setShowAddMaterialForm(false); // Hide other admin panels
-        setAdminMessage(''); // Clear any previous messages
+        setLogoutMessage(''); // Clear any previous messages
     };
 
     // Callbacks from AddMaterial / ManageMaterials components
     const handleMaterialAdded = () => {
         setShowAddMaterialForm(false); // Hide form after successful addition
         setMaterialRefreshKey(prevKey => prevKey + 1); // Trigger re-fetch for Browse mode and ManageMaterials
-        setAdminMessage('Material added successfully!');
-        setTimeout(() => setAdminMessage(''), 3000);
+        setLogoutMessage('Material added successfully!');
+        setTimeout(() => setLogoutMessage(''), 3000);
     };
 
     const handleMaterialManaged = (message) => {
         // We keep the ManageMaterialsPanel open usually after an action
         setMaterialRefreshKey(prevKey => prevKey + 1); // Trigger re-fetch for Browse mode and ManageMaterials
-        setAdminMessage(message || 'Material managed successfully!');
-        setTimeout(() => setAdminMessage(''), 3000);
+        setLogoutMessage(message || 'Material managed successfully!');
+        setTimeout(() => setLogoutMessage(''), 3000);
     };
 
     const handleCancelAddMaterial = () => {
