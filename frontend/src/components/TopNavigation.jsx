@@ -9,9 +9,7 @@ function TopNavigation({ onLogout }) {
 
     const handleProfileClick = () => {
         setShowProfileOptions(!showProfileOptions); // Toggle visibility
-    };
-
-    
+    };   
 
     return (
         <nav className="top-navigation">

@@ -232,20 +232,22 @@ function DashboardLayout() {
                 )}
                 {/* --- End NEW --- */}
 
-                {/* Welcome message for the Admin Dashboard */}
+                {/* Welcome message */}
                 {!showSearchResults && !selectedCourse && (
                     <WelcomeMessage message="Welcome, Student." /> /* Correctly passing the message prop */
                 )}
                 
                 
                 <div className="search-bar-container">
+                    {!selectedSubject && (
                     <input
                         type="text"
-                        placeholder="Search for subjects or study materials..."
+                        placeholder="Search for subjects..."
                         value={searchTerm}
                         onChange={handleSearchChange}
                         className="search-input"
                     />
+                    )}
                 </div>
 
                 {/* Conditional Rendering based on state */}

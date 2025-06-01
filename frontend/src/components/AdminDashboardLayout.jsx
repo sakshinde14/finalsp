@@ -14,7 +14,7 @@ import AddMaterial from './AddMaterial';
 import MaterialDisplayList from './MaterialDisplayList'; // For student/Browse view
 import ManageMaterials from './ManageMaterials';       // For admin management view
 
-import './DashboardStyles.css';
+//import './DashboardStyles.css';
 import './AdminDashboardStyles.css'; // Assuming you have this for admin-specific styling
 
 function AdminDashboardLayout() {
@@ -223,7 +223,6 @@ function AdminDashboardLayout() {
             if (response.ok) {
                 console.log("Successfully logged out");
                 setLogoutMessage("Successfully Logged Out!"); // Set success message
-                resetSelection(); // Clear dashboard selections
                 
                 // Delay redirection to show the message
                 setTimeout(() => {
@@ -394,12 +393,14 @@ function AdminDashboardLayout() {
                 )}
                 {/* --- End NEW --- */}
 
-                {/* Welcome message */}
-                {(!showSearchResults && !showAddMaterialForm && !showManageMaterialsPanel && !selectedContext) && (
+                {/* Welcome message for the Admin Dashboard */}
+                {!showSearchResults && !selectedCourse && (
                     <WelcomeMessage message="Welcome, Admin! Navigate or search to manage materials." />
                 )}
 
+
                 <div className="search-bar-container">
+                    {!selectedSubject && (
                     <input
                         type="text"
                         placeholder="Search for subjects..."
@@ -407,6 +408,7 @@ function AdminDashboardLayout() {
                         onChange={handleSearchChange}
                         className="search-input"
                     />
+                    )}
                 </div>
 
                 {/* Render the appropriate content based on state */}

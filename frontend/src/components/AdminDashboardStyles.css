@@ -48,17 +48,22 @@
 
 /* ... (Keep your existing styles for .dashboard-container, .main-content, .top-navigation, etc.) ... */
 
+.welcome-message {
+    margin: 5px;
+    text-align: center;
+    font-size: 1.8em;
+    color: var(--text-primary);
+}
+
 /* Styles for the search bar */
 .search-bar-container {
-    margin-bottom: 25px; /* Add some space below the search bar */
+    margin: 10px 50px 30px ; /* Add some space below the search bar */
     text-align: center;
-    /*padding: 10px;*/
     background-color: var(--background-light);
     border-bottom: 1px solid var(--secondary-color);
     display: flex;
     justify-content: center;
     padding: 20px;
-    margin: 20px;
 }
 
 .search-input {
@@ -157,24 +162,7 @@
     color: #dc3545;
 }
 
-/* Responsive adjustments for smaller screens */
-@media (max-width: 768px) {
-    .search-input {
-        width: 80%;
-    }
 
-    .admin-actions-bottom {
-        flex-direction: column; /* Stack buttons vertically on small screens */
-        gap: 15px; /* Adjust gap when stacked */
-        padding: 15px;
-    }
-
-    .admin-action-button {
-        min-width: unset; /* Remove min-width to allow full width */
-        width: 100%; /* Make buttons full width */
-        padding: 12px 20px;
-    }
-}
 
 /* Responsive adjustments for smaller screens */
 @media (max-width: 768px) {

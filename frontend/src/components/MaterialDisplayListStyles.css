@@ -9,7 +9,7 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     
     /* --- ADD THESE TWO LINES --- */
-    max-height: 400px; /* Adjust this value as needed, e.g., 300px, 500px */
+    max-height: 500px; /* Adjust this value as needed, e.g., 300px, 500px */
     overflow-y: auto;  /* Adds a vertical scrollbar if content exceeds max-height */
     /* 
 
