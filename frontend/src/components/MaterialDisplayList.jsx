@@ -29,7 +29,7 @@ function MaterialDisplayList({ materials }) {
 
         return categoryMatch && formatMatch;
     });
-
+    
     return (
         <div className="material-display-list-container">
             

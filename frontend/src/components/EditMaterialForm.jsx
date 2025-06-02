@@ -8,7 +8,6 @@ function EditMaterialForm({ material, onUpdate, onCancel }) {
         materialFormat: material.materialFormat || '',
         materialCategory: material.materialCategory || '',
         contentUrl: material.contentUrl || '',
-        // Removed textContent as per alignment with AddMaterial.jsx and current backend structure
         courseCode: material.courseCode || '',
         year: material.year || '',
         semester: material.semester || '',
@@ -25,7 +24,6 @@ function EditMaterialForm({ material, onUpdate, onCancel }) {
             materialFormat: material.materialFormat || '',
             materialCategory: material.materialCategory || '',
             contentUrl: material.contentUrl || '',
-            // Removed textContent to align with AddMaterial.jsx and backend capabilities
             courseCode: material.courseCode || '',
             year: material.year || '',
             semester: material.semester || '',
@@ -53,13 +51,14 @@ function EditMaterialForm({ material, onUpdate, onCancel }) {
             return;
         }
 
-        // Conditional validation for content based on format
-        // 'Text' format and its contentUrl validation has been removed
-        if (['PDF', 'Image', 'Document', 'Video', 'Link'].includes(formData.materialFormat) && !formData.contentUrl) {
-            setError('Content URL is required for the selected format (or a file was expected for uploaded types).');
+        // --- MODIFIED VALIDATION LOGIC ---
+        // Only validate contentUrl for 'Video' and 'Link' formats, where it's direct user input
+        if (['Video', 'Link'].includes(formData.materialFormat) && !formData.contentUrl) {
+            setError('Content URL is required for Video and External Link formats.');
             setLoading(false);
             return;
         }
+        // --- END MODIFIED VALIDATION LOGIC ---
 
         try {
             const payload = { ...formData };
@@ -100,6 +99,9 @@ function EditMaterialForm({ material, onUpdate, onCancel }) {
         }
     };
 
+    // Determine if the contentUrl field should be read-only
+    const isContentUrlReadOnly = ['PDF', 'Image', 'Document'].includes(formData.materialFormat);
+
     return (
         <div className="edit-material-form-container">
             <h3>Edit Material: {material.title || material.subject}</h3>
@@ -114,7 +116,6 @@ function EditMaterialForm({ material, onUpdate, onCancel }) {
 
                 <div className="form-group">
                     <label>Material Format:</label>
-                    {/* Updated options to match AddMaterial.jsx's formats */}
                     <select name="materialFormat" value={formData.materialFormat} onChange={handleChange} required>
                         <option value="">Select Format</option>
                         <option value="PDF">PDF</option>
@@ -135,12 +136,25 @@ function EditMaterialForm({ material, onUpdate, onCancel }) {
                     </select>
                 </div>
 
-                {/* Content URL field is now displayed for all non-text, non-file-upload formats */}
+                {/* Content URL field is now displayed conditionally and is read-only for file uploads */}
                 {(['PDF', 'Image', 'Document', 'Video', 'Link'].includes(formData.materialFormat)) && (
                     <div className="form-group">
                         <label>Content URL:</label>
-                        <input type="url" name="contentUrl" value={formData.contentUrl} onChange={handleChange} />
-                        <small className="form-hint">For uploaded files (PDF, Image, Document), this is the current file path. For Video/External Link, this is the URL.</small>
+                        {/* --- MODIFIED INPUT FIELD --- */}
+                        <input
+                            type="url"
+                            name="contentUrl"
+                            value={formData.contentUrl}
+                            onChange={handleChange}
+                            readOnly={isContentUrlReadOnly} // Add this prop
+                            className={isContentUrlReadOnly ? 'read-only' : ''} // Add a class for styling read-only state
+                        />
+                        {/* --- END MODIFIED INPUT FIELD --- */}
+                        <small className="form-hint">
+                            {isContentUrlReadOnly
+                                ? "This is the current file path (read-only for uploaded files)."
+                                : "Enter the URL for Video/External Link."}
+                        </small>
                     </div>
                 )}
 
