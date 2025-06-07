@@ -1,8 +1,19 @@
 /* frontend/src/components/TopNavigationStyles.css */
+:root {
+  --gradient-start: #a9ceff;  /* Light Pink */
+  --gradient-end: #e776f1;    /* Dark Pink */
+  --gradient-ui: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+
+  --bg-light: #FAFAFA;        /* Soft light background */
+  --card-bg: #FFFFFF;         /* White card background */
+  --text-dark: #2C2C2C;       /* Primary text */
+  --text-light: #FFFFFF;
+  --border-light: #d6bbf8;
+}
 
 .top-navigation {
-    background-color: var(--primary-color); /* Light purple/blue navigation */
-    border-bottom: 1px solid var(--secondary-color);
+    background: var(--gradient-ui) !important;
+    border-bottom: 1px solid var(--border-light);
     position: fixed; /* Makes the element fixed relative to the viewport */
     top: 0;          /* Positions it at the very top */
     left: 0;         /* Positions it at the very left */
@@ -23,7 +34,7 @@
 .nav-left .nav-link {
     font-size: 1.6em;
     font-weight: bold;
-    color: white;
+    color: var(--gradient-ui);
     text-decoration: none;
     transition: color 0.2s ease;
 }

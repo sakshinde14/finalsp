@@ -1,73 +1,65 @@
 /* frontend/src/components/AdminDashboardStyles.css */
-/*
-.admin-actions {
-    margin: 20px auto;
-    padding: 15px;
-    background-color: #e9f5ff; 
-    border-radius: 8px;
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    max-width: 800px;
-}
 
-.admin-action-button {
-    padding: 12px 20px;
-    font-size: 1em;
-    font-weight: bold;
-    color: white;
-    background-color: #007bff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-.admin-action-button:hover:not(:disabled) {
-    background-color: #0056b3;
-    transform: translateY(-2px);
-}
-
-.admin-action-button:disabled {
-    background-color: #cccccc;
-    cursor: not-allowed;
-    opacity: 0.7;
-}
-
-/* Light Purple Theme */
 :root {
-    --primary-color: #a8dadc; /* Light cyan/blue for primary elements */
-    --secondary-color: #457b9d; /* Darker blue for accents */
-    --background-light: #f1faee; /* Very light green/white for light backgrounds */
-    --text-primary: #1d3557; /* Dark blue for primary text */
-    --text-secondary: #6c757d; /* Gray for secondary text */
-    --accent-color: #e63946; /* Red/pink for important accents */
-    --hover-color: #cce5ed; /* Lighter cyan/blue for hover effects */
+  --gradient-start: #ffabce;  /* Light Pink */
+  --gradient-end: #88041a;    /* Dark Pink */
+  --gradient-ui: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+
+  --bg-light: #FAFAFA;        /* Soft light background */
+  --card-bg: #FFFFFF;         /* White card background */
+  --text-dark: #2C2C2C;       /* Primary text */
+  --text-light: #FFFFFF;
+  --border-light: #ff9dd3;
 }
 
-/* ... (Keep your existing styles for .dashboard-container, .main-content, .top-navigation, etc.) ... */
+body {
+    font-family: sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--background-light);
+    color: var(--text-primary);
+}
+
+.admindashboard-container {
+    max-width: none !important;
+    display: flex;
+    flex-direction: column;
+    width: 95vw;
+    height: 100%;
+    margin: 2px 15px;
+    padding: 20px;
+}
+
+
+.main-content {
+    flex: 1;
+    margin: 0;
+    padding: 0;
+    width: 90vw;
+    height: 95%;
+    background-color: var(--background-light); /* Light background */
+}
+
 
 .welcome-message {
-    margin: 5px;
+    margin: 0px auto 10px auto;
     text-align: center;
     font-size: 1.8em;
-    color: var(--text-primary);
+    color:#721c24;
 }
 
 /* Styles for the search bar */
 .search-bar-container {
-    margin: 10px 50px 30px ; /* Add some space below the search bar */
+    margin: 10px 50px 30px 50px; /* Add some space below the search bar */
     text-align: center;
-    background-color: var(--background-light);
-    border-bottom: 1px solid var(--secondary-color);
+    background-color: transparent;
     display: flex;
     justify-content: center;
-    padding: 20px;
+    padding: 10px;
 }
 
 .search-input {
-    width: 60%;
+    width: 80%;
     padding: 12px 20px;
     border: 1px solid #ddd;
     border-radius: 25px; /* More rounded search bar */
@@ -77,14 +69,14 @@
 }
 
 .search-input:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+    border-color: var(--gradient-end);
+    box-shadow: 0 0 0 2px var(--gradient-start);
     outline: none;
 }
   
 .subject-title-header {
     text-align: center;
-    color: #d3046b;
+    color: #df1c7d;
     font-size: 30px;
 }
 

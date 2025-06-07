@@ -8,13 +8,9 @@ import YearList from './YearList';
 import SemesterList from './SemesterList';
 import SubjectList from './SubjectList';
 import SearchResultsList from './SearchResultsList';
-
-// IMPORTS FOR MATERIAL MANAGEMENT
 import AddMaterial from './AddMaterial';
 import MaterialDisplayList from './MaterialDisplayList'; // For student/Browse view
 import ManageMaterials from './ManageMaterials';       // For admin management view
-
-//import './DashboardStyles.css';
 import './AdminDashboardStyles.css'; // Assuming you have this for admin-specific styling
 
 function AdminDashboardLayout() {
@@ -60,8 +56,6 @@ function AdminDashboardLayout() {
                 setSearchLoading(true);
                 setSearchError(null);
                 setShowSearchResults(true);
-                // When searching, clear current selections and hide admin panels
-                // We keep selectedContext intact here as search might lead to a new context
                 setSelectedCourse(null); // Clear navigation selection to prioritize search results
                 setSelectedYear(null);
                 setSelectedSemester(null);
@@ -135,17 +129,10 @@ function AdminDashboardLayout() {
 
     // Helper to reset all navigation and admin form states to initial dashboard state (CourseList)
     const resetToCourseList = () => {
-        setSelectedCourse(null);
-        setSelectedYear(null);
-        setSelectedSemester(null);
-        setSelectedSubject(null);
-        setShowSearchResults(false);
-        setSearchTerm('');
-        setSearchResults([]);
-        setShowAddMaterialForm(false);
-        setShowManageMaterialsPanel(false);
-        setCurrentMaterials([]);
-        setLogoutMessage(''); // Clear messages on full reset
+        setSelectedCourse(null);setSelectedYear(null);setSelectedSemester(null);
+        setSelectedSubject(null);setShowSearchResults(false);setSearchTerm('');
+        setSearchResults([]);setShowAddMaterialForm(false);setShowManageMaterialsPanel(false);
+        setCurrentMaterials([]);setLogoutMessage(''); // Clear messages on full reset
     };
 
     // Handlers for navigation clicks
@@ -382,7 +369,7 @@ function AdminDashboardLayout() {
     };
 
     return (
-        <div className="dashboard-container">
+        <div className="admindashboard-container">
             <TopNavigation onLogout={handleAdminLogout} />
             <main className="main-content">
                 {/* --- NEW: Display logout message --- */}
@@ -393,23 +380,26 @@ function AdminDashboardLayout() {
                 )}
                 {/* --- End NEW --- */}
 
-                {/* Welcome message for the Admin Dashboard */}
-                {!showSearchResults && !selectedCourse && (
-                    <WelcomeMessage message="Welcome, Admin! Navigate or search to manage materials." />
+                
+
+
+                <h3>Search for your subject: </h3>
+                {!selectedSubject && !showAddMaterialForm && !showManageMaterialsPanel && (
+                    <div className="search-bar-container">
+                        <input 
+                            type="text" 
+                            placeholder="Search for subjects..."
+                            value={searchTerm}
+                            onChange={handleSearchChange}
+                            className="search-input"
+                        />
+                    </div>
                 )}
 
-
-                <div className="search-bar-container">
-                    {!selectedSubject && (
-                    <input
-                        type="text"
-                        placeholder="Search for subjects..."
-                        value={searchTerm}
-                        onChange={handleSearchChange}
-                        className="search-input"
-                    />
-                    )}
-                </div>
+{/* Welcome message for the Admin Dashboard */}
+                {!showSearchResults && !selectedCourse && (
+                    <WelcomeMessage message="Welcome, Admin!" />
+                )}
 
                 {/* Render the appropriate content based on state */}
                 {renderContent()}

@@ -1,16 +1,25 @@
 /* frontend/src/components/ManageMaterialsStyles.css */
+:root {
+  --gradient-start: #ffabce;  /* Light Pink */
+  --gradient-end: #88041a;    /* Dark Pink */
+  --gradient-ui: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+
+  --bg-light: #FAFAFA;        /* Soft light background */
+  --card-bg: #FFFFFF;         /* White card background */
+  --text-dark: #2C2C2C;       /* Primary text */
+  --text-light: #FFFFFF;
+  --border-light: #be1d76;
+}
 
 .manage-materials-container {
     padding: 20px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    margin: 20px auto;
-    width: 1000px;
+    margin: 20px 0px;
+    width: 1310px;
     margin-top: 20px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
+    background-color: transparent;
     
     /* --- ADD THESE TWO LINES --- */
-    max-height: 400px; /* Adjust this value as needed, e.g., 300px, 500px */
+    max-height: 480px; /* Adjust this value as needed, e.g., 300px, 500px */
     overflow-y: auto;  /* Adds a vertical scrollbar if content exceeds max-height */
     /* -------------------------- */
 } 
@@ -30,7 +39,7 @@
 
 .material-item {
     background-color: #fff;
-    border: 1px solid #ddd;
+    border: 1px solid #dddddd;
     border-radius: 6px;
     margin-bottom: 15px;
     padding: 15px;
@@ -54,7 +63,7 @@
 
 .material-details h4 {
     margin: 0 0 8px 0;
-    color: #007bff;
+    color: #da2187;
     font-size: 1.2em;
 }
 
@@ -65,7 +74,7 @@
 }
 
 .material-details a {
-    color: #007bff;
+    color: #da2187;
     text-decoration: none;
 }
 
@@ -89,23 +98,25 @@
 }
 
 .edit-button {
-    background-color: #28a745; /* Green */
+    background-color: var(--gradient-start); /* Green */
     color: white;
 }
 
 .edit-button:hover {
-    background-color: #218838;
+    background-color: #ffffff;
     transform: translateY(-1px);
+    color: black;
 }
 
 .delete-button {
-    background-color: #dc3545; /* Red */
+    background-color: var(--gradient-end); /* Red */
     color: white;
 }
 
 .delete-button:hover {
-    background-color: #c82333;
+    background-color: white;
     transform: translateY(-1px);
+    color: black;
 }
 
 .no-materials-message {
@@ -153,7 +164,7 @@
 .back-button {
     display: block;
     width: fit-content;
-    margin: 25px auto 10px auto;
+    margin: 10px;
     padding: 10px 20px;
     background-color: #6c757d; /* Grey */
     color: white;

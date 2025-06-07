@@ -125,6 +125,7 @@ function ManageMaterials({ selectedContext, onMaterialManaged, onCancelManage })
     });
 
     return (
+        <div>
         <div className="manage-materials-container">
             <h2 className="manage-materials-header">
                 Manage Materials for: {selectedContext?.subject} ({selectedContext?.courseCode}, Year {selectedContext?.year}, Sem {selectedContext?.semester})
@@ -192,8 +193,9 @@ function ManageMaterials({ selectedContext, onMaterialManaged, onCancelManage })
                     )}
                 </>
             )}
-
-            <button onClick={onCancelManage} className="back-button">Back to Study material view</button>
+                
+        </div>
+        <button onClick={onCancelManage} className="back-button">Back to Study material view</button>
         </div>
     );
 }

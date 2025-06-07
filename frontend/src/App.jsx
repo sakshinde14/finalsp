@@ -22,7 +22,8 @@ import ProtectedRoute from './components/ProtectedRoute'; // <--- MODIFIED: Impo
 import './components/AuthStyles.css';
 import './components/DashboardStyles.css';
 import './components/MyNotesDashboardStyles.css';
-
+import './components/AdminDashboardStyles.css';
+import './App.css';
 // --- INLINE AuthLayout Component ---
 // This component provides the common layout for login/signup pages
 function AuthLayout({ children }) {
@@ -38,10 +39,6 @@ function AuthLayout({ children }) {
                     <Link to="/login/admin" className="toggle-link">Admin Login</Link>
                 )}
             </div>
-            <div className="auth-visual-side">
-                {/* Assuming /girlca.png is in your public folder */}
-                <img src="/girlca.png" alt="Login Support" style={{ maxWidth: '90%', maxHeight: '90%', objectFit: 'contain' }} />
-            </div>
             <div className="auth-form-side">
                 {children} {/* Renders the actual login/signup forms here */}
             </div>
@@ -53,7 +50,7 @@ function AuthLayout({ children }) {
 function App() {
     return (
     <Router>
-        <div className="app-container">
+        <div className="app-container" >
             <Routes>
                 {/* Default route: Redirects to student login */}
                 <Route path="/" element={<Navigate to="/signup/student" replace />} />
@@ -65,7 +62,7 @@ function App() {
                 
                 {/* Protected Student Dashboard Route */}
                 {/* Accessible by both students and admins to view study materials */}
-                <Route path="/dashboard" element={ <ProtectedRoute allowedRoles={['student', 'admin']}> <DashboardLayout /> </ProtectedRoute> } />
+                <Route path="/dashboard" element={ <ProtectedRoute allowedRoles={['student']}> <DashboardLayout /> </ProtectedRoute> } />
                 
                 
                 {/* NEW: Protected My Notes Route for Students */}
@@ -90,7 +87,7 @@ function App() {
                 <Route path="/admin/materials/manage" element={ <ProtectedRoute allowedRoles={['admin']}> <ManageMaterials /> </ProtectedRoute> } />
 
                 {/* Fallback route for any unmatched URLs */}
-                <Route path="*" element={<Navigate to="/login/student" replace />} />
+                {/*<Route path="*" element={<Navigate to="/login/student" replace />} />*/}
             </Routes>
         </div>
     </Router>
