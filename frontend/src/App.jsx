@@ -7,13 +7,10 @@ import StudentSignup from './components/StudentSignup';
 import AdminLogin from './components/AdminLogin';
 import DashboardLayout from './components/DashboardLayout'; // Student Dashboard Layout
 import AdminDashboardLayout from './components/AdminDashboardLayout'; // Admin Dashboard Layout
+
 // NEW IMPORTS for Admin Tools
 import AddMaterial from './components/AddMaterial';
 import ManageMaterials from './components/ManageMaterials';
-
-// NEW: My Notes feature for students
-import MyNotesDashboard from './components/MyNotesDashboard'; // Assuming MyNotesDashboard is in 'pages' folder
-
 
 // Import the ProtectedRoute component from its separate file
 import ProtectedRoute from './components/ProtectedRoute'; // <--- MODIFIED: Import ProtectedRoute
@@ -21,7 +18,6 @@ import ProtectedRoute from './components/ProtectedRoute'; // <--- MODIFIED: Impo
 // Import CSS files
 import './components/AuthStyles.css';
 import './components/DashboardStyles.css';
-import './components/MyNotesDashboardStyles.css';
 import './components/AdminDashboardStyles.css';
 import './App.css';
 // --- INLINE AuthLayout Component ---
@@ -64,20 +60,6 @@ function App() {
                 {/* Accessible by both students and admins to view study materials */}
                 <Route path="/dashboard" element={ <ProtectedRoute allowedRoles={['student']}> <DashboardLayout /> </ProtectedRoute> } />
                 
-                
-                {/* NEW: Protected My Notes Route for Students */}
-                    <Route
-                        path="/my-notes"
-                        element={
-                            <ProtectedRoute allowedRoles={['student']}> {/* Only students can access their notes */}
-                                {/*<AuthLayout>*/}
-                                    <MyNotesDashboard />
-                                {/*</AuthLayout>*/}
-                            </ProtectedRoute>
-                        }
-                    />
-
-
                 {/* Protected Admin Dashboard Route */}
                 {/* Accessible only by admins for management tasks */}
                 <Route path="/admin/dashboard" element={ <ProtectedRoute allowedRoles={['admin']}> <AdminDashboardLayout /> </ProtectedRoute>} />

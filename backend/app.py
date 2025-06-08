@@ -10,6 +10,8 @@ from bson.objectid import ObjectId
 import os # NEW: Import for file system operations
 from functools import wraps # NEW: Import for decorators
 import uuid
+from bson import ObjectId
+
 
 # --- Configuration ---
 MONGO_URI = "mongodb+srv://sakshi:gaurinde@cluster0.vpbqv.mongodb.net/sp_db?retryWrites=true&w=majority&appName=Cluster0"
@@ -18,20 +20,27 @@ STUDENT_COLLECTION = "students"
 ADMIN_COLLECTION = "admins"
 COURSE_COLLECTION = "courses"
 STUDY_MATERIALS_COLLECTION = "study_materials"
-USER_NOTES_COLLECTION = "user_notes"
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'a_very_long_and_random_secret_key_here_that_is_unique_and_not_guessable'
-CORS(app, resources={r"/api/*": {"origins": "http://localhost:5173"}}, supports_credentials=True)
+CORS(app, supports_credentials=True)
+#CORS(app, resources={r"/api/*": {"origins": "http://localhost:5173"}}, supports_credentials=True)
 
-# --- File Upload Configuration for Admin Materials ---
-# Define the upload folder. It's good practice to place it within a static directory.
-# Ensure this directory exists! Example: your_project_root/static/uploads/admin_materials
+# --- File Upload Configuration for Admin Materials --- Define the upload folder. It's good practice to place it within a static directory.Ensure this directory exists! Example: your_project_root/static/uploads/admin_materials
 UPLOAD_MATERIALS_FOLDER = os.path.join(app.root_path, 'static', 'uploads', 'admin_materials')
 # Create the upload folder if it doesn't exist
 if not os.path.exists(UPLOAD_MATERIALS_FOLDER):
     os.makedirs(UPLOAD_MATERIALS_FOLDER)
 app.config['UPLOAD_MATERIALS_FOLDER'] = UPLOAD_MATERIALS_FOLDER
+
+
+# --- NEW: File Upload Configuration for User Notes ---
+UPLOAD_USER_NOTES_FOLDER = os.path.join(app.root_path, 'static', 'uploads', 'user_notes')
+# Create the upload folder if it doesn't exist
+if not os.path.exists(UPLOAD_USER_NOTES_FOLDER):
+    os.makedirs(UPLOAD_USER_NOTES_FOLDER)
+app.config['UPLOAD_USER_NOTES_FOLDER'] = UPLOAD_USER_NOTES_FOLDER
+
 
 # Allowed extensions for admin-uploaded materials
 ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg', 'gif', 'doc', 'docx', 'txt'} # Added document extensions
@@ -49,7 +58,7 @@ students_collection = db[STUDENT_COLLECTION]
 admins_collection = db[ADMIN_COLLECTION]
 courses_collection = db[COURSE_COLLECTION]
 study_materials_collection = db[STUDY_MATERIALS_COLLECTION]
-user_notes_collection = db[USER_NOTES_COLLECTION] # Not used in this app.py, but kept for consistency
+
 
 @app.route('/')
 def hello_world():
@@ -62,6 +71,26 @@ def test_database_connection():
         return "Successfully connected to MongoDB Atlas!"
     except Exception as e:
         return f"Could not connect to MongoDB Atlas: {e}"
+    
+
+def is_student():
+    print(f"DEBUG: Inside is_student(). Session: {session.get('role')}")
+    return session.get('role') == 'student'
+
+from functools import wraps
+from flask import session, jsonify
+
+def login_required(role=None):
+    def decorator(f):
+        @wraps(f)
+        def wrapped(*args, **kwargs):
+            if 'user_id' not in session:
+                return jsonify({'message': 'Unauthorized'}), 401
+            if role and session.get('role') != role:
+                return jsonify({'message': 'Forbidden'}), 403
+            return f(*args, **kwargs)
+        return wrapped
+    return decorator
 
 @app.route('/api/auth/signup/student', methods=['POST'])
 def signup_student():
@@ -93,17 +122,40 @@ def login_student():
     if not email or not password:
         return jsonify({'message': 'Missing email or password'}), 400
 
+    # This is the line that was missing or out of place in your snippet!
     student = students_collection.find_one({'email': email})
 
     if student:
+        # This is the line that was missing or out of place in your snippet!
         stored_password = student.get('password')
-        if isinstance(stored_password, bytes) and checkpw(password.encode('utf-8'), stored_password):
+
+        if stored_password is None:
+            # Handle case where password field might be missing (e.g., old data, or corruption)
+            print(f"DEBUG: Password hash not found for student: {email}")
+            return jsonify({'message': 'Internal error: Password data missing for user.'}), 500
+        
+        # Ensure stored_password is bytes before checking
+        if isinstance(stored_password, str):
+            stored_password_bytes = stored_password.encode('utf-8')
+        elif isinstance(stored_password, bytes):
+            stored_password_bytes = stored_password
+        else:
+            print(f"DEBUG: Unexpected type for stored password: {type(stored_password)}")
+            return jsonify({'message': 'Invalid stored password format.'}), 500
+
+
+        if checkpw(password.encode('utf-8'), stored_password_bytes):
             session['user_id'] = str(student['_id'])
             session['username'] = student['fullName']
             session['role'] = 'student'
+            print(f"DEBUG: Student login successful for {email}. Session after login: {session}") # <--- Add this
             return jsonify({'message': 'Student login successful', 'role': 'student'}), 200
-
-    return jsonify({'message': 'Invalid credentials'}), 401
+        else:
+            print(f"DEBUG: Student login failed for {email} - incorrect password. Session: {session}") # <--- Add this for incorrect password
+            return jsonify({'message': 'Invalid credentials'}), 401
+    else:
+        print(f"DEBUG: Student login failed for {email} - user not found. Session: {session}") # <--- Add this for user not found
+        return jsonify({'message': 'Invalid credentials'}), 401
 
 @app.route('/api/auth/login/admin', methods=['POST'])
 def login_admin():
@@ -131,6 +183,7 @@ def check_auth():
     if 'user_id' in session:
         return jsonify({'isAuthenticated': True, 'role': session['role'], 'username': session['username']}), 200
     return jsonify({'isAuthenticated': False}), 200
+
 
 @app.route('/api/logout', methods=['POST'])
 def logout_user():
@@ -207,17 +260,9 @@ def search_subjects():
 def is_admin():
     return session.get('role') == 'admin'
 
-def admin_required(f):
-    @wraps(f) # Use @wraps to preserve function metadata
-    def wrapper(*args, **kwargs):
-        if not is_admin():
-            return jsonify({'message': 'Forbidden: Admin access required'}), 403
-        return f(*args, **kwargs)
-    return wrapper
-
 # --- Admin Material Management ---
 @app.route('/api/admin/materials/add', methods=['POST'])
-@admin_required
+@login_required(role='admin')
 def admin_add_material():
     data = request.get_json()
     title = data.get('title')
@@ -272,7 +317,7 @@ def admin_add_material():
 
 # --- REINSTATED: Admin Material Upload Endpoint ---
 @app.route('/api/admin/materials/upload', methods=['POST'])
-@admin_required
+@login_required(role='admin')
 def upload_admin_material():
     # Check if a file was sent
     if 'file' not in request.files:
@@ -373,7 +418,7 @@ def get_study_materials(course_code, year, semester, subject):
 
 # --- Get Materials for Admin View (with filters) ---
 @app.route('/api/admin/materials', methods=['GET'])
-@admin_required
+@login_required(role='admin')
 def admin_get_materials():
     course_code = request.args.get('courseCode')
     year = request.args.get('year')
@@ -409,7 +454,7 @@ def admin_get_materials():
 
 # --- Delete Material ---
 @app.route('/api/admin/materials/<string:material_id>', methods=['DELETE'])
-@admin_required
+@login_required(role='admin')
 def admin_delete_material(material_id):
     try:
         # Validate material_id as a valid ObjectId
@@ -441,7 +486,7 @@ def admin_delete_material(material_id):
 
 # --- Update Material ---
 @app.route('/api/admin/materials/<string:material_id>', methods=['PUT'])
-@admin_required
+@login_required(role='admin')
 def admin_update_material(material_id):
     data = request.get_json()
 
@@ -473,15 +518,9 @@ def admin_update_material(material_id):
     # Basic validation for materialFormat and associated content
     if 'materialFormat' in update_doc:
         material_format = update_doc['materialFormat']
-        # If materialFormat is changing to a URL-based type, contentUrl becomes required
         if material_format in ['Video', 'Link'] and ('contentUrl' not in data or not data['contentUrl']):
             return jsonify({'message': f"Content URL is required for {material_format} format"}), 400
-        # If materialFormat is changing to a file-based type, ensure 'fileName' is handled in the future if updates are made through PUT
-        # For now, PUT is expected to update metadata, not re-upload files.
         if material_format in ['PDF', 'Image', 'Document'] and 'contentUrl' not in data:
-            # If a file-based material is being updated, it should retain its contentUrl.
-            # If the user wants to *change* the file, they'd need a separate upload mechanism.
-            # Here, we assume contentUrl won't be empty for these types if it's not being changed
             pass # No strict validation for contentUrl on file types if it's not being changed
 
     # Also validate new category if it's provided
@@ -521,7 +560,7 @@ def serve_admin_material_file(filename):
 
 #PASSWORD CHANGE
 @app.route('/api/admin/change-password', methods=['POST'])
-@admin_required # Your admin login decorator
+@login_required(role='admin') # Your admin login decorator
 def change_password():
     data = request.get_json()
     current_password = data.get('currentPassword')
@@ -581,7 +620,7 @@ def change_password():
 
 #USERNAME CHANGE
 @app.route('/api/admin/change-username', methods=['POST'])
-@admin_required # Your admin login decorator
+@login_required(role='admin') # Your admin login decorator
 def change_username():
     data = request.get_json()
     new_username = data.get('newUsername')
@@ -609,6 +648,6 @@ def change_username():
     return jsonify({'message': 'Username updated successfully'}), 200
 
 
+# Ensure app runs correctly
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0') # Make it accessible from your frontend
-
+    app.run(debug=True, host='localhost', port=5000)
