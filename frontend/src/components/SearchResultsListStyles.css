@@ -1,58 +1,112 @@
-/* SearchResultsListStyles.css */
+/* src/components/SearchResultsListStyles.css */
 
 .search-results-container {
-    margin-top: 20px;
-    padding: 15px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    
-    /* --- ADD THESE TWO LINES --- */
-    max-height: 400px; /* Adjust this value as needed, e.g., 300px, 500px */
-    overflow-y: auto;  /* Adds a vertical scrollbar if content exceeds max-height */
-    /* -------------------------- */
+  background-color: var(--bg-color-white);
+  border-radius: var(--border-radius-large);
+  box-shadow: 0 5px 15px var(--shadow-light);
+  padding: var(--spacing-lg);
+  margin: var(--spacing-xl) auto; /* Top/bottom margin, auto left/right */
+  max-width: 800px; /* Limit width for readability */
+  width: 100%; /* Take full width within max-width */
+  box-sizing: border-box; /* Include padding/border in element's total width/height */
+  animation: fadeIn 0.6s ease-out; /* Fade in animation */
+}
+
+.search-results-container h2 {
+  text-align: center;
+  color: var(--gradient-blue-end); /* Consistent heading color */
+  margin-bottom: var(--spacing-lg);
+  font-size: 2rem;
+  font-weight: 700;
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 2px solid var(--border-color-light); /* Separator */
 }
 
 .search-results-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+  list-style: none; /* Remove default list bullets */
+  padding: 0;
+  margin: 0;
+  display: grid; /* Use CSS Grid for responsive layout */
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Adjust minmax as needed */
+  gap: var(--spacing-md); /* Space between results */
 }
 
 .search-result-item {
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    margin-bottom: 10px;
-    padding: 10px 15px;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
+  /* Adapting the .list-item-card style for search results */
+  background-color: var(--bg-color-white);
+  border: 1px solid var(--border-color-light);
+  border-radius: var(--border-radius-medium);
+  padding: var(--spacing-md);
+  cursor: pointer;
+  box-shadow: 0 2px 8px var(--shadow-light);
+  transition: all 0.3s ease;
+  display: flex; /* Use flexbox for internal layout */
+  flex-direction: column;
+  justify-content: space-between;
+  text-align: left; /* Align text within the card */
 }
 
 .search-result-item:hover {
-    background-color: #eef;
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px var(--shadow-medium);
+  border-color: var(--gradient-blue-start); /* Border highlight on hover */
 }
 
-.subject-name {
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 5px;
+.search-result-item .subject-name {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-color-dark);
+  margin-bottom: var(--spacing-xs);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
 }
 
-.course-details {
-    font-size: 0.9em;
-    color: #666;
+.search-result-item .course-details {
+  font-size: 0.95rem;
+  color: var(--text-color-light);
+  margin-top: var(--spacing-xs);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
 }
 
 .no-results-message {
-    text-align: center;
-    padding: 20px;
-    color: #888;
+  text-align: center;
+  font-size: 1.2rem;
+  color: var(--text-color-light);
+  padding: var(--spacing-xl);
+  background-color: var(--bg-color-white);
+  border-radius: var(--border-radius-medium);
+  box-shadow: var(--shadow-light);
+  margin: var(--spacing-md) auto;
+  max-width: 500px;
 }
 
-.error-message {
-    color: red;
-    font-weight: bold;
-    text-align: center;
-    padding: 20px;
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .search-results-container {
+    padding: var(--spacing-md);
+    margin: var(--spacing-lg) auto;
+  }
+
+  .search-results-container h2 {
+    font-size: 1.7rem;
+  }
+
+  .search-results-list {
+    grid-template-columns: 1fr; /* Stack items on small screens */
+  }
+
+  .search-result-item {
+    padding: var(--spacing-sm);
+  }
+
+  .search-result-item .subject-name {
+    font-size: 1.1rem;
+  }
+
+  .search-result-item .course-details {
+    font-size: 0.85rem;
+  }
 }

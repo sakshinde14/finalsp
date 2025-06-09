@@ -1,68 +1,136 @@
+/* src/index.css */
+
+/* --- Google Fonts Import --- */
+/* We'll use Poppins for headings and Open Sans for body text. */
+/* These provide a clean, modern aesthetic. */
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&family=Poppins:wght@400;500;600;700&display=swap');
+
+/* --- CSS Variables (for easy theme changes) --- */
+/* Define your color palette, fonts, and common sizes here. */
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+  --primary-color: #4CAF50; /* A vibrant green for main actions/branding */
+  --primary-color-dark: #388E3C; /* Darker shade for hover states */
+  --secondary-color: #2196F3; /* A complementary blue for secondary actions */
+  --secondary-color-dark: #1976D2; /* Darker shade for hover states */
+  --accent-color: #FFC107; /* A subtle yellow for highlights/warnings */
+  --danger-color: #f44336; /* Red for destructive actions */
+  --danger-color-dark: #d32f2f;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  --text-color-dark: #333; /* Dark text on light backgrounds */
+  --text-color-light: #666; /* Lighter gray for secondary text */
+  --text-color-inverted: #fff; /* White text for dark backgrounds */
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  --bg-color-light: #f8f9fa; /* Very light gray background */
+  --bg-color-white: #fff; /* Pure white for cards/elements */
+  --border-color-light: #e0e0e0; /* Light gray for subtle borders */
+
+  --shadow-light: rgba(0, 0, 0, 0.05); /* Subtle shadow for depth */
+  --shadow-medium: rgba(0, 0, 0, 0.1); /* Stronger shadow for hover/focus */
+
+  --font-heading: 'Poppins', sans-serif;
+  --font-body: 'Open Sans', sans-serif;
+
+  --border-radius-small: 5px;
+  --border-radius-medium: 8px;
+  --border-radius-large: 12px;
+
+  --spacing-xs: 0.5rem;   /* 8px */
+  --spacing-sm: 1rem;    /* 16px */
+  --spacing-md: 1.5rem;  /* 24px */
+  --spacing-lg: 2rem;    /* 32px */
+  --spacing-xl: 3rem;    /* 48px */
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+/* --- Basic Reset & Global Styling --- */
+/* A universal reset to remove default browser margins/paddings. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box; /* Include padding and border in the element's total width and height */
+  margin: 0;
+  padding: 0;
 }
 
 body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  font-family: var(--font-body); /* Apply the chosen body font */
+  color: var(--text-color-dark); /* Default text color */
+  background-color: var(--bg-color-light); /* Light background for the whole page */
+  line-height: 1.6; /* Improved readability */
+  -webkit-font-smoothing: antialiased; /* Smoother font rendering for macOS/iOS */
+  -moz-osx-font-smoothing: grayscale; /* Smoother font rendering for Firefox on macOS */
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+/* Headings Styling */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading); /* Apply the chosen heading font */
+  color: var(--text-color-dark);
+  margin-bottom: var(--spacing-sm); /* Spacing below headings */
+  font-weight: 600; /* A good default weight for headings */
 }
 
+h1 { font-size: 2.5rem; } /* 40px */
+h2 { font-size: 2rem; }   /* 32px */
+h3 { font-size: 1.75rem; } /* 28px */
+h4 { font-size: 1.5rem; }  /* 24px */
+h5 { font-size: 1.25rem; } /* 20px */
+h6 { font-size: 1rem; }    /* 16px */
+
+/* Link Styling */
+a {
+  color: var(--primary-color);
+  text-decoration: none; /* No underline by default */
+  transition: color 0.3s ease; /* Smooth color change on hover */
+}
+a:hover {
+  color: var(--primary-color-dark); /* Slightly darker on hover */
+}
+
+/* Button Base Styles (will be extended for specific button types) */
 button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
   cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  border: none; /* Remove default button border */
+  outline: none; /* Remove outline on focus for a cleaner look, but ensure accessibility with other styles */
+  font-family: var(--font-heading); /* Buttons use heading font for prominence */
+  font-weight: 600;
+  transition: all 0.3s ease; /* Smooth transitions for hover/active states */
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
+/* --- Utility Classes (for common layouts/spacing) --- */
+/* Use these classes directly in your JSX for quick styling. */
+.container {
+  max-width: 1200px; /* Max width for content to prevent stretching on large screens */
+  margin: 0 auto; /* Center the container */
+  padding: 0 var(--spacing-sm); /* Horizontal padding for responsiveness */
+}
+
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.text-left { text-align: left; }
+.text-muted { color: var(--text-color-light); } /* For secondary text */
+
+/* Margin utilities */
+.mt-sm { margin-top: var(--spacing-sm); }
+.mb-sm { margin-bottom: var(--spacing-sm); }
+.my-sm { margin-top: var(--spacing-sm); margin-bottom: var(--spacing-sm); }
+.mt-md { margin-top: var(--spacing-md); }
+.mb-md { margin-bottom: var(--spacing-md); }
+.my-md { margin-top: var(--spacing-md); margin-bottom: var(--spacing-md); }
+/* Add more as needed (e.g., mt-lg, mb-lg, pt-sm, px-md, etc.) */
+
+/* Flexbox utilities */
+.d-flex { display: flex; }
+.justify-content-center { justify-content: center; }
+.align-items-center { align-items: center; }
+.flex-column { flex-direction: column; }
+.gap-sm { gap: var(--spacing-sm); }
+.gap-md { gap: var(--spacing-md); }
+
+/* Basic responsive font sizes for smaller screens */
+@media (max-width: 768px) {
+  h1 { font-size: 2rem; }
+  h2 { font-size: 1.75rem; }
+  h3 { font-size: 1.5rem; }
+  .container {
+    padding: 0 var(--spacing-xs); /* Tighter padding on small screens */
   }
 }

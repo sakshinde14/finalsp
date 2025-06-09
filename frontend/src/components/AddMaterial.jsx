@@ -15,17 +15,12 @@ function AddMaterial({ onMaterialAdded, onCancelAdd, selectedContext }) {
 
     useEffect(() => {
         if (message) {
-            const timer = setTimeout(() => {
-                setMessage('');
-                setMessageType('');
-            }, 3000);
-            return () => clearTimeout(timer);
-        }
+            const timer = setTimeout(() => { setMessage(''); setMessageType('');}, 3000);
+            return () => clearTimeout(timer); }
     }, [message]);
 
     const handleFileChange = (e) => {
-        setSelectedFile(e.target.files[0]);
-    };
+        setSelectedFile(e.target.files[0]); };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -35,28 +30,22 @@ function AddMaterial({ onMaterialAdded, onCancelAdd, selectedContext }) {
         if (!title.trim()) {
             setMessage('Please enter a title for the material.');
             setMessageType('error');
-            return;
-        }
+            return; }
 
         if (!materialFormat) {
             setMessage('Please select a material type.');
             setMessageType('error');
-            return;
-        }
+            return; }
 
         if (!materialCategory) {
             setMessage('Please select a material category.');
             setMessageType('error');
-            return;
-        }
+            return; }
 
         let apiEndpoint;
-        // Initialize fetchOptions here; headers will be set conditionally
         let fetchOptions = {
             method: 'POST',
-            credentials: 'include',
-            // No 'Content-Type' header here, it will be added conditionally below
-        };
+            credentials: 'include', };
 
         const isFileUpload = ['PDF', 'Image', 'Document'].includes(materialFormat);
 
@@ -64,8 +53,7 @@ function AddMaterial({ onMaterialAdded, onCancelAdd, selectedContext }) {
             if (!selectedFile) {
                 setMessage(`Please select a ${materialFormat} file to upload.`);
                 setMessageType('error');
-                return;
-            }
+                return; }
 
             apiEndpoint = 'http://localhost:5000/api/admin/materials/upload';
             const formData = new FormData();
@@ -78,29 +66,25 @@ function AddMaterial({ onMaterialAdded, onCancelAdd, selectedContext }) {
             formData.append('materialFormat', materialFormat);
             formData.append('materialCategory', materialCategory);
 
-            fetchOptions.body = formData; // Directly assign FormData
-            // DO NOT set Content-Type header for FormData, browser does it automatically
+            fetchOptions.body = formData;
             for (let pair of formData.entries()) {
-                console.log(pair[0]+ ': ' + pair[1]);
-            }
+                console.log(pair[0]+ ': ' + pair[1]); }
             console.log('Sending FormData...');
 
-        } else { // Video or Link (URL-based)
+        } else {
             if (!contentUrl.trim()) {
                 setMessage('Content URL cannot be empty for ' + materialFormat + ' material.');
                 setMessageType('error');
-                return;
-            }
+                return; }
             try {
                 new URL(contentUrl.trim());
             } catch (error) {
                 setMessage('Please enter a valid URL.');
                 setMessageType('error');
-                return;
-            }
+                return;  }
 
             apiEndpoint = 'http://localhost:5000/api/admin/materials/add';
-            const requestBody = { // Define requestBody here for URL-based
+            const requestBody = {
                 title: title.trim(),
                 courseCode: courseCode,
                 year: year,
@@ -108,15 +92,12 @@ function AddMaterial({ onMaterialAdded, onCancelAdd, selectedContext }) {
                 subject: subject,
                 materialFormat: materialFormat,
                 materialCategory: materialCategory,
-                contentUrl: contentUrl.trim(),
-            };
+                contentUrl: contentUrl.trim(), };
 
-            fetchOptions.body = JSON.stringify(requestBody); // Stringify for JSON
-            fetchOptions.headers = { // Set Content-Type here for JSON
-                'Content-Type': 'application/json',
-            };
-            console.log('Sending JSON payload:', requestBody);
-        }
+            fetchOptions.body = JSON.stringify(requestBody);
+            fetchOptions.headers = {
+                'Content-Type': 'application/json', };
+            console.log('Sending JSON payload:', requestBody); }
 
         try {
             const response = await fetch(apiEndpoint, fetchOptions);
@@ -130,19 +111,16 @@ function AddMaterial({ onMaterialAdded, onCancelAdd, selectedContext }) {
                 setContentUrl('');
                 setSelectedFile(null);
                 if (onMaterialAdded) {
-                    onMaterialAdded();
-                }
+                    onMaterialAdded(); }
             } else {
                 const errorData = await response.json();
                 setMessage(`Error: ${errorData.message || 'Failed to add material.'}`);
-                setMessageType('error');
-            }
+                setMessageType('error'); }
 
         } catch (error) {
             console.error('Network or server error:', error);
             setMessage('Network error. Could not connect to server.');
-            setMessageType('error');
-        }
+            setMessageType('error'); }
     };
 
     const getAcceptedFileTypes = (type) => {
@@ -154,9 +132,7 @@ function AddMaterial({ onMaterialAdded, onCancelAdd, selectedContext }) {
             case 'Document':
                 return '.doc,.docx,.txt';
             default:
-                return '';
-        }
-    };
+                return ''; } };
 
     return (
         <div className="add-material-container">
@@ -168,28 +144,14 @@ function AddMaterial({ onMaterialAdded, onCancelAdd, selectedContext }) {
             <form onSubmit={handleSubmit} className="add-material-form">
                 <div className="form-group">
                     <label htmlFor="title">Material Title:</label>
-                    <input
-                        type="text"
-                        id="title"
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                        placeholder="e.g., C++ Programming Notes"
-                        required
-                    />
+                    <input type="text" id="title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g., C++ Programming Notes"
+                        required/>
                 </div>
 
                 <div className="form-group">
                     <label htmlFor="materialFormat">Material Type:</label>
-                    <select
-                        id="materialFormat"
-                        value={materialFormat}
-                        onChange={(e) => {
-                            setMaterialFormat(e.target.value);
-                            setContentUrl('');
-                            setSelectedFile(null);
-                        }}
-                        required
-                    >
+                    <select id="materialFormat" value={materialFormat}
+                        onChange={(e) => { setMaterialFormat(e.target.value); setContentUrl(''); setSelectedFile(null); }} required>
                         <option value="">Select Type</option>
                         <option value="PDF">PDF Document</option>
                         <option value="Image">Image (JPG, PNG, GIF)</option>
@@ -201,14 +163,8 @@ function AddMaterial({ onMaterialAdded, onCancelAdd, selectedContext }) {
 
                 <div className="form-group">
                     <label htmlFor="materialCategory">Material Category:</label>
-                    <select
-                        id="materialCategory"
-                        value={materialCategory}
-                        onChange={(e) => {
-                            setMaterialCategory(e.target.value);
-                        }}
-                        required
-                    >
+                    <select id="materialCategory" value={materialCategory}
+                        onChange={(e) => { setMaterialCategory(e.target.value); }} required >
                         <option value="">Select Category</option>
                         <option value="syllabus">Syllabus</option>
                         <option value="notes">Notes</option>
@@ -219,25 +175,13 @@ function AddMaterial({ onMaterialAdded, onCancelAdd, selectedContext }) {
                 {(['PDF', 'Image', 'Document'].includes(materialFormat)) ? (
                     <div className="form-group">
                         <label htmlFor="fileUpload">Upload File:</label>
-                        <input
-                            type="file"
-                            id="fileUpload"
-                            onChange={handleFileChange}
-                            accept={getAcceptedFileTypes(materialFormat)}
-                            required={!selectedFile}
-                        />
+                        <input type="file" id="fileUpload" onChange={handleFileChange} accept={getAcceptedFileTypes(materialFormat)} required={!selectedFile} />
                     </div>
                 ) : (materialFormat && (materialFormat === 'Video' || materialFormat === 'Link')) && (
                     <div className="form-group">
                         <label htmlFor="contentUrl">Content URL:</label>
-                        <input
-                            type="url"
-                            id="contentUrl"
-                            value={contentUrl}
-                            onChange={(e) => setContentUrl(e.target.value)}
-                            placeholder="e.g., https://example.com/document.pdf or https://youtube.com/video"
-                            required
-                        />
+                        <input type="url" id="contentUrl" value={contentUrl} onChange={(e) => setContentUrl(e.target.value)}
+                            placeholder="e.g., https://example.com/document.pdf or https://youtube.com/video" required />
                     </div>
                 )}
 
@@ -249,5 +193,4 @@ function AddMaterial({ onMaterialAdded, onCancelAdd, selectedContext }) {
         </div>
     );
 }
-
 export default AddMaterial;

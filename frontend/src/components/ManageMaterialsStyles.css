@@ -1,179 +1,305 @@
-/* frontend/src/components/ManageMaterialsStyles.css */
-:root {
-  --gradient-start: #ffabce;  /* Light Pink */
-  --gradient-end: #88041a;    /* Dark Pink */
-  --gradient-ui: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+/* src/components/ManageMaterialsStyles.css */
 
-  --bg-light: #FAFAFA;        /* Soft light background */
-  --card-bg: #FFFFFF;         /* White card background */
-  --text-dark: #2C2C2C;       /* Primary text */
-  --text-light: #FFFFFF;
-  --border-light: #be1d76;
+.manage-materials-wrapper {
+  /* This wrapper helps position the back button outside the main container */
+  position: relative;
+  padding-bottom: var(--spacing-xl); /* Space for the back button */
 }
 
 .manage-materials-container {
-    padding: 20px;
-    margin: 20px 0px;
-    width: 1310px;
-    margin-top: 20px;
-    background-color: transparent;
-    
-    /* --- ADD THESE TWO LINES --- */
-    max-height: 480px; /* Adjust this value as needed, e.g., 300px, 500px */
-    overflow-y: auto;  /* Adds a vertical scrollbar if content exceeds max-height */
-    /* -------------------------- */
-} 
+  background-color: var(--bg-color-white);
+  border-radius: var(--border-radius-large);
+  box-shadow: 0 5px 15px var(--shadow-light);
+  padding: var(--spacing-xl);
+  margin: var(--spacing-xl) auto; /* Top/bottom margin, auto left/right */
+  max-width: var(--content-max-width);
+  width: 100%;
+  box-sizing: border-box;
+  animation: fadeIn 0.6s ease-out;
+}
 
 .manage-materials-header {
-    color: #333;
-    margin-bottom: 25px;
-    text-align: center;
-    font-size: 1.8em;
+  text-align: center;
+  color: var(--gradient-blue-end);
+  margin-bottom: var(--spacing-lg);
+  font-size: 2rem;
+  font-weight: 700;
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 2px solid var(--border-color-light);
+  line-height: 1.3; /* Ensure text wraps nicely */
 }
 
-.materials-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+/* --- Messages (Loading, Error, System) --- */
+.loading-message,
+.error-message,
+.system-message {
+  text-align: center;
+  padding: var(--spacing-md);
+  margin: var(--spacing-md) auto;
+  border-radius: var(--border-radius-medium);
+  font-size: 1.1rem;
+  font-weight: 500;
+  max-width: 600px;
 }
 
-.material-item {
-    background-color: #fff;
-    border: 1px solid #dddddd;
-    border-radius: 6px;
-    margin-bottom: 15px;
-    padding: 15px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap; /* Allow wrapping for smaller screens */
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.material-item:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-
-.material-details {
-    flex-grow: 1;
-    padding-right: 15px;
-}
-
-.material-details h4 {
-    margin: 0 0 8px 0;
-    color: #da2187;
-    font-size: 1.2em;
-}
-
-.material-details p {
-    margin: 4px 0;
-    font-size: 0.95em;
-    color: #555;
-}
-
-.material-details a {
-    color: #da2187;
-    text-decoration: none;
-}
-
-.material-details a:hover {
-    text-decoration: underline;
-}
-
-.material-actions {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px; /* For smaller screens where wrapping occurs */
-}
-
-.material-actions button {
-    padding: 8px 15px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.9em;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-.edit-button {
-    background-color: var(--gradient-start); /* Green */
-    color: white;
-}
-
-.edit-button:hover {
-    background-color: #ffffff;
-    transform: translateY(-1px);
-    color: black;
-}
-
-.delete-button {
-    background-color: var(--gradient-end); /* Red */
-    color: white;
-}
-
-.delete-button:hover {
-    background-color: white;
-    transform: translateY(-1px);
-    color: black;
-}
-
-.no-materials-message {
-    text-align: center;
-    color: #777;
-    font-style: italic;
-    margin-top: 30px;
-}
-
-/* General loading and error messages (can be reused from DashboardStyles.css) */
 .loading-message {
-    text-align: center;
-    font-size: 1.1em;
-    color: #007bff;
-    margin: 20px 0;
+  background-color: #e0f2f7; /* Light blue */
+  color: var(--secondary-color-dark);
+  border: 1px solid #b3e5fc;
 }
 
 .error-message {
-    text-align: center;
-    font-size: 1.1em;
-    color: #dc3545;
-    margin: 20px 0;
-}
-
-.system-message {
-    padding: 10px;
-    margin-bottom: 20px;
-    border-radius: 5px;
-    text-align: center;
-    font-weight: bold;
+  background-color: #ffebee; /* Light red */
+  color: var(--danger-color-dark);
+  border: 1px solid #ef9a9a;
 }
 
 .system-message.success {
-    background-color: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
+  background-color: #e8f5e9; /* Light green */
+  color: var(--primary-color-dark);
+  border: 1px solid #c8e6c9;
 }
 
-.system-message.error {
-    background-color: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
+.system-message.error { /* For messages explicitly indicating error, e.g., 'Failed to delete' */
+  background-color: #ffebee;
+  color: var(--danger-color-dark);
+  border: 1px solid #ef9a9a;
 }
 
+/* --- Material Filters Section (Reusing from MaterialDisplayList) --- */
+.material-filters {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
+  padding: var(--spacing-md);
+  background-color: var(--bg-color-light);
+  border-radius: var(--border-radius-medium);
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.material-filters label {
+  font-weight: 600;
+  color: var(--text-color-dark);
+  margin-right: var(--spacing-xs);
+  align-self: center;
+}
+
+.material-filters select {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--border-color-light);
+  border-radius: var(--border-radius-medium);
+  background-color: var(--bg-color-white);
+  font-size: 1rem;
+  color: var(--text-color-dark);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 120px;
+}
+
+.material-filters select:hover {
+  border-color: var(--secondary-color);
+  box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+}
+
+.material-filters select:focus {
+  outline: none;
+  border-color: var(--secondary-color-dark);
+  box-shadow: 0 0 0 4px rgba(33, 150, 243, 0.2);
+}
+
+/* --- No Materials Found Message (Reusing) --- */
+.no-materials-found {
+  text-align: center;
+  padding: var(--spacing-xl);
+  margin: var(--spacing-lg) auto;
+  background-color: #fff3e0;
+  border: 1px solid #ffcc80;
+  border-radius: var(--border-radius-medium);
+  color: var(--text-color-dark);
+  font-size: 1.1rem;
+  box-shadow: var(--shadow-light);
+}
+
+.no-materials-found p {
+  margin: var(--spacing-sm) 0;
+}
+
+/* --- Materials List (Grid for Material Items) --- */
+.materials-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Adjust minmax as needed */
+  gap: var(--spacing-md);
+}
+
+.material-item {
+  background-color: var(--bg-color-white);
+  border: 1px solid var(--border-color-light);
+  border-radius: var(--border-radius-medium);
+  padding: var(--spacing-md);
+  box-shadow: 0 2px 8px var(--shadow-light);
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-align: left;
+}
+
+.material-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px var(--shadow-medium);
+  border-color: var(--primary-color); /* Highlight on hover, maybe green for admin */
+}
+
+.material-item .material-details h4 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-color-dark);
+  margin-top: 0;
+  margin-bottom: var(--spacing-sm);
+}
+
+.material-item .material-details p {
+  font-size: 0.95rem;
+  color: var(--text-color-light);
+  margin: var(--spacing-xs) 0;
+  line-height: 1.4;
+}
+
+.material-item .material-details a {
+  color: var(--secondary-color-dark);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.material-item .material-details a:hover {
+  text-decoration: underline;
+}
+
+/* --- Material Actions (Buttons) --- */
+.material-actions {
+  display: flex;
+  justify-content: flex-end; /* Align buttons to the right */
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-md);
+  padding-top: var(--spacing-sm);
+  border-top: 1px solid var(--border-color-light); /* Separator above buttons */
+}
+
+.material-actions button {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: none;
+  border-radius: var(--border-radius-small);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.edit-button {
+  background-color: var(--secondary-color); /* Blue for edit */
+  color: var(--text-color-inverted);
+}
+
+.edit-button:hover {
+  background-color: var(--secondary-color-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.delete-button {
+  background-color: var(--danger-color); /* Red for delete */
+  color: var(--text-color-inverted);
+}
+
+.delete-button:hover {
+  background-color: var(--danger-color-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* --- Back Button (at the bottom of the page) --- */
 .back-button {
-    display: block;
-    width: fit-content;
-    margin: 10px;
-    padding: 10px 20px;
-    background-color: #6c757d; /* Grey */
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+  display: block; /* Make it block level to center */
+  margin: var(--spacing-xl) auto; /* Center it below the main container */
+  background: linear-gradient(90deg, var(--gradient-blue-start), var(--gradient-blue-end)); /* Blue to Purple Gradient */
+  color: var(--text-color-inverted);
+  padding: var(--spacing-md) var(--spacing-xl);
+  border-radius: var(--border-radius-large);
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+  max-width: fit-content; /* Only take content width */
 }
 
 .back-button:hover {
-    background-color: #5a6268;
+  background: linear-gradient(90deg, #303F9F, #311B92); /* Darker shade on hover */
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+  .manage-materials-container {
+    padding: var(--spacing-lg);
+  }
+  .manage-materials-header {
+    font-size: 1.8rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .manage-materials-container {
+    padding: var(--spacing-md);
+    margin: var(--spacing-lg) auto;
+  }
+  .manage-materials-header {
+    font-size: 1.6rem;
+  }
+  .material-filters {
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+  }
+  .material-filters label {
+    margin-right: 0;
+  }
+  .material-filters select {
+    width: 80%;
+    max-width: 250px;
+  }
+  .materials-list {
+    grid-template-columns: 1fr; /* Stack materials on smaller screens */
+  }
+  .material-item {
+    padding: var(--spacing-sm);
+  }
+}
+
+@media (max-width: 480px) {
+  .manage-materials-header {
+    font-size: 1.4rem;
+  }
+  .material-item .material-details h4 {
+    font-size: 1.1rem;
+  }
+  .material-item .material-details p {
+    font-size: 0.85rem;
+  }
+  .material-actions button {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: 0.9rem;
+  }
+  .back-button {
+    padding: var(--spacing-sm) var(--spacing-lg);
+    font-size: 1rem;
+  }
 }

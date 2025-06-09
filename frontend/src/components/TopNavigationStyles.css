@@ -1,121 +1,186 @@
-/* frontend/src/components/TopNavigationStyles.css */
+/* src/components/TopNavigationStyles.css */
 :root {
-  --gradient-start: #a9ceff;  /* Light Pink */
-  --gradient-end: #e776f1;    /* Dark Pink */
-  --gradient-ui: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+  --primary-color: #4CAF50; /* Green - Used for general accents if no gradient */
+  --primary-color-dark: #388E3C;
+  --primary-color-light: #81C784;
 
-  --bg-light: #FAFAFA;        /* Soft light background */
-  --card-bg: #FFFFFF;         /* White card background */
-  --text-dark: #2C2C2C;       /* Primary text */
-  --text-light: #FFFFFF;
-  --border-light: #d6bbf8;
+  --secondary-color: #2196F3; /* Blue - Base for some gradients */
+  --secondary-color-dark: #1976D2;
+
+  --accent-color: #FFC107; /* Amber/Yellow */
+  --accent-color-dark: #FFA000;
+
+  --danger-color: #F44336; /* Red for errors/logout */
+  --danger-color-dark: #D32F2F;
+
+  /* Gradient colors */
+  --gradient-blue-start: #647af7; /* Indigo */
+  --gradient-blue-end: #2600ff;   /* Dark Purple */
+  --gradient-red-start: #eb0f97;  /* Pink */
+  --gradient-red-end: #e203ff;    /* Deep Purple */
+
+  --bg-color-light: #f5f5f5; /* Light gray background for page */
+  --bg-color-white: #ffffff; /* White background for cards/panels */
+
+  --text-color-dark: #333333;
+  --text-color-light: #757575;
+  --text-color-inverted: #ffffff; /* White text for dark/gradient backgrounds */
+
+  --border-color-light: #e0e0e0;
+  --border-color-dark: #9e9e9e; /* New: for gradient borders */
+
+  --shadow-light: rgba(0, 0, 0, 0.08);
+  --shadow-medium: rgba(0, 0, 0, 0.15);
+  --shadow-dark: rgba(0, 0, 0, 0.25);
+
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+
+  --border-radius-small: 4px;
+  --border-radius-medium: 8px;
+  --border-radius-large: 12px;
+
+  --font-heading: 'Roboto', sans-serif;
+  --font-body: 'Open Sans', sans-serif;
+
+  --content-max-width: 1200px; /* Max width for main content */
+  --top-nav-height: 70px; /* Approximate height of your TopNavigation. Adjust if needed. */
 }
+
+
 
 .top-navigation {
-    background: var(--gradient-ui) !important;
-    border-bottom: 1px solid var(--border-light);
-    position: fixed; /* Makes the element fixed relative to the viewport */
-    top: 0;          /* Positions it at the very top */
-    left: 0;         /* Positions it at the very left */
-    width: 100%;     /* Makes it span the full width of the screen */
-    z-index: 1000;   /* Ensures it stays on top of other content (choose a high number) */
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Optional: add a subtle shadow for separation */
-    /* Add any other styling like padding, height, etc. */
-    padding: 10px 20px; /* Example padding */
-    height: 60px; /* Example fixed height for calculations below */
-    display: flex; /* Example to align content inside */
-    align-items: center;
-    justify-content: space-between;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #667eea, #764ba2); /* Blue to Purple Gradient */
+  padding: var(--spacing-md) var(--spacing-lg);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 10px var(--shadow-light);
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
 }
 
-
-
-.nav-left .nav-link {
-    font-size: 1.6em;
-    font-weight: bold;
-    color: var(--gradient-ui);
-    text-decoration: none;
-    transition: color 0.2s ease;
-}
-
-.nav-left .nav-link:hover {
-    color: #000000; /* Lighter blue on hover */
+.nav-left h2 {
+  color: var(--text-color-inverted); /* White title text */
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  font-family: var(--font-heading);
 }
 
 .nav-right {
-    display: flex;
-    align-items: center;
-    gap: 25px; /* Space between nav items */
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
 }
 
 .nav-link {
-    color: white;
-    text-decoration: none;
-    font-size: 1.1em;
-    padding: 5px 0; /* Add padding for click area */
-    transition: color 0.2s ease, border-bottom 0.2s ease;
+  color: var(--text-color-inverted); /* White link text */
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1rem;
+  padding: 0.5rem 0.8rem;
+  border-radius: var(--border-radius-small);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  background: transparent; /* Remove default background */
+  border: 1px solid var(--border-color-light); /* Add a border */
 }
 
 .nav-link:hover {
-    color: #000000;
+  background-color: rgba(255, 255, 255, 0.1); /* Light white background on hover */
+  color: var(--text-color-inverted);
 }
 
-.logout-link {
-    cursor: pointer; /* Indicate it's clickable */
+.nav-link.logout-link {
+  background: linear-gradient(90deg, #D81B60, #8E24AA); /* Pink to Purple Gradient */
+  color: var(--text-color-inverted);
+  padding: 0.6rem 1.2rem;
+  border-radius: var(--border-radius-medium);
+  font-weight: 600;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border: none; /* Remove border */
 }
 
-/* NEW STYLES FOR PROFILE DROPDOWN */
+.nav-link.logout-link:hover {
+  background: linear-gradient(90deg, #C2185B, #6A1B9A); /* Darker shade on hover */
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  color: var(--text-color-inverted);
+}
+
+/* Profile Dropdown Container (if you decide to implement it later) */
 .nav-profile-dropdown {
-    position: relative; /* Establishes positioning context for its children */
-    cursor: pointer; /* Indicate it's clickable */
+  position: relative;
+  display: inline-block;
 }
 
 
 
-
-/* The container for the ProfileManagement component */
-.profile-options-container {
-    /* These styles make it appear as a dropdown directly below "Profile" */
-    position: absolute;
-    top: calc(100% + 10px); /* Position 10px below the bottom of .profile-toggle */
-    right: 0; /* Align to the right edge of the .nav-profile-dropdown parent */
-    /* The actual styling of the dropdown box (background, shadow etc.) will be in ProfileManagementStyles.css */
-    /* This container mainly helps with positioning in relation to the nav bar */
+.profile-dropdown-content {
+  position: absolute;
+  background-color: var(--bg-color-white);
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px var(--shadow-medium);
+  z-index: 1;
+  border-radius: var(--border-radius-medium);
+  overflow: hidden;
+  right: 0;
+  top: calc(100% + 5px);
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  pointer-events: none;
 }
 
-/* Optional: Adjustments for smaller screens */
+.nav-profile-dropdown.active .profile-dropdown-content {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: all;
+}
+
+.profile-dropdown-content a {
+  color: var(--text-color-dark);
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  font-weight: 400;
+  transition: background-color 0.2s ease;
+}
+
+.profile-dropdown-content a:hover {
+  background-color: var(--bg-color-light);
+  color: var(--primary-color);
+}
+
+/* Responsive Adjustments */
 @media (max-width: 768px) {
-    .top-navigation {
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 10px 20px;
-    }
+  .top-navigation {
+    flex-direction: column;
+    padding: var(--spacing-sm);
+    gap: var(--spacing-sm);
+  }
 
-    .nav-right {
-        flex-direction: column;
-        align-items: flex-start;
-        width: 100%;
-        gap: 10px;
-        margin-top: 10px;
-    }
+  .nav-right {
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    width: 100%;
+  }
 
-    .nav-link {
-        width: 100%;
-        text-align: left;
-        padding: 5px 0;
-    }
+  .nav-link {
+    width: 100%;
+    text-align: center;
+    padding: 0.8rem 1rem;
+  }
 
-    .nav-profile-dropdown {
-        width: 100%;
-    }
-
-    .profile-options-container {
-        /* On small screens, you might want it to fill more width or be a modal */
-        width: 100%;
-        left: 0; /* Align left */
-        right: auto; /* Remove right alignment */
-        top: calc(100% + 5px); /* Keep it just below the toggle */
-        /* If you want it as a full-screen modal, more complex positioning would be needed */
-    }
+  .nav-left h2 {
+    font-size: 1.5rem;
+  }
 }

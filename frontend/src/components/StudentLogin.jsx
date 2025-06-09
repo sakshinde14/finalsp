@@ -53,7 +53,7 @@ function StudentLogin() {
     };
 
     return (
-                <div className="auth-container">
+            <div className="auth-container">
             <h2 className="auth-title">Student Login</h2>
 
             {/* --- NEW: Conditional rendering for the custom popup message --- */}
@@ -89,7 +89,7 @@ function StudentLogin() {
                         placeholder="Your password"
                     />
                 </div>
-                <button type="submit" className="form-button">Login</button>
+                <button type="submit" className="login-form-button">Login</button>
             </form>
             <div className="toggle-link-container">
                 Don't have an account? <Link to="/signup/student" className="toggle-link">Sign Up</Link>

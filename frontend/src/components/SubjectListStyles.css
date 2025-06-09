@@ -1,98 +1,78 @@
-/* SubjectListStyles.css - Modern & Clean */
+/* src/components/SubjectListStyles.css */
 
-.list-container {
-  max-width: 600px;
-  margin: 2rem auto;
-  padding: 20px 30px;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: #333;
+.subject-list-container { /* Renamed from .list-container for clarity */
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* Adjust minmax for subject items */
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  margin-top: var(--spacing-lg);
+  justify-content: center;
+  align-items: stretch; /* Ensures cards are same height */
+  background-color: var(--bg-color-white); /* Add background for the whole list container */
+  border-radius: var(--border-radius-large);
+  box-shadow: 0 5px 15px var(--shadow-light);
+  padding-bottom: var(--spacing-lg); /* Add some bottom padding */
+}
+
+/* Style for the heading inside SubjectList */
+.subject-list-container h3 {
+  grid-column: 1 / -1; /* Make the heading span all columns */
   text-align: center;
-}
-
-.list-container h3 {
-  margin-bottom: 20px;
-  font-weight: 700;
-  font-size: 1.5rem;
-  color: #222;
-}
-
-.item-list {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 25px 0;
-  max-height: 300px;
-  overflow-y: auto;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-}
-
-.list-item {
-  padding: 14px 18px;
-  border-bottom: 1px solid #eee;
-  cursor: pointer;
-  color: #444;
+  color: var(--gradient-blue-end); /* Consistent heading color */
+  margin: var(--spacing-md) 0 var(--spacing-lg) 0; /* Adjust margin for spacing */
+  font-size: 1.8rem;
   font-weight: 600;
-  transition: background-color 0.25s ease, color 0.25s ease;
-  user-select: none;
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 1px solid var(--border-color-light); /* Subtle separator */
 }
 
-.list-item:last-child {
-  border-bottom: none;
-}
-
-.list-item:hover,
-.list-item:focus {
-  background-color: #88bec0;
-  color: rgb(0, 0, 0);
-  outline: none;
-}
-
-.loading-message,
-.error-message,
-.no-data-message {
-  max-width: 600px;
-  margin: 3rem auto;
-  padding: 1rem 1.5rem;
-  border-radius: 10px;
-  font-size: 1.1rem;
-  font-weight: 600;
+/* Specific styles for messages within SubjectList (consistent with others) */
+.subject-list-message {
   text-align: center;
-  user-select: none;
+  font-size: 1.2rem;
+  color: var(--text-color-light);
+  padding: var(--spacing-xl);
+  grid-column: 1 / -1; /* Make messages span all columns */
 }
 
-.loading-message {
-  background-color: #e6f0ff;
-  color: #0056b3;
-}
-
-.error-message {
-  background-color: #ffe6e6;
-  color: #cc0000;
+.subject-list-error {
+  color: var(--danger-color);
+  font-weight: 600;
 }
 
 .no-data-message {
-  background-color: #fff7e6;
-  color: #b37400;
+    text-align: center;
+    font-size: 1.2rem;
+    color: var(--text-color-light);
+    padding: var(--spacing-xl);
+    grid-column: 1 / -1; /* Make messages span all columns */
+    background-color: var(--bg-color-white); /* Ensure background is white for no-data card */
+    border-radius: var(--border-radius-medium);
+    box-shadow: var(--shadow-light);
+    margin: var(--spacing-md) auto;
+    max-width: 500px;
 }
 
-.back-button {
-  background-color: #7fb4b6;
-  color: white;
-  border: none;
-  padding: 0.8rem 2.5rem;
-  font-size: 1.1rem;
-  font-weight: 700;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  user-select: none;
+/* Inherit styles from .list-item-card defined in DashboardStyles.css */
+/* Ensure DashboardStyles.css is loaded before this component's CSS for .list-item-card */
+.subject-list-container .list-item-card {
+  /* No specific overrides needed here unless unique styling is desired */
 }
 
-.back-button:hover,
-.back-button:focus {
-  background-color: #446a6b;
-  outline: none;
+/* Responsive adjustments specific to the subject list */
+@media (max-width: 768px) {
+  .subject-list-container {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    padding: var(--spacing-md);
+  }
+  .subject-list-container h3 {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .subject-list-container {
+    grid-template-columns: 1fr; /* Stack items vertically on very small screens */
+    padding: var(--spacing-sm);
+  }
 }

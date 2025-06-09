@@ -1,5 +1,6 @@
 // SemesterList.jsx
 import React, { useState, useEffect } from 'react';
+import './SemesterListStyles.css'; // Import the new styles
 
 function SemesterList({ onSemesterSelect, courseCode, selectedYear }) {
     const [semesters, setSemesters] = useState([]);
@@ -11,8 +12,6 @@ function SemesterList({ onSemesterSelect, courseCode, selectedYear }) {
         if (!courseCode || !selectedYear) {
             setSemesters([]); // Clear any previous semesters
             setLoading(false);
-            // Optionally, you might want to set an error or message here if it's expected
-            // that courseCode and selectedYear should always be present when this component renders.
             return; // Exit early, no fetch needed yet
         }
 
@@ -23,9 +22,8 @@ function SemesterList({ onSemesterSelect, courseCode, selectedYear }) {
             try {
                 // Construct the URL dynamically using the props
                 const response = await fetch(`http://localhost:5000/api/courses/${courseCode}/years/${selectedYear}/semesters`);
-                
+
                 if (!response.ok) {
-                    // Provide more specific error messages for debugging
                     if (response.status === 404) {
                         throw new Error(`Data not found for Course: ${courseCode}, Year: ${selectedYear}. Please check your selections and database.`);
                     }
@@ -46,11 +44,11 @@ function SemesterList({ onSemesterSelect, courseCode, selectedYear }) {
     }, [courseCode, selectedYear]); // Dependency array: re-run useEffect when these props change
 
     if (loading) {
-        return <div className="loading-message">Loading semesters...</div>;
+        return <div className="semester-list-message">Loading semesters...</div>;
     }
 
     if (error) {
-        return <div className="error-message">Error: {error}</div>;
+        return <div className="semester-list-message semester-list-error">Error: {error}</div>;
     }
 
     // Display a message if no semesters are returned (e.g., if a year has no semesters)
@@ -60,15 +58,16 @@ function SemesterList({ onSemesterSelect, courseCode, selectedYear }) {
 
     return (
         <div className="semester-list">
-            <h2>Select Semester</h2>
+            <h2>Select Semester</h2> {/* Heading for the semester list */}
             {semesters.map((semester) => (
-                <button 
-                    key={semester} 
-                    onClick={() => onSemesterSelect(semester)} 
-                    className="semester-button"
+                // Use a div with list-item-card class for consistent styling
+                <div
+                    key={semester}
+                    onClick={() => onSemesterSelect(semester)}
+                    className="list-item-card" // Apply the consistent list item card style
                 >
                     Semester {semester}
-                </button>
+                </div>
             ))}
         </div>
     );

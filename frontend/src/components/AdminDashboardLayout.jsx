@@ -381,11 +381,9 @@ function AdminDashboardLayout() {
                 {/* --- End NEW --- */}
 
                 
-
-
-                <h3>Search for your subject: </h3>
                 {!selectedSubject && !showAddMaterialForm && !showManageMaterialsPanel && (
                     <div className="search-bar-container">
+                        <h3>Search for your subject: </h3>
                         <input 
                             type="text" 
                             placeholder="Search for subjects..."

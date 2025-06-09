@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import './CourseListStyles.css'; // Import the new styles
 
 function CourseList({ onCourseSelect }) {
     const [courses, setCourses] = useState([]);
@@ -25,19 +26,20 @@ function CourseList({ onCourseSelect }) {
     }, []);
 
     if (loading) {
-        return <div>Loading courses...</div>;
+        return <div className="course-list-message">Loading courses...</div>;
     }
 
     if (error) {
-        return <div>Error loading courses: {error}</div>;
+        return <div className="course-list-message course-list-error">Error loading courses: {error}</div>;
     }
 
     return (
         <div className="course-list">
             {courses.map((course) => (
-                <button key={course.code} onClick={() => onCourseSelect(course)} className="course-button">
+                // Use a div with list-item-card class for consistent styling
+                <div key={course.code} onClick={() => onCourseSelect(course)} className="list-item-card">
                     {course.title}
-                </button>
+                </div>
             ))}
         </div>
     );

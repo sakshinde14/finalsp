@@ -1,181 +1,308 @@
-/* frontend/src/components/AdminDashboardStyles.css */
-
+/* src/components/AdminDashboardStyles.css */
 :root {
-  --gradient-start: #ffabce;  /* Light Pink */
-  --gradient-end: #88041a;    /* Dark Pink */
-  --gradient-ui: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+  --primary-color: #4CAF50; /* Green - Used for general accents if no gradient */
+  --primary-color-dark: #388E3C;
+  --primary-color-light: #81C784;
 
-  --bg-light: #FAFAFA;        /* Soft light background */
-  --card-bg: #FFFFFF;         /* White card background */
-  --text-dark: #2C2C2C;       /* Primary text */
-  --text-light: #FFFFFF;
-  --border-light: #ff9dd3;
+  --secondary-color: #2196F3; /* Blue - Base for some gradients */
+  --secondary-color-dark: #1976D2;
+
+  --accent-color: #FFC107; /* Amber/Yellow */
+  --accent-color-dark: #FFA000;
+
+  --danger-color: #F44336; /* Red for errors/logout */
+  --danger-color-dark: #D32F2F;
+
+  /* Gradient colors */
+  --gradient-blue-start: #647af7; /* Indigo */
+  --gradient-blue-end: #2600ff;   /* Dark Purple */
+  --gradient-red-start: #eb0f97;  /* Pink */
+  --gradient-red-end: #e203ff;    /* Deep Purple */
+
+  --bg-color-light: #f5f5f5; /* Light gray background for page */
+  --bg-color-white: #ffffff; /* White background for cards/panels */
+
+  --text-color-dark: #333333;
+  --text-color-light: #757575;
+  --text-color-inverted: #ffffff; /* White text for dark/gradient backgrounds */
+
+  --border-color-light: #e0e0e0;
+  --border-color-dark: #9e9e9e; /* New: for gradient borders */
+
+  --shadow-light: rgba(0, 0, 0, 0.08);
+  --shadow-medium: rgba(0, 0, 0, 0.15);
+  --shadow-dark: rgba(0, 0, 0, 0.25);
+
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+
+  --border-radius-small: 4px;
+  --border-radius-medium: 8px;
+  --border-radius-large: 12px;
+
+  --font-heading: 'Roboto', sans-serif;
+  --font-body: 'Open Sans', sans-serif;
+
+  --content-max-width: 1200px; /* Max width for main content */
+  --top-nav-height: 0px; /* Approximate height of your TopNavigation. Adjust if needed. */
 }
 
-body {
-    font-family: sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: var(--background-light);
-    color: var(--text-primary);
-}
 
+
+/* --- Main Admin Dashboard Container --- */
 .admindashboard-container {
-    max-width: none !important;
-    display: flex;
-    flex-direction: column;
-    width: 95vw;
-    height: 100%;
-    margin: 2px 15px;
-    padding: 20px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--bg-color-light);
+  font-family: var(--font-body);
+  color: var(--text-color-dark);
 }
 
-
+/* --- Main Content Area (Adjusted for Top Navigation) --- */
 .main-content {
-    flex: 1;
-    margin: 0;
-    padding: 0;
-    width: 90vw;
-    height: 95%;
-    background-color: var(--background-light); /* Light background */
+  flex-grow: 1;
+  padding: calc(var(--top-nav-height) + var(--spacing-lg)) var(--spacing-md) var(--spacing-lg);
+  position: relative;
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Define a CSS variable for top navigation height, matching your TopNavigationStyles.css */
+:root {
+    --top-nav-height: 0px; /* Approximate height.  Adjust if needed. */
 }
 
 
+/* --- Welcome Message (Specific to Admin Dashboard) --- */
 .welcome-message {
-    margin: 0px auto 10px auto;
-    text-align: center;
-    font-size: 1.8em;
-    color:#721c24;
+  text-align: center;
+  padding: var(--spacing-xs);
+  margin-bottom: var(--spacing-xs);
+  /*color:rgb(255, 255, 255);*/
+  border-radius: var(--border-radius-large);
+  box-shadow: 0 10px 30px var(--shadow-medium);
+  font-size: 2.2rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  animation: fadeInScale 0.8s ease-out;
 }
 
-/* Styles for the search bar */
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* --- Logout Popup Message (Reused from DashboardStyles) --- */
+.logout-popup {
+  position: fixed;
+  top: calc(var(--top-nav-height) + var(--spacing-md));
+  left: 50%;
+  transform: translateX(-50%);
+  width: auto;
+  max-width: 90%;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--border-radius-medium);
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-color-inverted);
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  animation: slideDownFadeIn 0.5s ease-out forwards;
+  will-change: transform, opacity;
+}
+
+.logout-popup.success {
+  background-color: var(--primary-color);
+}
+
+.logout-popup.error {
+  background-color: var(--danger-color);
+}
+
+@keyframes slideDownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* --- Search Bar Container (Reused from DashboardStyles) --- */
 .search-bar-container {
-    margin: 10px 50px 30px 50px; /* Add some space below the search bar */
-    text-align: center;
-    background-color: transparent;
-    display: flex;
-    justify-content: center;
-    padding: 10px;
+  max-width: 600px;
+  margin: var(--spacing-md) auto var(--spacing-lg) auto;
+  padding: 0 var(--spacing-sm);
 }
 
 .search-input {
-    width: 80%;
-    padding: 12px 20px;
-    border: 1px solid #ddd;
-    border-radius: 25px; /* More rounded search bar */
-    font-size: 1.1em;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.08);
-    transition: all 0.3s ease;
+  width: 100%;
+  padding: var(--spacing-sm);
+  border: 1px solid var(--border-color-light);
+  border-radius: 70px;
+  font-size: 1.1rem;
+  font-family: var(--font-body);
+  color: var(--text-color-dark);
+  box-shadow: 0 2px 8px var(--shadow-light);
+  transition: all 0.3s ease;
 }
 
 .search-input:focus {
-    border-color: var(--gradient-end);
-    box-shadow: 0 0 0 2px var(--gradient-start);
-    outline: none;
-}
-  
-.subject-title-header {
-    text-align: center;
-    color: #df1c7d;
-    font-size: 30px;
+  border-color: var(--secondary-color);
+  box-shadow: 0 0 0 4px rgba(33, 150, 243, 0.2);
+  outline: none;
 }
 
-/* Styles for the admin action buttons at the bottom */
-.admin-actions-bottom {
-    margin: 20px auto 20px auto; /* More vertical space, centered */
-    display: flex;
-    justify-content: center; /* Center the buttons within the container */
-    gap: 25px; /* Increase space between buttons */
-    max-width: 1300px;
-    flex-wrap: wrap; /* Allow wrapping if space is too small */
+.search-input::placeholder {
+  color: var(--text-color-light);
+  opacity: 0.8;
 }
 
-.admin-action-button {
-    padding: 14px 28px; /* Slightly larger padding for better click area */
-    border: none;
-    border-radius: 8px; /* Nicely rounded corners */
-    cursor: pointer;
-    font-size: 1.05em; /* Slightly larger font */
-    font-weight: 600; /* Bolder text */
-    color: white; /* White text */
-    background-color: #d85396;
-    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2); /* Subtle shadow for depth */
-    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-    min-width: 220px; /* Ensure a minimum width for consistency */
-    text-align: center;
-}
-
-.admin-action-button:hover {
-    background-color: #e2068e; /* Darker blue on hover */
-    transform: translateY(-3px); /* Lift effect on hover */
-    box-shadow: 0 6px 15px rgba(0, 123, 255, 0.3); /* Enhanced shadow on hover */
-}
-
-.admin-action-button:active {
-    transform: translateY(0); /* Press down effect */
-    box-shadow: 0 2px 5px rgba(0, 123, 255, 0.2);
-}
-
-/* General message styles */
-.system-message {
-    padding: 12px;
-    margin-bottom: 20px;
-    border-radius: 8px;
-    text-align: center;
-    font-weight: bold;
-    font-size: 1.05em;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-.system-message.success {
-    background-color: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
-}
-
-.system-message.error {
-    background-color: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
-}
-
+/* --- General Message Styles (Loading, Error) (Reused from DashboardStyles) --- */
 .loading-message,
 .error-message {
-    text-align: center;
-    font-size: 1.1em;
-    padding: 20px 0;
+  text-align: center;
+  padding: var(--spacing-md);
+  margin: var(--spacing-lg) auto;
+  border-radius: var(--border-radius-medium);
+  font-size: 1.1rem;
+  font-weight: 500;
+  max-width: 500px;
+  box-shadow: 0 2px 8px var(--shadow-light);
+  animation: fadeIn 0.5s ease-out;
 }
 
 .loading-message {
-    color: #007bff;
+  background-color: var(--bg-color-white);
+  color: var(--text-color-light);
+  border: 1px solid var(--border-color-light);
 }
 
 .error-message {
-    color: #dc3545;
+  background-color: #ffebee;
+  color: var(--danger-color);
+  border: 1px solid var(--danger-color);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* --- Subject Materials View Specifics (Reused from DashboardStyles) --- */
+.subject-materials-view {
+  background-color: var(--bg-color-white);
+  border-radius: var(--border-radius-large);
+  box-shadow: 0 5px 15px var(--shadow-light);
+  padding: var(--spacing-xl);
+  margin: var(--spacing-lg) auto;
+  max-width: 900px;
+  width: 100%;
+  text-align: center;
+  animation: fadeIn 0.6s ease-out;
+}
+
+.subject-title-header {
+  font-size: 2rem;
+  color: var(--primary-color);
+  margin-bottom: var(--spacing-lg);
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 2px solid var(--border-color-light);
+}
+
+/* --- Back Buttons (Reused from DashboardStyles) --- */
+.back-button {
+  background: linear-gradient(90deg, #3F51B5, #4A148C); /* Blue to Purple Gradient */
+  color: var(--text-color-inverted);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--border-radius-medium);
+  font-weight: 500;
+  margin-top: var(--spacing-lg);
+  display: inline-block;
+  text-align: center;
+  box-shadow: 0 2px 5px var(--shadow-light);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: none; /* Remove default button border */
+}
+
+.back-button:hover {
+  background: linear-gradient(90deg, #303F9F, #311B92); /* Darker shade on hover */
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px var(--shadow-medium);
 }
 
 
+/* --- Admin Action Buttons --- */
+.admin-actions-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-xl);
+  padding-top: var(--spacing-lg);
+  border-top: 1px dashed var(--border-color-light);
+}
 
-/* Responsive adjustments for smaller screens */
-@media (max-width: 768px) {
-    .search-input {
-        width: 80%;
-    }
+.admin-action-button {
+    background: linear-gradient(90deg, #3F51B5, #4A148C); /* Blue to Purple Gradient */
+    color: var(--text-color-inverted);
+    padding: var(--spacing-md) var(--spacing-xl);
+    border-radius: var(--border-radius-large);
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
 
-    .admin-actions-bottom {
-        /* REMOVE OR COMMENT OUT THIS LINE IF YOU WANT THEM ALWAYS SIDE-BY-SIDE: */
-        /* flex-direction: column; */
-        gap: 15px; /* Adjust gap */
-        padding: 15px;
-    }
+.admin-action-button:hover {
+    background: linear-gradient(90deg, #303F9F, #311B92); /* Darker shade on hover */
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+}
 
-    .admin-action-button {
-        /* If you keep flex-direction: column, you might want these: */
-        /* min-width: unset; */ /* Remove min-width to allow full width */
-        /* width: 100%; */ /* Make buttons full width */
+/* --- Navigation Section (for CourseList, YearList, etc.) --- */
+.navigation-section {
+  padding: var(--spacing-lg);
+  background-color: var(--bg-color-white);
+  border-radius: var(--border-radius-large);
+  box-shadow: 0 5px 15px var(--shadow-light);
+  margin: var(--spacing-lg) auto;
+  max-width: 800px;
+  animation: fadeIn 0.6s ease-out;
+}
 
-        /* If you want them side-by-side even on small screens, adjust min-width or remove width: 100% */
-        min-width: unset; /* Allow buttons to shrink if needed to stay side-by-side */
-        flex-grow: 1; /* Allow buttons to grow and take equal space */
-    }
+.navigation-section h3 {
+  text-align: center;
+  color: var(--primary-color);
+  margin-bottom: var(--spacing-lg);
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+/* Ensure the h3 "Search for your subject:" is styled nicely */
+.main-content h3 {
+    text-align: center;
+    color: var(--text-color-dark);
+    margin-top: var(--spacing-lg);
+    margin-bottom: var(--spacing-md);
+    font-size: 1.5rem;
 }

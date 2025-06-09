@@ -10,8 +10,9 @@ import SubjectList from './SubjectList';
 import SearchResultsList from './SearchResultsList';
 import MaterialDisplayList from './MaterialDisplayList';
 
+import './AdminDashboardStyles.css';
 import './DashboardStyles.css'; // Ensure this contains your new message styles
-
+import './CourseListStyles.css';
 function DashboardLayout() {
     const navigate = useNavigate();
 

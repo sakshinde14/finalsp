@@ -1,6 +1,6 @@
 // frontend/src/components/MaterialDisplayList.jsx
 import React, { useState } from 'react';
-import './MaterialDisplayListStyles.css';
+import './MaterialDisplayListStyles.css'; // Import the new CSS file
 
 function MaterialDisplayList({ materials }) {
     const [selectedCategory, setSelectedCategory] = useState('All');
@@ -29,31 +29,34 @@ function MaterialDisplayList({ materials }) {
 
         return categoryMatch && formatMatch;
     });
-    
+
     return (
         <div className="material-display-list-container">
-            
+
             <h4>Study Materials</h4>
 
             <div className="material-filters">
-                <label htmlFor="category">Material Category:</label>
-                <select id="category" value={selectedCategory} onChange={handleCategoryChange}>
-                    <option value="All">All</option>
-                    <option value="Syllabus">Syllabus</option>
-                    <option value="Notes">Notes</option>
-                    <option value="Paper">Papers</option>
-                </select>
+                <div> {/* Group label and select for category */}
+                    <label htmlFor="category">Material Category:</label>
+                    <select id="category" value={selectedCategory} onChange={handleCategoryChange}>
+                        <option value="All">All</option>
+                        <option value="Syllabus">Syllabus</option>
+                        <option value="Notes">Notes</option>
+                        <option value="Paper">Papers</option>
+                    </select>
+                </div>
 
-                <label htmlFor="format" style={{ marginLeft: '15px' }}>Material Format:</label>
-                <select id="format" value={selectedFormat} onChange={handleFormatChange}>
-                    <option value="All">All</option>
-                    <option value="PDF">PDF</option>
-                    <option value="Image">Image</option> {/* Added Image filter option */}
-                    <option value="Document">Document</option> {/* Added Document filter option */}
-                    <option value="Video">Video</option>
-                    <option value="Link">Link</option>
-                    {/* Removed Text filter option */}
-                </select>
+                <div> {/* Group label and select for format */}
+                    <label htmlFor="format">Material Format:</label>
+                    <select id="format" value={selectedFormat} onChange={handleFormatChange}>
+                        <option value="All">All</option>
+                        <option value="PDF">PDF</option>
+                        <option value="Image">Image</option>
+                        <option value="Document">Document</option>
+                        <option value="Video">Video</option>
+                        <option value="Link">Link</option>
+                    </select>
+                </div>
             </div>
 
             {filteredMaterials.length === 0 ? (
@@ -65,8 +68,8 @@ function MaterialDisplayList({ materials }) {
                 <ul className="material-items-grid">
                     {filteredMaterials.map((material) => (
                         <li key={material._id || material.contentUrl || material.textContent} className="material-item-card">
-                            <h4>{material.materialCategory.toUpperCase()}</h4>
-                            <p className="material-title">{material.title}</p> {/* Added a class for title */}
+                            <h4>{material.materialCategory?.toUpperCase()}</h4>
+                            <p className="material-title">{material.title}</p>
 
                             {/* Conditional rendering for different material formats */}
                             {material.materialFormat === 'PDF' && material.contentUrl && (
@@ -74,7 +77,7 @@ function MaterialDisplayList({ materials }) {
                             )}
 
                             {material.materialFormat === 'Image' && material.contentUrl && (
-                            <p><a href={`${BASE_URL}${material.contentUrl}`} target="_blank" rel="noopener noreferrer" className="material-action-link">View Image in New Tab</a></p>
+                                <p><a href={`${BASE_URL}${material.contentUrl}`} target="_blank" rel="noopener noreferrer" className="material-action-link">View Image</a></p>
                             )}
 
                             {material.materialFormat === 'Document' && material.contentUrl && (
@@ -88,13 +91,16 @@ function MaterialDisplayList({ materials }) {
                             {material.materialFormat === 'Link' && material.contentUrl && (
                                 <p><a href={material.contentUrl} target="_blank" rel="noopener noreferrer" className="material-action-link">Visit Link</a></p>
                             )}
-                            
-                            {material.uploadedBy && (
-                                <p className="material-info">Uploaded By: {material.uploadedBy}</p>
-                            )}
-                            {material.uploadedAt && (
-                                <p className="material-info">Uploaded: {new Date(material.uploadedAt).toLocaleDateString()}</p>
-                            )}
+
+                            {/* Added more specific info styling */}
+                            <div className="material-info-section">
+                                {material.uploadedBy && (
+                                    <p className="material-info">Uploaded By: {material.uploadedBy}</p>
+                                )}
+                                {material.uploadedAt && (
+                                    <p className="material-info">Uploaded: {new Date(material.uploadedAt).toLocaleDateString()}</p>
+                                )}
+                            </div>
                         </li>
                     ))}
                 </ul>

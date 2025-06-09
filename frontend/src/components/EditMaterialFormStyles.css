@@ -1,112 +1,174 @@
-/* frontend/src/components/EditMaterialFormStyles.css */
+/* src/components/EditMaterialFormStyles.css */
 
 .edit-material-form-container {
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    margin: 20px auto;
-    max-width: 600px;
+  background-color: var(--bg-color-white);
+  border-radius: var(--border-radius-large);
+  box-shadow: 0 5px 15px var(--shadow-medium); /* Slightly stronger shadow for forms */
+  padding: var(--spacing-xl);
+  margin: var(--spacing-xl) auto; /* Center the form */
+  max-width: 600px; /* Limit form width for better readability */
+  width: 100%;
+  box-sizing: border-box;
+  animation: fadeIn 0.5s ease-out; /* Smooth fade-in */
 }
 
 .edit-material-form-container h3 {
-    color: #333;
-    margin-bottom: 20px;
-    text-align: center;
-    font-size: 1.5em;
+  text-align: center;
+  color: var(--gradient-blue-end);
+  margin-bottom: var(--spacing-lg);
+  font-size: 1.8rem;
+  font-weight: 700;
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 2px solid var(--border-color-light);
 }
 
-.edit-material-form-container .form-group {
-    margin-bottom: 15px;
+/* --- Messages (Success/Error) --- */
+.success-message,
+.error-message {
+  text-align: center;
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+  border-radius: var(--border-radius-medium);
+  font-size: 1rem;
+  font-weight: 500;
 }
 
-.edit-material-form-container label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-    color: #555;
+.success-message {
+  background-color: #e8f5e9; /* Light green */
+  color: var(--primary-color-dark);
+  border: 1px solid #c8e6c9;
 }
 
-.edit-material-form-container input[type="text"],
-.edit-material-form-container input[type="url"],
-.edit-material-form-container select,
-.edit-material-form-container textarea {
-    width: calc(100% - 20px); /* Adjust for padding */
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 1em;
-    box-sizing: border-box; /* Include padding in width */
+.error-message {
+  background-color: #ffebee; /* Light red */
+  color: var(--danger-color-dark);
+  border: 1px solid #ef9a9a;
 }
 
-.edit-material-form-container textarea {
-    resize: vertical; /* Allow vertical resizing */
+/* --- Form Groups --- */
+.form-group {
+  margin-bottom: var(--spacing-md);
 }
 
-.edit-material-form-container .read-only {
-    background-color: #e9ecef;
-    cursor: not-allowed;
+.form-group label {
+  display: block; /* Label on top of input */
+  margin-bottom: var(--spacing-xs);
+  font-weight: 600;
+  color: var(--text-color-dark);
+  font-size: 1rem;
 }
 
-.edit-material-form-container .form-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-top: 20px;
+.form-group input[type="text"],
+.form-group input[type="url"],
+.form-group select {
+  width: 100%;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--border-color-light);
+  border-radius: var(--border-radius-small);
+  font-size: 1rem;
+  color: var(--text-color-dark);
+  background-color: var(--bg-color-white);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  box-sizing: border-box; /* Include padding/border in width */
 }
 
-.edit-material-form-container .submit-button,
-.edit-material-form-container .cancel-button {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1em;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
+.form-group input[type="text"]:focus,
+.form-group input[type="url"]:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--secondary-color);
+  box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1); /* Subtle blue glow */
 }
 
-.edit-material-form-container .submit-button {
-    background-color: #007bff;
-    color: white;
+/* --- Read-only Fields --- */
+.form-group input.read-only {
+  background-color: var(--bg-color-light); /* Lighter background for read-only */
+  color: var(--text-color-light);
+  cursor: not-allowed;
+  border-style: dashed; /* Indicate it's not editable */
 }
 
-.edit-material-form-container .submit-button:hover:not(:disabled) {
-    background-color: #0056b3;
+.form-group input.read-only:focus {
+    box-shadow: none; /* Remove glow on focus for read-only */
+    border-color: var(--border-color-light); /* Keep border consistent */
 }
 
-.edit-material-form-container .submit-button:disabled {
-    background-color: #cccccc;
-    cursor: not-allowed;
+/* --- Form Hint Text --- */
+.form-hint {
+  display: block; /* Ensures it's on its own line */
+  font-size: 0.85rem;
+  color: var(--text-color-light);
+  margin-top: var(--spacing-xs);
 }
 
-.edit-material-form-container .cancel-button {
-    background-color: #6c757d;
-    color: white;
+/* --- Form Actions (Buttons) --- */
+.form-actions {
+  display: flex;
+  justify-content: flex-end; /* Align buttons to the right */
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-xl);
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--border-color-light);
 }
 
-.edit-material-form-container .cancel-button:hover {
-    background-color: #5a6268;
+.form-actions button {
+  padding: var(--spacing-md) var(--spacing-xl);
+  border: none;
+  border-radius: var(--border-radius-medium);
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-.edit-material-form-container .success-message {
-    background-color: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
-    padding: 10px;
-    margin-bottom: 15px;
-    border-radius: 5px;
-    text-align: center;
-    font-weight: bold;
+.submit-button {
+  background: linear-gradient(90deg, var(--gradient-blue-start), var(--gradient-blue-end)); /* Blue to Purple Gradient */
+  color: var(--text-color-inverted);
 }
 
-.edit-material-form-container .error-message {
-    background-color: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
-    padding: 10px;
-    margin-bottom: 15px;
-    border-radius: 5px;
-    text-align: center;
-    font-weight: bold;
+.submit-button:hover:not(:disabled) {
+  background: linear-gradient(90deg, #303F9F, #311B92); /* Darker shade on hover */
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.submit-button:disabled {
+  background-color: var(--bg-color-light);
+  color: var(--text-color-light);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.cancel-button {
+  background-color: var(--danger-color); /* Red for cancel */
+  color: var(--text-color-inverted);
+}
+
+.cancel-button:hover {
+  background-color: var(--danger-color-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .edit-material-form-container {
+    padding: var(--spacing-lg);
+    margin: var(--spacing-lg) auto;
+  }
+  .edit-material-form-container h3 {
+    font-size: 1.6rem;
+  }
+  .form-actions {
+    flex-direction: column; /* Stack buttons on small screens */
+    align-items: center;
+    gap: var(--spacing-sm);
+  }
+  .form-actions button {
+    width: 80%; /* Make buttons wider */
+    max-width: 250px;
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: 1rem;
+  }
 }

@@ -1,17 +1,18 @@
 // frontend/src/components/EditMaterialForm.jsx
 import React, { useState, useEffect } from 'react';
-import './EditMaterialFormStyles.css'; // Add your styles here
+import './EditMaterialFormStyles.css'; // Your custom styles
 
-function EditMaterialForm({ material, onUpdate, onCancel }) {
+function EditMaterialForm({ material, onUpdate, onCancel, selectedContext }) { // Added selectedContext prop
     const [formData, setFormData] = useState({
         title: material.title || '',
         materialFormat: material.materialFormat || '',
         materialCategory: material.materialCategory || '',
         contentUrl: material.contentUrl || '',
-        courseCode: material.courseCode || '',
-        year: material.year || '',
-        semester: material.semester || '',
-        subject: material.subject || '',
+        // Use selectedContext for consistent context if available, fallback to material
+        courseCode: selectedContext?.courseCode || material.courseCode || '',
+        year: selectedContext?.year || material.year || '',
+        semester: selectedContext?.semester || material.semester || '',
+        subject: selectedContext?.subject || material.subject || '',
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -24,14 +25,14 @@ function EditMaterialForm({ material, onUpdate, onCancel }) {
             materialFormat: material.materialFormat || '',
             materialCategory: material.materialCategory || '',
             contentUrl: material.contentUrl || '',
-            courseCode: material.courseCode || '',
-            year: material.year || '',
-            semester: material.semester || '',
-            subject: material.subject || '',
+            courseCode: selectedContext?.courseCode || material.courseCode || '',
+            year: selectedContext?.year || material.year || '',
+            semester: selectedContext?.semester || material.semester || '',
+            subject: selectedContext?.subject || material.subject || '',
         });
         setError(null);
         setMessage('');
-    }, [material]);
+    }, [material, selectedContext]); // Depend on selectedContext too
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -51,14 +52,12 @@ function EditMaterialForm({ material, onUpdate, onCancel }) {
             return;
         }
 
-        // --- MODIFIED VALIDATION LOGIC ---
         // Only validate contentUrl for 'Video' and 'Link' formats, where it's direct user input
         if (['Video', 'Link'].includes(formData.materialFormat) && !formData.contentUrl) {
             setError('Content URL is required for Video and External Link formats.');
             setLoading(false);
             return;
         }
-        // --- END MODIFIED VALIDATION LOGIC ---
 
         try {
             const payload = { ...formData };
@@ -68,6 +67,7 @@ function EditMaterialForm({ material, onUpdate, onCancel }) {
 
             // Remove fileName and textContent from payload if they exist,
             // as this PUT endpoint handles metadata and contentUrl, not file re-uploads or text content updates directly.
+            // These would be handled by a separate file upload mechanism if implemented.
             if ('fileName' in payload) {
                 delete payload.fileName;
             }
@@ -130,35 +130,34 @@ function EditMaterialForm({ material, onUpdate, onCancel }) {
                     <label>Material Category:</label>
                     <select name="materialCategory" value={formData.materialCategory} onChange={handleChange} required>
                         <option value="">Select Category</option>
-                        <option value="syllabus">Syllabus</option>
-                        <option value="notes">Notes</option>
-                        <option value="paper">Previous Year Paper</option>
+                        <option value="Syllabus">Syllabus</option>
+                        <option value="Notes">Notes</option>
+                        <option value="Paper">Previous Year Paper</option>
+                        {/* Add other categories if needed */}
                     </select>
                 </div>
 
-                {/* Content URL field is now displayed conditionally and is read-only for file uploads */}
+                {/* Content URL field is displayed if it's one of the relevant formats */}
                 {(['PDF', 'Image', 'Document', 'Video', 'Link'].includes(formData.materialFormat)) && (
                     <div className="form-group">
                         <label>Content URL:</label>
-                        {/* --- MODIFIED INPUT FIELD --- */}
                         <input
                             type="url"
                             name="contentUrl"
                             value={formData.contentUrl}
                             onChange={handleChange}
-                            readOnly={isContentUrlReadOnly} // Add this prop
-                            className={isContentUrlReadOnly ? 'read-only' : ''} // Add a class for styling read-only state
+                            readOnly={isContentUrlReadOnly}
+                            className={isContentUrlReadOnly ? 'read-only' : ''}
                         />
-                        {/* --- END MODIFIED INPUT FIELD --- */}
                         <small className="form-hint">
                             {isContentUrlReadOnly
-                                ? "This is the current file path (read-only for uploaded files)."
-                                : "Enter the URL for Video/External Link."}
+                                ? "This is the current file path (read-only for uploaded files like PDF/Image/Document). To change the file, you would need a new upload mechanism."
+                                : "Enter the full URL for Video/External Link (e.g., YouTube link, external website)."}
                         </small>
                     </div>
                 )}
 
-                {/* Display current context as read-only */}
+                {/* Display current context as read-only, making it clear what material is being edited */}
                 <div className="form-group">
                     <label>Course Code:</label>
                     <input type="text" value={formData.courseCode} readOnly className="read-only" />

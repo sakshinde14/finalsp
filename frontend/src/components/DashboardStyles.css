@@ -1,289 +1,338 @@
-/* DashboardStyles.css */
+/* src/components/DashboardStyles.css */
 
-/* Light Purple Theme */
+/* --- Root Variables for Global Styling (ensure these are in an accessible global CSS file, e.g., src/index.css) --- */
+/* If you don't have a global variables file, you can place this at the very top of DashboardStyles.css or AdminDashboardStyles.css */
 :root {
-    --primary-color: #a8dadc; /* Light cyan/blue for primary elements */
-    --secondary-color: #457b9d; /* Darker blue for accents */
-    --background-light: #f1faee; /* Very light green/white for light backgrounds */
-    --text-primary: #1d3557; /* Dark blue for primary text */
-    --text-secondary: #6c757d; /* Gray for secondary text */
-    --accent-color: #e63946; /* Red/pink for important accents */
-    --hover-color: #cce5ed; /* Lighter cyan/blue for hover effects */
+  --primary-color: #4CAF50; /* Green - Used for general accents if no gradient */
+  --primary-color-dark: #388E3C;
+  --primary-color-light: #81C784;
+
+  --secondary-color: #2196F3; /* Blue - Base for some gradients */
+  --secondary-color-dark: #1976D2;
+
+  --accent-color: #FFC107; /* Amber/Yellow */
+  --accent-color-dark: #FFA000;
+
+  --danger-color: #F44336; /* Red for errors/logout */
+  --danger-color-dark: #D32F2F;
+
+  /* Gradient colors */
+  --gradient-blue-start: #647af7; /* Indigo */
+  --gradient-blue-end: #2600ff;   /* Dark Purple */
+  --gradient-red-start: #eb0f97;  /* Pink */
+  --gradient-red-end: #e203ff;    /* Deep Purple */
+
+  --bg-color-light: #f5f5f5; /* Light gray background for page */
+  --bg-color-white: #ffffff; /* White background for cards/panels */
+
+  --text-color-dark: #333333;
+  --text-color-light: #757575;
+  --text-color-inverted: #ffffff; /* White text for dark/gradient backgrounds */
+
+  --border-color-light: #e0e0e0;
+  --border-color-dark: #9e9e9e; /* New: for gradient borders */
+
+  --shadow-light: rgba(0, 0, 0, 0.08);
+  --shadow-medium: rgba(0, 0, 0, 0.15);
+  --shadow-dark: rgba(0, 0, 0, 0.25);
+
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+
+  --border-radius-small: 4px;
+  --border-radius-medium: 8px;
+  --border-radius-large: 12px;
+
+  --font-heading: 'Roboto', sans-serif;
+  --font-body: 'Open Sans', sans-serif;
+
+  --content-max-width: 1200px; /* Max width for main content */
+  --top-nav-height: 10px; /* Approximate height of your TopNavigation. Adjust if needed. */
 }
 
-body {
-    font-family: sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: var(--background-light);
-    color: var(--text-primary);
-}
 
+/* --- Main Dashboard Container --- */
 .dashboard-container {
-    max-width: none !important;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    background-color: var(--background-light); /* Light background */
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--bg-color-light);
+  font-family: var(--font-body);
+  color: var(--text-color-dark);
 }
 
-.dashboard-content {
-    display: flex;
-    flex: 1;
-    background-color: var(--background-light); /* Light background */
-}
-
+/* --- Main Content Area (Adjusted for Top Navigation) --- */
 .main-content {
-    flex: 1;
-  /*position: fixed;
-    margin-top: 20px;*/
-    width: 100vw;
-    padding: 20px;
-    background-color: var(--background-light); /* Light background */
-    /* Assuming your TopNavigation has a height of, say, 60px */
-    padding-top: 80px; /* Adjust this value to be slightly more than your nav bar's height + any desired space */
-    /* Add any other styling for your main content area */
+  flex-grow: 1;
+  /* Crucial: Add top padding to clear the fixed TopNavigation */
+  /*padding: calc(var(--top-nav-height) + var(--spacing-lg)) var(--spacing-md) var(--spacing-lg);
+  */position: relative;
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-
-.top-navigation {
-    background-color: var(--primary-color); /* Light purple/blue navigation */
-    border-bottom: 1px solid var(--secondary-color);
-    position: fixed; /* Makes the element fixed relative to the viewport */
-    top: 0;          /* Positions it at the very top */
-    left: 0;         /* Positions it at the very left */
-    width: 100%;     /* Makes it span the full width of the screen */
-    z-index: 1000;   /* Ensures it stays on top of other content (choose a high number) */
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Optional: add a subtle shadow for separation */
-    /* Add any other styling like padding, height, etc. */
-    padding: 10px 20px; /* Example padding */
-    height: 60px; /* Example fixed height for calculations below */
-    display: flex; /* Example to align content inside */
-    align-items: center;
-    justify-content: space-between;
-}
-
-
-.top-navigation a {
-    color: var(--text-primary);
-    text-decoration: none;
-    margin-left: 15px;
-}
-
-.top-navigation a:hover {
-    color: var(--accent-color);
-}
-
-.course {
-    margin-top: 40px;
-}
-
-.ppl {
-    color: var(--text-primary); /* Ensure text color is readable */
-}
-
+/* --- Welcome Message --- */
 .welcome-message {
-    margin: 5px;
-    text-align: center;
-    font-size: 1.8em;
-    color: var(--text-primary);
+  text-align: center;
+  padding: var(--spacing-xs);
+  margin-bottom: var(--spacing-xs);
+  /*background: linear-gradient(135deg, var(--gradient-red-start) 10%, var(--gradient-red-end) 100%); /* Blue/Purple Gradient */
+  color: rgb(134, 12, 108);
+  border-radius: var(--border-radius-large);
+  box-shadow: 0 10px 30px var(--shadow-medium);
+  font-size: 2.2rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  animation: fadeInScale 0.8s ease-out;
 }
 
-/* Styles for the search bar */
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* --- Logout Popup Message --- */
+.logout-popup {
+  position: fixed;
+  top: calc(var(--top-nav-height) + var(--spacing-md));
+  left: 50%;
+  transform: translateX(-50%);
+  width: auto;
+  max-width: 90%;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--border-radius-medium);
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-color-inverted);
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  animation: slideDownFadeIn 0.5s ease-out forwards;
+  will-change: transform, opacity;
+}
+
+.logout-popup.success {
+  background: linear-gradient(90deg, var(--primary-color), var(--primary-color-dark)); /* Green gradient for success */
+}
+
+.logout-popup.error {
+  background: linear-gradient(90deg, var(--danger-color), var(--danger-color-dark)); /* Red gradient for errors */
+}
+
+@keyframes slideDownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* --- Search Bar Container --- */
 .search-bar-container {
-    margin: 10px 50px 30px ; /* Add some space below the search bar */
-    text-align: center;
-    background-color: var(--background-light);
-    display: flex;
-    justify-content: center;
-    padding: 20px;
+  max-width: 600px;
+  margin: var(--spacing-md) auto var(--spacing-lg) auto;
+  padding: 0 var(--spacing-sm);
 }
 
 .search-input {
-    width: 80%; /* Adjust width as needed */
-    padding: 10px;
-    border: 1px solid var(--secondary-color);
-    border-radius: 5px;
-    font-size: 1em;
-    color: var(--text-primary);
+  width: 100%;
+  padding: var(--spacing-sm);
+  border: 1px solid var(--border-color-light);
+  border-radius: 70px;
+  font-size: 1.1rem;
+  font-family: var(--font-body);
+  color: var(--text-color-dark);
+  box-shadow: 0 2px 8px var(--shadow-light);
+  transition: all 0.3s ease;
 }
 
 .search-input:focus {
-    outline: none;
-    border-color: var(--accent-color); /* Highlight on focus */
-    box-shadow: 0 0 5px rgba(69, 123, 157, 0.5);
+  border-color: var(--secondary-color);
+  box-shadow: 0 0 0 4px rgba(33, 150, 243, 0.2);
+  outline: none;
 }
 
-.course-list {
-    margin-top: 20px;
-    padding: 0 20px;
+.search-input::placeholder {
+  color: var(--text-color-light);
+  opacity: 0.8;
 }
 
-.course-button {
-    display: block;
+/* --- General Message Styles (Loading, Error) --- */
+.loading-message,
+.error-message {
+  text-align: center;
+  padding: var(--spacing-md);
+  margin: var(--spacing-lg) auto;
+  border-radius: var(--border-radius-medium);
+  font-size: 1.1rem;
+  font-weight: 500;
+  max-width: 500px;
+  box-shadow: 0 2px 8px var(--shadow-light);
+  animation: fadeIn 0.5s ease-out;
+}
+
+.loading-message {
+  background-color: var(--bg-color-white);
+  color: var(--text-color-light);
+  border: 1px solid var(--border-color-light);
+}
+
+.error-message {
+  background-color: #ffebee;
+  color: var(--danger-color);
+  border: 1px solid var(--danger-color);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* --- Subject Materials View Specifics --- */
+.subject-materials-view {
+  background-color: var(--bg-color-white);
+  border-radius: var(--border-radius-large);
+  box-shadow: 0 5px 15px var(--shadow-light);
+  padding: var(--spacing-xl);
+  margin: var(--spacing-lg) auto;
+  max-width: 900px;
+  width: 100%;
+  text-align: center;
+  animation: fadeIn 0.6s ease-out;
+}
+
+.subject-title-header {
+  font-size: 2rem;
+  color: var(--gradient-blue-end); /* Use a darker purple from the gradient */
+  margin-bottom: var(--spacing-lg);
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 2px solid var(--border-color-light);
+}
+
+/* --- Back Buttons (Now with Gradient) --- */
+.back-button {
+  background: linear-gradient(90deg, var(--gradient-blue-start), var(--gradient-blue-end)); /* Blue to Purple Gradient */
+  color: var(--text-color-inverted);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--border-radius-medium);
+  font-weight: 500;
+  margin-top: var(--spacing-lg);
+  display: inline-block;
+  text-align: center;
+  box-shadow: 0 2px 5px var(--shadow-light);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: none;
+}
+
+.back-button:hover {
+  background: linear-gradient(90deg, #303F9F, #311B92); /* Darker shade on hover */
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px var(--shadow-medium);
+}
+
+/* --- Navigation Section (for CourseList, YearList, etc.) --- */
+.navigation-section {
+  padding: var(--spacing-lg);
+  background-color: var(--bg-color-white);
+  border-radius: var(--border-radius-large);
+  box-shadow: 0 5px 15px var(--shadow-light);
+  margin: var(--spacing-lg) auto;
+  max-width: 800px;
+  animation: fadeIn 0.6s ease-out;
+}
+
+.navigation-section h3 {
+  text-align: center;
+  color: var(--gradient-blue-end); /* Use a darker purple from the gradient */
+  margin-bottom: var(--spacing-lg);
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+/* Ensure the h3 "Search for your subject:" is styled nicely */
+.main-content h3 {
+    text-align: center;
+    color: var(--text-color-dark);
+    margin-top: var(--spacing-lg);
+    margin-bottom: var(--spacing-md);
+    font-size: 1.5rem;
+}
+
+
+/* --- List Item Styles (e.g., CourseListItem, YearListItem, SubjectListItem) --- */
+/* Assuming a common class for clickable list items in your components */
+.list-item-card {
+  background-color: var(--bg-color-white);
+  border: 1px solid var(--border-color-light);
+  border-radius: var(--border-radius-medium);
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-sm);
+  cursor: pointer;
+  box-shadow: 0 2px 8px var(--shadow-light);
+  transition: all 0.3s ease;
+  text-align: center; /* Center content in list items */
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--text-color-dark);
+}
+
+.list-item-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px var(--shadow-medium);
+  border-color: var(--gradient-blue-start); /* Border highlight on hover */
+}
+
+/* If you have specific active/selected states for list items, you can add: */
+.list-item-card.active {
+  background: linear-gradient(45deg, var(--gradient-blue-start), var(--gradient-blue-end));
+  color: var(--text-color-inverted);
+  border-color: var(--gradient-blue-end);
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 768px) {
+  .main-content {
+    padding: calc(var(--top-nav-height) + var(--spacing-md)) var(--spacing-sm) var(--spacing-md);
+  }
+
+  .welcome-message {
+    font-size: 1.75rem;
+    padding: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .subject-materials-view {
+    padding: var(--spacing-md);
+    margin: var(--spacing-md) var(--spacing-sm);
+  }
+
+  .subject-title-header {
+    font-size: 1.75rem;
+    margin-bottom: var(--spacing-md);
+  }
+
+  .back-button {
     width: 100%;
-    padding: 12px;
-    margin-bottom: 8px;
-    border: 1px solid var(--secondary-color);
-    border-radius: 5px;
-    text-align: left;
-    cursor: pointer;
-    background-color: var(--primary-color);
-    color: var(--text-primary);
-    font-size: 1em;
-    transition: background-color 0.3s ease;
-}
+    padding: var(--spacing-md);
+  }
 
-.course-button:hover {
-    background-color: var(--hover-color);
-}
-
-.year-list,
-.semester-list,
-.subject-list {
-    margin-top: 20px;
-    padding: 0 20px;
-}
-
-.year-list h2,
-.semester-list h2,
-.subject-list h2 {
-    color: var(--secondary-color);
-    margin-bottom: 15px;
-    text-align: center;
-}
-
-.year-button,
-.semester-button {
-    display: block;
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 8px;
-    border: 1px solid var(--secondary-color);
-    border-radius: 5px;
-    text-align: center;
-    cursor: pointer;
-    background-color: var(--primary-color);
-    color: var(--text-primary);
-    font-size: 1em;
-    transition: background-color 0.3s ease;
-}
-
-.year-button:hover,
-.semester-button:hover {
-    background-color: var(--hover-color);
-}
-
-.subject-list div {
-    padding: 10px;
-    margin-bottom: 5px;
-    border-bottom: 1px solid var(--secondary-color);
-}
-
-.subject-list div:last-child {
-    border-bottom: none;
-}
-
-.subject-list button { /* Back to Course Selection button */
-    background-color: var(--accent-color);
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1em;
-    margin-bottom: 15px;
-    transition: background-color 0.3s ease;
-}
-
-.subject-list button:hover {
-    background-color: #d32f2f; /* Darker red */
-}
-
-/* Add these styles to your DashboardStyles.css or TopNavigation's dedicated CSS file */
-
-.nav-links {
-    /* Ensure this container is also participating in stacking context */
-    position: relative; /* This is important for z-index of children sometimes */
-    z-index: 1001; /* A slightly higher z-index than its parent, just in case */
-    display: flex; /* Assuming it's a flex container for the links */
-    gap: 20px; /* Adds space between "Profile" and "Logout" */
-    align-items: center; /* Vertically align items in the middle */
-}
-
-.nav-links span { /* These styles apply to your 'Profile' and 'Logout' spans */
-    cursor: pointer; /* Makes it visually clear they are clickable */
-    padding: 5px 10px; /* Gives a slightly larger area to click on */
-    user-select: none; /* Prevents text from being highlighted on rapid clicks */
-    color: var(--text-primary); /* Use your theme variable for text color */
-    font-weight: bold; /* Example style */
-    transition: color 0.2s ease; /* Smooth transition on hover */
-}
-
-.nav-links span:hover {
-    color: var(--accent-color); /* Change color on hover, like your 'a:hover' */
-}*/
-
-/* In DashboardStyles.css */
-
-.logout-alert {
-    padding: 15px;
-    margin-bottom: 20px;
-    border-radius: 8px;
-    font-weight: bold;
-    text-align: center;
-    opacity: 1;
-    transition: opacity 0.5s ease-in-out;
-}
-
-.logout-alert.success {
-    background-color: #d4edda; /* Light green */
-    color: #155724; /* Dark green text */
-    border: 1px solid #c3e6cb;
-}
-
-.logout-alert.error {
-    background-color: #f8d7da; /* Light red */
-    color: #721c24; /* Dark red text */
-    border: 1px solid #f5c6cb;
-}
-
-/* DashboardStyles.css */
-
-/* ... (your existing styles) ... */
-
-/* Styles for the Logout success/error message popup */
-.logout-popup {
-    position: fixed; /* Fixed position relative to the viewport */
-    top: 13.5%; /* Just below your navigation bar (adjust if nav height changes) */
-    left: 50%; /* Center horizontally */
-    transform: translateX(-50%); /* Adjust for perfect centering */
-    padding: 15px 25px;
-    border-radius: 8px;
-    font-size: 1.1em;
-    font-weight: bold;
-    color: #fff;
-    text-align: center;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    z-index: 1000; /* Ensure it's above other content */
-    opacity: 0; /* Start hidden */
-    animation: fadeInOut 2.5s forwards; /* Animation for fade in and fade out */
-}
-
-/* Specific styles for success message */
-.logout-popup.success {
-    background-color: #b950b9; /* Green for success */
-}
-
-/* Specific styles for error message */
-.logout-popup.error {
-    background-color: #f44336; /* Red for error */
-}
-
-/* Fade In/Out Animation */
-@keyframes fadeInOut {
-    0% { opacity: 0; transform: translateX(-50%) translateY(-20px); } /* Start slightly above and transparent */
-    10% { opacity: 1; transform: translateX(-50%) translateY(0); } /* Fade in and move to position */
-    90% { opacity: 1; transform: translateX(-50%) translateY(0); } /* Stay visible for most of the duration */
-    100% { opacity: 0; transform: translateX(-50%) translateY(-20px); } /* Fade out and move up */
+  .list-item-card {
+    font-size: 1rem;
+    padding: var(--spacing-sm);
+  }
 }

@@ -1,0 +1,65 @@
+/* src/components/SemesterListStyles.css */
+
+.semester-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* Adjust minmax for semester items */
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  margin-top: var(--spacing-lg);
+  justify-content: center;
+  align-items: stretch;
+}
+
+.semester-list h2 {
+  grid-column: 1 / -1; /* Make the heading span all columns */
+  text-align: center;
+  color: var(--gradient-blue-end); /* Consistent heading color */
+  margin-bottom: var(--spacing-lg);
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+/* Inherit styles from .list-item-card defined in DashboardStyles.css */
+.semester-list .list-item-card {
+  /* No specific overrides needed here unless unique styling is desired */
+}
+
+/* Specific styles for messages within SemesterList (consistent with CourseList) */
+.semester-list-message {
+  text-align: center;
+  font-size: 1.2rem;
+  color: var(--text-color-light);
+  padding: var(--spacing-xl);
+  grid-column: 1 / -1; /* Make messages span all columns */
+}
+
+.semester-list-error {
+  color: var(--danger-color);
+  font-weight: 600;
+}
+
+.no-data-message {
+    text-align: center;
+    font-size: 1.2rem;
+    color: var(--text-color-light);
+    padding: var(--spacing-xl);
+    grid-column: 1 / -1; /* Make messages span all columns */
+    background-color: var(--bg-color-white);
+    border-radius: var(--border-radius-medium);
+    box-shadow: var(--shadow-light);
+    margin: var(--spacing-md) auto;
+    max-width: 500px;
+}
+
+
+/* Responsive adjustments specific to the semester list */
+@media (max-width: 600px) {
+  .semester-list {
+    grid-template-columns: 1fr; /* Stack items vertically on smaller screens */
+    padding: var(--spacing-sm);
+  }
+
+  .semester-list h2 {
+    font-size: 1.5rem;
+  }
+}
