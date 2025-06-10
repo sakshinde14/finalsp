@@ -14,7 +14,7 @@ function TopNavigation({ onLogout }) {
     return (
         <nav className="top-navigation">
             <div className="nav-left">
-                <h2>STUDY PORTAL</h2>
+                <h2><Link to="/LandingPage">STUDY PORTAL</Link></h2>
             </div>
             <div className="nav-right">
                 {/* Add the "My Notes" link here */}

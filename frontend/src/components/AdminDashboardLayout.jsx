@@ -46,7 +46,7 @@ function AdminDashboardLayout() {
     // --- NEW STATES FOR COURSE MANAGEMENT ---
     const [showManageCoursesPanel, setShowManageCoursesPanel] = useState(false);
     const [showCourseForm, setShowCourseForm] = useState(false); // True for add/edit course form
-    const [editingCourseData, setEditingCourseData] = useState(null); // Holds data of course being edited
+    const [editingCourseData, setEditingCourseData] = useState(); // Holds data of course being edited
     const [courseListRefreshKey, setCourseListRefreshKey] = useState(0); // To force re-fetch of course list
     // --- END NEW STATES ---
 

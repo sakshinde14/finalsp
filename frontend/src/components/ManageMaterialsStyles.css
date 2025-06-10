@@ -132,7 +132,7 @@
   padding: 0;
   margin: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Adjust minmax as needed */
+  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); /* Adjust minmax as needed */
   gap: var(--spacing-md);
 }
 
@@ -165,7 +165,7 @@
 
 .material-item .material-details p {
   font-size: 0.95rem;
-  color: var(--text-color-light);
+  color: darkblue;
   margin: var(--spacing-xs) 0;
   line-height: 1.4;
 }

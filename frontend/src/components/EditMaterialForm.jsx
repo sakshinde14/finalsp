@@ -130,9 +130,9 @@ function EditMaterialForm({ material, onUpdate, onCancel, selectedContext }) { /
                     <label>Material Category:</label>
                     <select name="materialCategory" value={formData.materialCategory} onChange={handleChange} required>
                         <option value="">Select Category</option>
-                        <option value="Syllabus">Syllabus</option>
-                        <option value="Notes">Notes</option>
-                        <option value="Paper">Previous Year Paper</option>
+                        <option value="syllabus">Syllabus</option>
+                        <option value="notes">Notes</option>
+                        <option value="paper">Previous Year Paper</option>
                         {/* Add other categories if needed */}
                     </select>
                 </div>

@@ -69,11 +69,11 @@ function MaterialDisplayList({ materials }) {
                     {filteredMaterials.map((material) => (
                         <li key={material._id || material.contentUrl || material.textContent} className="material-item-card">
                             <h4>{material.materialCategory?.toUpperCase()}</h4>
-                            <p className="material-title">{material.title}</p>
+                            <p className="mic-title">{material.title}</p>
 
                             {/* Conditional rendering for different material formats */}
                             {material.materialFormat === 'PDF' && material.contentUrl && (
-                                <p><a href={`${BASE_URL}${material.contentUrl}`} target="_blank" rel="noopener noreferrer" className="material-action-link">View PDF Document</a></p>
+                                <p className='smlink'><a href={`${BASE_URL}${material.contentUrl}`} target="_blank" rel="noopener noreferrer" className="material-action-link">View PDF Document</a></p>
                             )}
 
                             {material.materialFormat === 'Image' && material.contentUrl && (

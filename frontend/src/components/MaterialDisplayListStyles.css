@@ -16,9 +16,8 @@
   text-align: center;
   color: var(--gradient-blue-end); /* Consistent heading color */
   margin-bottom: var(--spacing-lg);
-  font-size: 2.2rem;
+  font-size: 25px;
   font-weight: 700;
-  padding-bottom: var(--spacing-sm);
   border-bottom: 2px solid var(--border-color-light); /* Separator */
 }
 
@@ -113,21 +112,25 @@
 }
 
 .material-item-card h4 { /* Category heading inside card */
-  font-size: 1.1rem;
-  color: var(--secondary-color-dark); /* A darker blue for category */
+  text-align: center;
+  color: var(--gradient-blue-end); /* Consistent heading color */
+  font-size: 25px;
+  font-weight: 700;
+  margin: 0;
+  border-bottom: 2px solid var(--border-color-light); /* Separator */
+}
+
+.mic-title { /* Category heading inside card */
+  color: rgb(228, 136, 151); /* A darker blue for category */
+  font-size: 25px;
   margin-top: 0;
-  margin-bottom: var(--spacing-sm);
+  margin-bottom: 0;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
-
-.material-item-card h3 { /* Category heading inside card */
-  font-size: 1.1rem;
-  color: var(--secondary-color-dark); /* A darker blue for category */
-  margin-top: 0;
-  margin-bottom: var(--spacing-sm);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+.smlink {
+  margin: 0;
+  padding: 0;
 }
 
 .material-item-card .material-title {
