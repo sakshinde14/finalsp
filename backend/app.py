@@ -1,17 +1,15 @@
 from flask import Flask, request, jsonify, session, send_from_directory
-from werkzeug.security import check_password_hash, generate_password_hash
-from werkzeug.utils import secure_filename # NEW: Import for secure file uploads
+from werkzeug.security import check_password_hash, generate_password_hash # Not directly used for bcrypt, but kept if you have other uses
+from werkzeug.utils import secure_filename
 from pymongo import MongoClient
 from bcrypt import hashpw, checkpw, gensalt
-from bson.binary import Binary
+from bson.binary import Binary # Not directly used for password, but kept if you use for other binary data
 from flask_cors import CORS
 from datetime import datetime
 from bson.objectid import ObjectId
-import os # NEW: Import for file system operations
-from functools import wraps # NEW: Import for decorators
+import os
+from functools import wraps
 import uuid
-from bson import ObjectId
-
 
 # --- Configuration ---
 MONGO_URI = "mongodb+srv://sakshi:gaurinde@cluster0.vpbqv.mongodb.net/sp_db?retryWrites=true&w=majority&appName=Cluster0"
@@ -24,27 +22,21 @@ STUDY_MATERIALS_COLLECTION = "study_materials"
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'a_very_long_and_random_secret_key_here_that_is_unique_and_not_guessable'
 CORS(app, supports_credentials=True)
-#CORS(app, resources={r"/api/*": {"origins": "http://localhost:5173"}}, supports_credentials=True)
 
-# --- File Upload Configuration for Admin Materials --- Define the upload folder. It's good practice to place it within a static directory.Ensure this directory exists! Example: your_project_root/static/uploads/admin_materials
+# --- File Upload Configuration for Admin Materials ---
 UPLOAD_MATERIALS_FOLDER = os.path.join(app.root_path, 'static', 'uploads', 'admin_materials')
-# Create the upload folder if it doesn't exist
 if not os.path.exists(UPLOAD_MATERIALS_FOLDER):
     os.makedirs(UPLOAD_MATERIALS_FOLDER)
 app.config['UPLOAD_MATERIALS_FOLDER'] = UPLOAD_MATERIALS_FOLDER
 
-
-# --- NEW: File Upload Configuration for User Notes ---
+# --- File Upload Configuration for User Notes ---
 UPLOAD_USER_NOTES_FOLDER = os.path.join(app.root_path, 'static', 'uploads', 'user_notes')
-# Create the upload folder if it doesn't exist
 if not os.path.exists(UPLOAD_USER_NOTES_FOLDER):
     os.makedirs(UPLOAD_USER_NOTES_FOLDER)
 app.config['UPLOAD_USER_NOTES_FOLDER'] = UPLOAD_USER_NOTES_FOLDER
 
-
 # Allowed extensions for admin-uploaded materials
-ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg', 'gif', 'doc', 'docx', 'txt'} # Added document extensions
-
+ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg', 'gif', 'doc', 'docx', 'txt'}
 
 # Helper function to check allowed file extensions
 def allowed_file(filename):
@@ -59,7 +51,6 @@ admins_collection = db[ADMIN_COLLECTION]
 courses_collection = db[COURSE_COLLECTION]
 study_materials_collection = db[STUDY_MATERIALS_COLLECTION]
 
-
 @app.route('/')
 def hello_world():
     return 'Hello, World!'
@@ -72,13 +63,9 @@ def test_database_connection():
     except Exception as e:
         return f"Could not connect to MongoDB Atlas: {e}"
     
-
 def is_student():
     print(f"DEBUG: Inside is_student(). Session: {session.get('role')}")
     return session.get('role') == 'student'
-
-from functools import wraps
-from flask import session, jsonify
 
 def login_required(role=None):
     def decorator(f):
@@ -122,19 +109,15 @@ def login_student():
     if not email or not password:
         return jsonify({'message': 'Missing email or password'}), 400
 
-    # This is the line that was missing or out of place in your snippet!
     student = students_collection.find_one({'email': email})
 
     if student:
-        # This is the line that was missing or out of place in your snippet!
         stored_password = student.get('password')
 
         if stored_password is None:
-            # Handle case where password field might be missing (e.g., old data, or corruption)
             print(f"DEBUG: Password hash not found for student: {email}")
             return jsonify({'message': 'Internal error: Password data missing for user.'}), 500
         
-        # Ensure stored_password is bytes before checking
         if isinstance(stored_password, str):
             stored_password_bytes = stored_password.encode('utf-8')
         elif isinstance(stored_password, bytes):
@@ -143,18 +126,17 @@ def login_student():
             print(f"DEBUG: Unexpected type for stored password: {type(stored_password)}")
             return jsonify({'message': 'Invalid stored password format.'}), 500
 
-
         if checkpw(password.encode('utf-8'), stored_password_bytes):
             session['user_id'] = str(student['_id'])
             session['username'] = student['fullName']
             session['role'] = 'student'
-            print(f"DEBUG: Student login successful for {email}. Session after login: {session}") # <--- Add this
+            print(f"DEBUG: Student login successful for {email}. Session after login: {session}")
             return jsonify({'message': 'Student login successful', 'role': 'student'}), 200
         else:
-            print(f"DEBUG: Student login failed for {email} - incorrect password. Session: {session}") # <--- Add this for incorrect password
+            print(f"DEBUG: Student login failed for {email} - incorrect password. Session: {session}")
             return jsonify({'message': 'Invalid credentials'}), 401
     else:
-        print(f"DEBUG: Student login failed for {email} - user not found. Session: {session}") # <--- Add this for user not found
+        print(f"DEBUG: Student login failed for {email} - user not found. Session: {session}")
         return jsonify({'message': 'Invalid credentials'}), 401
 
 @app.route('/api/auth/login/admin', methods=['POST'])
@@ -184,7 +166,6 @@ def check_auth():
         return jsonify({'isAuthenticated': True, 'role': session['role'], 'username': session['username']}), 200
     return jsonify({'isAuthenticated': False}), 200
 
-
 @app.route('/api/logout', methods=['POST'])
 def logout_user():
     session.clear()
@@ -199,10 +180,32 @@ def admin_setup():
     admins_collection.insert_one({'username': 'superadmin', 'password': hashed_password, 'role': 'admin'})
     return jsonify({'message': 'Superadmin created successfully'}), 201
 
+# --- Public Course Browse Endpoints ---
 @app.route('/api/courses', methods=['GET'])
-def get_courses():
-    courses = list(courses_collection.find({}, {'_id': 0, 'code': 1, 'title': 1}))
-    return jsonify(courses), 200
+def get_all_courses():
+    all_courses_from_db = []
+    for course_doc in courses_collection.find({}):
+        total_years = len(course_doc.get('years', []))
+        total_semesters = 0
+        for year_data in course_doc.get('years', []):
+            total_semesters += len(year_data.get('semesters', []))
+
+        all_courses_from_db.append({
+            "code": course_doc.get('code'),
+            "title": course_doc.get('title'),
+            "description": course_doc.get('description', 'No description available.'),
+            "duration": f"{total_years} Years",
+            "semesters": f"{total_semesters} Semesters"
+        })
+    return jsonify(all_courses_from_db)
+
+@app.route('/api/courses/<course_code>', methods=['GET'])
+def get_course_details(course_code):
+    course_doc = courses_collection.find_one({"code": course_code})
+    if course_doc:
+        course_doc['_id'] = str(course_doc['_id'])
+        return jsonify(course_doc)
+    return jsonify({"message": "Course not found"}), 404
 
 @app.route('/api/courses/<course_code>/years', methods=['GET'])
 def get_years(course_code):
@@ -260,7 +263,7 @@ def search_subjects():
 def is_admin():
     return session.get('role') == 'admin'
 
-# --- Admin Material Management ---
+# --- Admin Material Management Endpoints ---
 @app.route('/api/admin/materials/add', methods=['POST'])
 @login_required(role='admin')
 def admin_add_material():
@@ -277,18 +280,15 @@ def admin_add_material():
     if not all([title, course_code, year, semester, subject, material_format, material_category]):
         return jsonify({'message': 'Missing required fields'}), 400
 
-    # Ensure material_category is valid
     if material_category not in ['syllabus', 'notes', 'paper']:
         return jsonify({'message': 'Invalid material Category. Must be one of: syllabus, notes, paper'}), 400
 
-    # This endpoint now handles only URL-based formats (Video, Link)
     if material_format not in ['Video', 'Link']:
         return jsonify({'message': 'Invalid material format for this endpoint. Use /api/admin/materials/upload for files.'}), 400
 
     if not content_url:
         return jsonify({'message': f"Content URL is required for {material_format} format"}), 400
 
-    # Basic validation for year and semester if they are expected as integers
     try:
         year = int(year)
         semester = int(semester)
@@ -297,7 +297,7 @@ def admin_add_material():
 
     material_doc = {
         'title': title,
-        'courseCode': course_code,
+        'courseCode': course_code.upper(), # Standardize course code
         'year': year,
         'semester': semester,
         'subject': subject,
@@ -315,23 +315,18 @@ def admin_add_material():
         print(f"Error adding material: {e}")
         return jsonify({'message': 'Failed to add material', 'error': str(e)}), 500
 
-# --- REINSTATED: Admin Material Upload Endpoint ---
 @app.route('/api/admin/materials/upload', methods=['POST'])
 @login_required(role='admin')
 def upload_admin_material():
-    # Check if a file was sent
     if 'file' not in request.files:
         return jsonify({'message': 'No file part in the request'}), 400
 
     file = request.files['file']
-    # If the user does not select a file, the browser submits an empty file without a filename.
     if file.filename == '':
         return jsonify({'message': 'No selected file'}), 400
 
-    # Ensure file is allowed and process it
     if file and allowed_file(file.filename):
         try:
-            # Get other form data
             title = request.form.get('title')
             course_code = request.form.get('courseCode')
             year = request.form.get('year')
@@ -343,39 +338,37 @@ def upload_admin_material():
             if not all([title, course_code, year, semester, subject, material_format, material_category]):
                 return jsonify({'message': 'Missing required form data for material'}), 400
 
-            if material_category not in ['syllabus', 'notes', 'paper']: # Validate category for uploads too
+            if material_category not in ['syllabus', 'notes', 'paper']:
                 return jsonify({'message': 'Invalid material Category. Must be one of: syllabus, notes, paper'}), 400
-
-            # Secure the filename before saving
+            
+            # Secure the filename and create a unique name
             filename = f"{uuid.uuid4().hex}_{secure_filename(file.filename)}"
             file_path = os.path.join(app.config['UPLOAD_MATERIALS_FOLDER'], filename)
             file.save(file_path)
 
-            # Construct the URL to access the uploaded file
             content_url = f"/static/uploads/admin_materials/{filename}"
 
-            # Save material data to MongoDB
             material_entry = {
                 'title': title,
-                'courseCode': course_code,
-                'year': int(year), # Ensure year is stored as int
-                'semester': int(semester), # Ensure semester is stored as int
+                'courseCode': course_code.upper(), # Standardize course code
+                'year': int(year),
+                'semester': int(semester),
                 'subject': subject,
-                'materialFormat': material_format,
+                'materialFormat': material_format, # This should be 'File' or specific like 'PDF', 'Image' etc.
                 'materialCategory': material_category,
-                'contentUrl': content_url, # Store the URL to the uploaded file
-                'fileName': filename, # Store original filename for potential future use (e.g., deletion)
-                'uploadedBy': session.get('username'), # Assuming admin username is in session
+                'contentUrl': content_url,
+                'fileName': filename,
+                'uploadedBy': session.get('username'),
                 'uploadedAt': datetime.utcnow()
             }
             
             inserted_result = study_materials_collection.insert_one(material_entry)
             
-            material_entry['_id'] = str(inserted_result.inserted_id) # Convert ObjectId to string for JSON serialization
+            material_entry['_id'] = str(inserted_result.inserted_id)
 
             return jsonify({'message': 'Material uploaded and added successfully', 'material': material_entry}), 201
 
-        except ValueError as ve: # Catch specific ValueError for int conversion
+        except ValueError as ve:
             print(f"Validation error: {ve}")
             return jsonify({'message': f'Invalid data provided: {ve}'}), 400
         except Exception as e:
@@ -451,19 +444,20 @@ def admin_get_materials():
     except Exception as e:
         print(f"Error fetching materials for admin: {e}")
         return jsonify({'message': 'Failed to fetch materials', 'error': str(e)}), 500
-
+    
 # --- Delete Material ---
 @app.route('/api/admin/materials/<string:material_id>', methods=['DELETE'])
 @login_required(role='admin')
 def admin_delete_material(material_id):
     try:
-        # Validate material_id as a valid ObjectId
         if not ObjectId.is_valid(material_id):
             return jsonify({'message': 'Invalid Material ID format'}), 400
 
-        # Before deleting from DB, check if it's a file and delete the file from server
         material_doc = study_materials_collection.find_one({'_id': ObjectId(material_id)})
-        if material_doc and 'fileName' in material_doc and material_doc.get('materialFormat') in ['PDF', 'Image', 'Document']:
+
+        # Check if it's a file stored on the server and delete it
+        # Assuming 'File' is the materialFormat for all file uploads
+        if material_doc and 'fileName' in material_doc and material_doc.get('materialFormat') in ['File', 'PDF', 'Image', 'Document', 'Text']: # Added more explicit formats based on potential frontend naming
             file_to_delete_path = os.path.join(app.config['UPLOAD_MATERIALS_FOLDER'], material_doc['fileName'])
             if os.path.exists(file_to_delete_path):
                 try:
@@ -471,7 +465,7 @@ def admin_delete_material(material_id):
                     print(f"Deleted file from server: {file_to_delete_path}")
                 except Exception as e:
                     print(f"Error deleting file from server: {e}")
-                    # Log error but proceed with DB deletion
+                    # Log error but proceed with DB deletion, as the main goal is to remove the record
 
         result = study_materials_collection.delete_one({'_id': ObjectId(material_id)})
 
@@ -483,18 +477,15 @@ def admin_delete_material(material_id):
         print(f"Error deleting material: {e}")
         return jsonify({'message': 'Failed to delete material', 'error': str(e)}), 500
 
-
 # --- Update Material ---
 @app.route('/api/admin/materials/<string:material_id>', methods=['PUT'])
 @login_required(role='admin')
 def admin_update_material(material_id):
     data = request.get_json()
 
-    # Validate material_id as a valid ObjectId
     if not ObjectId.is_valid(material_id):
         return jsonify({'message': 'Invalid Material ID format'}), 400
 
-    # Fields that can be updated
     update_fields = [
         'title', 'materialFormat', 'materialCategory', 'contentUrl',
         'courseCode', 'year', 'semester', 'subject'
@@ -502,28 +493,26 @@ def admin_update_material(material_id):
 
     update_doc = {}
     for field in update_fields:
-        if field in data: # Only update if the field is present in the request body
-            # Specific type conversion for year/semester if they are updated
+        if field in data:
             if field in ['year', 'semester']:
                 try:
                     update_doc[field] = int(data[field])
                 except ValueError:
                     return jsonify({'message': f"Invalid format for {field}. Must be an integer."}), 400
+            elif field == 'courseCode': # Standardize course code on update
+                update_doc[field] = data[field].upper()
             else:
                 update_doc[field] = data[field]
 
     if not update_doc:
         return jsonify({'message': 'No fields provided for update'}), 400
 
-    # Basic validation for materialFormat and associated content
     if 'materialFormat' in update_doc:
         material_format = update_doc['materialFormat']
         if material_format in ['Video', 'Link'] and ('contentUrl' not in data or not data['contentUrl']):
             return jsonify({'message': f"Content URL is required for {material_format} format"}), 400
-        if material_format in ['PDF', 'Image', 'Document'] and 'contentUrl' not in data:
-            pass # No strict validation for contentUrl on file types if it's not being changed
+        # For file types, contentUrl is managed by upload endpoint, not direct PUT
 
-    # Also validate new category if it's provided
     if 'materialCategory' in update_doc:
         if update_doc['materialCategory'] not in ['syllabus', 'notes', 'paper']:
             return jsonify({'message': 'Invalid material Category. Must be one of: syllabus, notes, paper'}), 400
@@ -544,110 +533,210 @@ def admin_update_material(material_id):
         print(f"Error updating material: {e}")
         return jsonify({'message': 'Failed to update material', 'error': str(e)}), 500
 
-# --- Static File Serving ---
+# --- Admin Course Management Endpoints (Newly Added) ---
+@app.route('/api/admin/courses', methods=['GET'])
+@login_required(role='admin')
+def admin_get_all_courses_for_admin():
+    """
+    Admin endpoint to get all courses with their full structure for management.
+    """
+    try:
+        courses = list(courses_collection.find({})) # Fetch all courses
+        for course in courses:
+            course['_id'] = str(course['_id']) # Convert ObjectId to string
+            # No need to convert inner ObjectIds unless you specifically need them
+            # on the frontend for nested updates by _id. For now, course_code is key.
+        return jsonify(courses), 200
+    except Exception as e:
+        print(f"Error fetching courses for admin: {e}")
+        return jsonify({'message': 'Failed to fetch courses', 'error': str(e)}), 500
+
+@app.route('/api/admin/courses', methods=['POST'])
+@login_required(role='admin')
+def admin_add_course():
+    """
+    Admin endpoint to add a new course with its complete structure (years, semesters, subjects).
+    Expected data:
+    {
+        "code": "CS101",
+        "title": "Introduction to Computer Science",
+        "description": "...",
+        "years": [
+            {
+                "year": 1,
+                "semesters": [
+                    {
+                        "semester": 1,
+                        "subjects": [
+                            {"name": "Programming Fundamentals", "description": "..."}
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+    """
+    data = request.get_json()
+
+    required_fields = ['code', 'title', 'description', 'years']
+    if not all(field in data for field in required_fields):
+        return jsonify({'message': f'Missing required fields: {", ".join(required_fields)}'}), 400
+
+    course_code = data['code'].upper() # Standardize course code to uppercase
+    if courses_collection.find_one({'code': course_code}):
+        return jsonify({'message': f'Course with code {course_code} already exists'}), 409
+
+    if not isinstance(data.get('years'), list):
+        return jsonify({'message': 'Years must be a list'}), 400
+
+    for year_data in data['years']:
+        if not isinstance(year_data.get('year'), int) or not isinstance(year_data.get('semesters'), list):
+            return jsonify({'message': 'Each year must have a numeric year and a list of semesters'}), 400
+        for semester_data in year_data['semesters']:
+            if not isinstance(semester_data.get('semester'), int) or not isinstance(semester_data.get('subjects'), list):
+                return jsonify({'message': 'Each semester must have a numeric semester and a list of subjects'}), 400
+            for subject_data in semester_data['subjects']:
+                if not isinstance(subject_data.get('name'), str):
+                    return jsonify({'message': 'Each subject must have a name string'}), 400
+                if 'description' in subject_data and not isinstance(subject_data['description'], str):
+                    return jsonify({'message': 'Subject description must be a string if provided'}), 400
+                subject_data['materials'] = [] # Materials will be added via separate material endpoints
+
+    new_course = {
+        'code': course_code,
+        'title': data['title'],
+        'description': data['description'],
+        'years': data['years']
+    }
+
+    try:
+        courses_collection.insert_one(new_course)
+        # Convert _id to string for the response
+        new_course['_id'] = str(new_course['_id'])
+        return jsonify({'message': 'Course added successfully', 'course': new_course}), 201
+    except Exception as e:
+        print(f"Error adding course: {e}")
+        return jsonify({'message': 'Failed to add course', 'error': str(e)}), 500
+
+@app.route('/api/admin/courses/<course_code>', methods=['PUT'])
+@login_required(role='admin')
+def admin_update_course(course_code):
+    """
+    Admin endpoint to update an existing course's details and its structure.
+    The entire course document (excluding _id) should be sent.
+    """
+    data = request.get_json()
+
+    required_fields = ['code', 'title', 'description', 'years']
+    if not all(field in data for field in required_fields):
+        return jsonify({'message': f'Missing required fields for update: {", ".join(required_fields)}'}), 400
+
+    # Ensure the code in the URL matches the code in the payload
+    if data['code'].upper() != course_code.upper():
+        return jsonify({'message': 'Course code in URL and payload mismatch'}), 400
+
+    if not isinstance(data.get('years'), list):
+        return jsonify({'message': 'Years must be a list'}), 400
+
+    for year_data in data['years']:
+        if not isinstance(year_data.get('year'), int) or not isinstance(year_data.get('semesters'), list):
+            return jsonify({'message': 'Each year must have a numeric year and a list of semesters'}), 400
+        for semester_data in year_data['semesters']:
+            if not isinstance(semester_data.get('semester'), int) or not isinstance(semester_data.get('subjects'), list):
+                return jsonify({'message': 'Each semester must have a numeric semester and a list of subjects'}), 400
+            for subject_data in semester_data['subjects']:
+                if not isinstance(subject_data.get('name'), str):
+                    return jsonify({'message': 'Each subject must have a name string'}), 400
+                if 'description' in subject_data and not isinstance(subject_data['description'], str):
+                    return jsonify({'message': 'Subject description must be a string if provided'}), 400
+                
+                # IMPORTANT: Remove 'materials' field from incoming subject data to prevent accidental overwrite
+                # Materials are managed by separate material upload/management endpoints.
+                if 'materials' in subject_data:
+                    del subject_data['materials']
+
+
+    updated_course = {
+        'code': course_code.upper(), # Ensure consistent casing
+        'title': data['title'],
+        'description': data['description'],
+        'years': data['years']
+    }
+
+    try:
+        result = courses_collection.replace_one({'code': course_code.upper()}, updated_course)
+        if result.matched_count == 0:
+            return jsonify({'message': 'Course not found'}), 404
+        
+        # Convert _id to string for the response if the course was found
+        # Fetch the updated course to return its _id if needed, or simply return the payload
+        # For PUT, returning the sent payload (updated_course) is common as it represents the new state
+        return jsonify({'message': 'Course updated successfully', 'course': updated_course}), 200
+    except Exception as e:
+        print(f"Error updating course {course_code}: {e}")
+        return jsonify({'message': 'Failed to update course', 'error': str(e)}), 500
+
+@app.route('/api/admin/courses/<course_code>', methods=['DELETE'])
+@login_required(role='admin')
+def admin_delete_course(course_code):
+    """
+    Admin endpoint to delete a course.
+    Also deletes all associated study materials and their files from the server.
+    """
+    try:
+        course_code_upper = course_code.upper()
+
+        # 1. Delete the course document itself
+        course_delete_result = courses_collection.delete_one({'code': course_code_upper})
+
+        if course_delete_result.deleted_count == 0:
+            return jsonify({'message': 'Course not found'}), 404
+
+        # 2. Delete all study materials associated with this course from disk
+        materials_on_disk = list(study_materials_collection.find(
+            {'courseCode': course_code_upper, 'fileName': {'$exists': True}}, # Only materials that have a 'fileName' field
+            {'fileName': 1} # Only fetch the filename
+        ))
+
+        for material in materials_on_disk:
+            if 'fileName' in material:
+                file_path = os.path.join(app.config['UPLOAD_MATERIALS_FOLDER'], material['fileName'])
+                if os.path.exists(file_path):
+                    try:
+                        os.remove(file_path)
+                        print(f"Deleted file from disk: {file_path}")
+                    except Exception as e:
+                        print(f"Error deleting file {file_path} from disk: {e}")
+        
+        # 3. Delete all study material records associated with this course from the database
+        material_delete_result = study_materials_collection.delete_many({'courseCode': course_code_upper})
+        print(f"Deleted {material_delete_result.deleted_count} material records associated with course {course_code}")
+
+        return jsonify({'message': 'Course and all associated materials deleted successfully'}), 200
+    except Exception as e:
+        print(f"Error deleting course {course_code}: {e}")
+        return jsonify({'message': 'Failed to delete course', 'error': str(e)}), 500
+
+# --- Serve uploaded files (e.g., admin materials, user notes) ---
 @app.route('/static/uploads/admin_materials/<filename>')
-def serve_admin_material_file(filename):
-    # This route serves files from the UPLOAD_MATERIALS_FOLDER
-    # Ensure this folder is correctly configured and accessible
+def serve_admin_material(filename):
+    """Serves files uploaded by admins."""
     print(f"Attempting to serve file: {filename} from {app.config['UPLOAD_MATERIALS_FOLDER']}")
     try:
         return send_from_directory(app.config['UPLOAD_MATERIALS_FOLDER'], filename)
     except FileNotFoundError:
         print(f"File not found: {filename} in {app.config['UPLOAD_MATERIALS_FOLDER']}")
-        # You might want to log this or return a more specific error,
-        # or handle it with an @app.errorhandler(404) if it should redirect.
         return jsonify({'message': 'File not found'}), 404
 
-#PASSWORD CHANGE
-@app.route('/api/admin/change-password', methods=['POST'])
-@login_required(role='admin') # Your admin login decorator
-def change_password():
-    data = request.get_json()
-    current_password = data.get('currentPassword')
-    new_password = data.get('newPassword')
-
-    if not current_password or not new_password:
-        return jsonify({'message': 'Missing password fields'}), 400
-
-    user_id = session.get('user_id')
-    if not user_id:
-        return jsonify({'message': 'Unauthorized'}), 401
-
+@app.route('/static/uploads/user_notes/<filename>')
+def serve_user_note(filename):
+    """Serves user-uploaded notes."""
+    print(f"Attempting to serve user note: {filename} from {app.config['UPLOAD_USER_NOTES_FOLDER']}")
     try:
-        # Assuming user IDs in session are strings, convert to ObjectId for MongoDB lookup
-        user = admins_collection.find_one({'_id': ObjectId(user_id)})
-    except Exception as e:
-        # Log the error for debugging purposes
-        print(f"Error fetching user in change_password: {e}")
-        return jsonify({'message': 'Internal server error while fetching user data.'}), 500
+        return send_from_directory(app.config['UPLOAD_USER_NOTES_FOLDER'], filename)
+    except FileNotFoundError:
+        print(f"User note file not found: {filename} in {app.config['UPLOAD_USER_NOTES_FOLDER']}")
+        return jsonify({'message': 'File not found'}), 404
 
-    if not user:
-        return jsonify({'message': 'User not found'}), 404
-
-    stored_password_hash = user.get('password') # Use .get() for safety
-
-    if stored_password_hash is None:
-        return jsonify({'message': 'Password hash not found for user.'}), 500
-    if isinstance(stored_password_hash, str):
-        stored_password_hash_bytes = stored_password_hash.encode('utf-8')
-    elif isinstance(stored_password_hash, bytes):
-        stored_password_hash_bytes = stored_password_hash
-    else:
-        print(f"Unexpected type for stored password hash: {type(stored_password_hash)}")
-        return jsonify({'message': 'Invalid stored password hash format.'}), 500
-
-    # Verify current password using bcrypt.checkpw
-    if not checkpw(current_password.encode('utf-8'), stored_password_hash_bytes):
-        return jsonify({'message': 'Incorrect current password'}), 403
-
-    # Basic new password validation (you might have more robust frontend validation)
-    if len(new_password) < 6: # Example: Minimum password length
-        return jsonify({'message': 'New password must be at least 6 characters long.'}), 400
-
-    # Hash the new password using bcrypt.hashpw
-    hashed_new_password = Binary(hashpw(new_password.encode('utf-8'), gensalt()))
-
-    try:
-        admins_collection.update_one(
-            {'_id': ObjectId(user_id)},
-            {'$set': {'password': hashed_new_password}}
-        )
-        return jsonify({'message': 'Password changed successfully'}), 200
-    except Exception as e:
-        print(f"Error updating password in change_password: {e}")
-        return jsonify({'message': 'Internal server error while updating password.'}), 500
-
-
-#USERNAME CHANGE
-@app.route('/api/admin/change-username', methods=['POST'])
-@login_required(role='admin') # Your admin login decorator
-def change_username():
-    data = request.get_json()
-    new_username = data.get('newUsername')
-
-    if not new_username:
-        return jsonify({'message': 'Missing new username'}), 400
-
-    user_id = session.get('user_id')
-    if not user_id:
-        return jsonify({'message': 'Unauthorized'}), 401
-
-    user = admins_collection.find_one({'_id': ObjectId(user_id)})
-    if not user:
-        return jsonify({'message': 'User not found'}), 404
-
-    # Check if username already exists (optional but recommended)
-    if admins_collection.find_one({'username': new_username, '_id': {'$ne': ObjectId(user_id)}}):
-        return jsonify({'message': 'Username already taken'}), 409
-
-    # Update username
-    admins_collection.update_one(
-        {'_id': ObjectId(user_id)},
-        {'$set': {'username': new_username}}
-    )
-    return jsonify({'message': 'Username updated successfully'}), 200
-
-
-# Ensure app runs correctly
 if __name__ == '__main__':
     app.run(debug=True, host='localhost', port=5000)

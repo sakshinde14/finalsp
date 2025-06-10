@@ -121,6 +121,15 @@
   letter-spacing: 0.5px;
 }
 
+.material-item-card h3 { /* Category heading inside card */
+  font-size: 1.1rem;
+  color: var(--secondary-color-dark); /* A darker blue for category */
+  margin-top: 0;
+  margin-bottom: var(--spacing-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
 .material-item-card .material-title {
   font-size: 1.3rem;
   font-weight: 700;
@@ -152,7 +161,7 @@
 
 .material-item-card .material-info {
   font-size: 0.9rem;
-  color: var(--text-color-light);
+  color: var(--text-color-dark);
   margin-top: var(--spacing-xs);
   line-height: 1.4;
 }

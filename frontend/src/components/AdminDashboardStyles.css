@@ -1,308 +1,552 @@
-/* src/components/AdminDashboardStyles.css */
+/* frontend/src/components/AdminDashboardStyles.css */
+
 :root {
-  --primary-color: #4CAF50; /* Green - Used for general accents if no gradient */
-  --primary-color-dark: #388E3C;
-  --primary-color-light: #81C784;
-
-  --secondary-color: #2196F3; /* Blue - Base for some gradients */
-  --secondary-color-dark: #1976D2;
-
-  --accent-color: #FFC107; /* Amber/Yellow */
-  --accent-color-dark: #FFA000;
-
-  --danger-color: #F44336; /* Red for errors/logout */
-  --danger-color-dark: #D32F2F;
-
-  /* Gradient colors */
-  --gradient-blue-start: #647af7; /* Indigo */
-  --gradient-blue-end: #2600ff;   /* Dark Purple */
-  --gradient-red-start: #eb0f97;  /* Pink */
-  --gradient-red-end: #e203ff;    /* Deep Purple */
-
-  --bg-color-light: #f5f5f5; /* Light gray background for page */
-  --bg-color-white: #ffffff; /* White background for cards/panels */
-
-  --text-color-dark: #333333;
-  --text-color-light: #757575;
-  --text-color-inverted: #ffffff; /* White text for dark/gradient backgrounds */
-
-  --border-color-light: #e0e0e0;
-  --border-color-dark: #9e9e9e; /* New: for gradient borders */
-
-  --shadow-light: rgba(0, 0, 0, 0.08);
-  --shadow-medium: rgba(0, 0, 0, 0.15);
-  --shadow-dark: rgba(0, 0, 0, 0.25);
-
-  --spacing-xs: 4px;
-  --spacing-sm: 8px;
-  --spacing-md: 16px;
-  --spacing-lg: 24px;
-  --spacing-xl: 32px;
-
-  --border-radius-small: 4px;
-  --border-radius-medium: 8px;
-  --border-radius-large: 12px;
-
-  --font-heading: 'Roboto', sans-serif;
-  --font-body: 'Open Sans', sans-serif;
-
-  --content-max-width: 1200px; /* Max width for main content */
-  --top-nav-height: 0px; /* Approximate height of your TopNavigation. Adjust if needed. */
+    --primary-color: #4CAF50; /* Green */
+    --primary-dark: #388E3C;
+    --secondary-color: #007BFF; /* Blue */
+    --secondary-dark: #0056b3;
+    --accent-color: #FFC107; /* Amber */
+    --background-light: #f4f7f6;
+    --text-color-dark: #333;
+    --text-color-light: #fefefe;
+    --border-color: #ddd;
+    --danger-color: #dc3545;
+    --success-color: #28a745;
 }
 
+/* In your AdminDashboardStyles.css or a relevant CSS file */
 
-
-/* --- Main Admin Dashboard Container --- */
 .admindashboard-container {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  background-color: var(--bg-color-light);
-  font-family: var(--font-body);
-  color: var(--text-color-dark);
+    /* Existing styles */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    color: var(--text-color-dark); /* Keep your text color */
+
+    /* --- Background Image Styles --- */
+    background-image: url('../assets/btg cs.jpg'); /* Relative path from CSS to image */
+    background-size: cover; /* Ensures the image covers the entire element */
+    background-position: center center; /* Centers the image */
+    background-repeat: no-repeat; /* Prevents the image from repeating */
+    background-attachment: fixed; /* Keeps the background fixed when scrolling */
+    /* --- End Background Image Styles --- */
+
+    /* If you want a fallback color in case the image fails to load or for better contrast */
+    background-color: #f4f7f6; /* Your original background-color as a fallback */
 }
 
-/* --- Main Content Area (Adjusted for Top Navigation) --- */
-.main-content {
-  flex-grow: 1;
-  padding: calc(var(--top-nav-height) + var(--spacing-lg)) var(--spacing-md) var(--spacing-lg);
-  position: relative;
-  max-width: var(--content-max-width);
-  margin: 0 auto;
-  width: 100%;
-  box-sizing: border-box;
+/* Top Navigation (assuming it has its own styles, but defining general integration) */
+.top-navigation {
+    background-color: var(--primary-color);
+    color: var(--text-color-light);
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Define a CSS variable for top navigation height, matching your TopNavigationStyles.css */
-:root {
-    --top-nav-height: 0px; /* Approximate height.  Adjust if needed. */
+.top-navigation h1 {
+    margin: 0;
+    font-size: 1.8rem;
+}
+
+.top-navigation .logout-button {
+    background-color: var(--primary-dark);
+    color: var(--text-color-light);
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+.top-navigation .logout-button:hover {
+    background-color: #c0392b; /* A darker red for hover */
 }
 
 
-/* --- Welcome Message (Specific to Admin Dashboard) --- */
+/* Main Content Area */.main-content {
+    flex-grow: 1;
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 20px auto;
+    /* Change this line */
+    background-color: rgba(255, 255, 255, 0.85); /* White with 85% opacity */
+    /* You can adjust the last value (0.85) from 0 (fully transparent) to 1 (fully opaque) */
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+}
+
+/* Welcome Message */
 .welcome-message {
-  text-align: center;
-  padding: var(--spacing-xs);
-  margin-bottom: var(--spacing-xs);
-  /*color:rgb(255, 255, 255);*/
-  border-radius: var(--border-radius-large);
-  box-shadow: 0 10px 30px var(--shadow-medium);
-  font-size: 2.2rem;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  animation: fadeInScale 0.8s ease-out;
+    text-align: center;
+    font-size: 2.5rem;
+    color: var(--danger-color);
+    margin-bottom: 2rem;
+    /*padding: 1rem;
+    background-color: #ffc6cf63; /* Light green background */
+    border-radius: 5px;
 }
 
-@keyframes fadeInScale {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-/* --- Logout Popup Message (Reused from DashboardStyles) --- */
-.logout-popup {
-  position: fixed;
-  top: calc(var(--top-nav-height) + var(--spacing-md));
-  left: 50%;
-  transform: translateX(-50%);
-  width: auto;
-  max-width: 90%;
-  padding: var(--spacing-sm) var(--spacing-md);
-  border-radius: var(--border-radius-medium);
-  font-size: 1rem;
-  font-weight: 500;
-  color: var(--text-color-inverted);
-  text-align: center;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  z-index: 1000;
-  animation: slideDownFadeIn 0.5s ease-out forwards;
-  will-change: transform, opacity;
-}
-
-.logout-popup.success {
-  background-color: var(--primary-color);
-}
-
-.logout-popup.error {
-  background-color: var(--danger-color);
-}
-
-@keyframes slideDownFadeIn {
-  from {
-    opacity: 0;
-    transform: translateX(-50%) translateY(-50px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-}
-
-/* --- Search Bar Container (Reused from DashboardStyles) --- */
+/* Search Bar */
 .search-bar-container {
-  max-width: 600px;
-  margin: var(--spacing-md) auto var(--spacing-lg) auto;
-  padding: 0 var(--spacing-sm);
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.search-bar-container h3 {
+    color: var(--secondary-dark);
+    margin-bottom: 1rem;
 }
 
 .search-input {
-  width: 100%;
-  padding: var(--spacing-sm);
-  border: 1px solid var(--border-color-light);
-  border-radius: 70px;
-  font-size: 1.1rem;
-  font-family: var(--font-body);
-  color: var(--text-color-dark);
-  box-shadow: 0 2px 8px var(--shadow-light);
-  transition: all 0.3s ease;
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 25px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 .search-input:focus {
-  border-color: var(--secondary-color);
-  box-shadow: 0 0 0 4px rgba(33, 150, 243, 0.2);
-  outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+    outline: none;
 }
 
-.search-input::placeholder {
-  color: var(--text-color-light);
-  opacity: 0.8;
+/* Admin Primary Action Buttons (Manage Courses) */
+.admin-primary-actions {
+    text-align: center;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
 }
 
-/* --- General Message Styles (Loading, Error) (Reused from DashboardStyles) --- */
-.loading-message,
-.error-message {
-  text-align: center;
-  padding: var(--spacing-md);
-  margin: var(--spacing-lg) auto;
-  border-radius: var(--border-radius-medium);
-  font-size: 1.1rem;
-  font-weight: 500;
-  max-width: 500px;
-  box-shadow: 0 2px 8px var(--shadow-light);
-  animation: fadeIn 0.5s ease-out;
-}
-
-.loading-message {
-  background-color: var(--bg-color-white);
-  color: var(--text-color-light);
-  border: 1px solid var(--border-color-light);
-}
-
-.error-message {
-  background-color: #ffebee;
-  color: var(--danger-color);
-  border: 1px solid var(--danger-color);
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-/* --- Subject Materials View Specifics (Reused from DashboardStyles) --- */
-.subject-materials-view {
-  background-color: var(--bg-color-white);
-  border-radius: var(--border-radius-large);
-  box-shadow: 0 5px 15px var(--shadow-light);
-  padding: var(--spacing-xl);
-  margin: var(--spacing-lg) auto;
-  max-width: 900px;
-  width: 100%;
-  text-align: center;
-  animation: fadeIn 0.6s ease-out;
-}
-
-.subject-title-header {
-  font-size: 2rem;
-  color: var(--primary-color);
-  margin-bottom: var(--spacing-lg);
-  padding-bottom: var(--spacing-sm);
-  border-bottom: 2px solid var(--border-color-light);
-}
-
-/* --- Back Buttons (Reused from DashboardStyles) --- */
-.back-button {
-  background: linear-gradient(90deg, #3F51B5, #4A148C); /* Blue to Purple Gradient */
-  color: var(--text-color-inverted);
-  padding: var(--spacing-sm) var(--spacing-md);
-  border-radius: var(--border-radius-medium);
-  font-weight: 500;
-  margin-top: var(--spacing-lg);
-  display: inline-block;
-  text-align: center;
-  box-shadow: 0 2px 5px var(--shadow-light);
-  transition: all 0.3s ease;
-  cursor: pointer;
-  border: none; /* Remove default button border */
-}
-
-.back-button:hover {
-  background: linear-gradient(90deg, #303F9F, #311B92); /* Darker shade on hover */
-  transform: translateY(-2px);
-  box-shadow: 0 4px 10px var(--shadow-medium);
-}
-
-
-/* --- Admin Action Buttons --- */
-.admin-actions-bottom {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: var(--spacing-md);
-  margin-top: var(--spacing-xl);
-  padding-top: var(--spacing-lg);
-  border-top: 1px dashed var(--border-color-light);
-}
-
-.admin-action-button {
-    background: linear-gradient(90deg, #3F51B5, #4A148C); /* Blue to Purple Gradient */
-    color: var(--text-color-inverted);
-    padding: var(--spacing-md) var(--spacing-xl);
-    border-radius: var(--border-radius-large);
+.primary-admin-button {
+    background-color: palevioletred;
+    color: var(--text-color-light);
+    padding: 1rem 2rem;
     font-size: 1.1rem;
-    font-weight: 600;
-    cursor: pointer;
     border: none;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-    transition: all 0.3s ease;
-    flex-shrink: 0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.admin-action-button:hover {
-    background: linear-gradient(90deg, #303F9F, #311B92); /* Darker shade on hover */
-    transform: translateY(-3px);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+.primary-admin-button:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-2px);
 }
 
-/* --- Navigation Section (for CourseList, YearList, etc.) --- */
+.primary-admin-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Navigation Sections (CourseList, YearList, SemesterList, SubjectList) */
 .navigation-section {
-  padding: var(--spacing-lg);
-  background-color: var(--bg-color-white);
-  border-radius: var(--border-radius-large);
-  box-shadow: 0 5px 15px var(--shadow-light);
-  margin: var(--spacing-lg) auto;
-  max-width: 800px;
-  animation: fadeIn 0.6s ease-out;
+    margin-top: 2rem;
+    padding: 1.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: #08fc00;
+    box-shadow: inset 0 1px 5px rgba(0, 0, 0, 0.05);
+}
+
+.navigation-section h2 {
+    color: var(--background-light);
+    margin-bottom: 1.5rem;
+    text-align: center;
 }
 
 .navigation-section h3 {
-  text-align: center;
-  color: var(--primary-color);
-  margin-bottom: var(--spacing-lg);
-  font-size: 1.8rem;
-  font-weight: 600;
+    color: palevioletred;
+    margin-bottom: 1.5rem;
+    text-align: center;
 }
 
-/* Ensure the h3 "Search for your subject:" is styled nicely */
-.main-content h3 {
+/* Common list styles for CourseList, YearList, etc. */
+.course-list, .year-list, .semester-list, .subject-list, .search-results-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Responsive grid */
+}
+
+.course-list-item, .year-list-item, .semester-list-item, .subject-list-item, .search-result-item {
+    background-color: #e9f5e9; /* Light green */
+    border: 1px solid var(--primary-color);
+    border-radius: 5px;
+    padding: 1rem;
     text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.07);
+}
+
+.course-list-item:hover, .year-list-item:hover, .semester-list-item:hover, .subject-list-item:hover, .search-result-item:hover {
+    background-color: var(--primary-color);
+    color: var(--text-color-light);
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.course-list-item h4, .year-list-item h4, .semester-list-item h4, .subject-list-item h4, .search-result-item h4 {
+    margin: 0.5rem 0;
+    font-size: 1.1rem;
+}
+
+.search-result-item p {
+    font-size: 0.9rem;
+    color: #555;
+    margin-top: 0.5rem;
+}
+
+.search-result-item:hover p {
+    color: var(--text-color-light);
+}
+
+/* Back Button */
+.back-button {
+    background-color: var(--secondary-color);
+    color: var(--text-color-light);
+    border: none;
+    padding: 0.7rem 1.5rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    margin-top: 1.5rem;
+    display: block; /* Make it take full width */
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.back-button:hover {
+    background-color: var(--secondary-dark);
+    transform: translateY(-2px);
+}
+
+/* Subject Materials Display */
+.subject-materials-view {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: #fcfcfc;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.subject-title-header {
+    text-align: center;
+    color: var(--primary-dark);
+    margin-bottom: 2rem;
+    font-size: 1.6rem;
+}
+
+/* Loading and Error Messages */
+.loading-message {
+    text-align: center;
+    font-size: 1.2rem;
+    color: var(--secondary-color);
+    padding: 1.5rem;
+    background-color: #e0f2f7; /* Light blue */
+    border-left: 5px solid var(--secondary-color);
+    border-radius: 5px;
+    margin-top: 2rem;
+}
+
+.error-message {
+    text-align: center;
+    font-size: 1.2rem;
+    color: var(--danger-color);
+    padding: 1.5rem;
+    background-color: #ffe6e6; /* Light red */
+    border-left: 5px solid var(--danger-color);
+    border-radius: 5px;
+    margin-top: 2rem;
+}
+
+/* Admin Action Buttons (Add/Manage Materials) */
+.admin-actions-bottom {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 2.5rem;
+    padding-top: 1rem;
+    border-top: 1px dashed var(--border-color);
+}
+
+.admin-action-button {
+    background-color: var(--accent-color);
     color: var(--text-color-dark);
-    margin-top: var(--spacing-lg);
-    margin-bottom: var(--spacing-md);
-    font-size: 1.5rem;
+    padding: 0.8rem 1.8rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    white-space: nowrap; /* Prevent text wrapping */
+}
+
+.admin-action-button:hover {
+    background-color: #FFDA6B; /* Slightly darker amber */
+    transform: translateY(-2px);
+}
+
+.admin-action-button:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Logout/Info Popup Messages */
+.logout-popup {
+    padding: 1rem 2rem;
+    margin: 1rem auto;
+    text-align: center;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 1.1rem;
+    max-width: 600px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    animation: fadeInOut 4s forwards;
+}
+
+.logout-popup.success {
+    background-color: var(--success-color);
+    color: var(--text-color-light);
+}
+
+.logout-popup.error {
+    background-color: var(--danger-color);
+    color: var(--text-color-light);
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translateY(-10px); }
+    10% { opacity: 1; transform: translateY(0); }
+    90% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-10px); }
+}
+
+/* Specific styles for CourseManagementList and CourseForm if they don't have their own detailed CSS */
+/* Assuming they will eventually have their own files, but including placeholders here for integration */
+
+/* If CourseManagementList.css is not separate */
+.course-management-list-container {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: #fcfcfc;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.course-management-list-container h2 {
+    text-align: center;
+    color: var(--primary-dark);
+    margin-bottom: 1.5rem;
+}
+
+.course-management-list-container ul {
+    list-style: none;
+    padding: 0;
+}
+
+.course-management-list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    border: 1px solid #eee;
+    padding: 0.8rem 1.2rem;
+    margin-bottom: 0.8rem;
+    border-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.course-management-list-item:hover {
+    background-color: #f9f9f9;
+}
+
+.course-info {
+    flex-grow: 1;
+    font-size: 1rem;
+    color: var(--text-color-dark);
+}
+
+.course-info strong {
+    color: var(--primary-dark);
+}
+
+.course-actions button {
+    margin-left: 0.8rem;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease;
+}
+
+.course-actions .edit-button {
+    background-color: var(--secondary-color);
+    color: var(--text-color-light);
+}
+
+.course-actions .edit-button:hover {
+    background-color: var(--secondary-dark);
+}
+
+.course-actions .delete-button {
+    background-color: var(--danger-color);
+    color: var(--text-color-light);
+}
+
+.course-actions .delete-button:hover {
+    background-color: #c82333;
+}
+
+/* If CourseForm.css is not separate */
+.course-form-container {
+    margin-top: 2rem;
+    padding: 2rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: #fcfcfc;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.course-form-container h2 {
+    text-align: center;
+    color: var(--primary-dark);
+    margin-bottom: 2rem;
+}
+
+.course-form-group {
+    margin-bottom: 1.5rem;
+}
+
+.course-form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    color: var(--secondary-dark);
+}
+
+.course-form-group input[type="text"],
+.course-form-group textarea {
+    width: calc(100% - 20px); /* Account for padding */
+    padding: 0.8rem 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.course-form-group input[type="text"]:focus,
+.course-form-group textarea:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
+.course-form-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.course-form-actions button {
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+.course-form-actions .submit-button {
+    background-color: var(--primary-color);
+    color: var(--text-color-light);
+}
+
+.course-form-actions .submit-button:hover {
+    background-color: var(--primary-dark);
+}
+
+.course-form-actions .cancel-button {
+    background-color: #6c757d; /* Grey */
+    color: var(--text-color-light);
+}
+
+.course-form-actions .cancel-button:hover {
+    background-color: #5a6268;
+}
+
+/* General responsiveness */
+@media (max-width: 768px) {
+    .main-content {
+        padding: 1rem;
+        margin: 10px auto;
+    }
+
+    .top-navigation {
+        flex-direction: column;
+        gap: 0.5rem;
+        padding: 1rem;
+    }
+
+    .top-navigation h1 {
+        font-size: 1.5rem;
+    }
+
+    .search-input {
+        width: 95%;
+    }
+
+    .admin-primary-actions, .admin-actions-bottom {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .primary-admin-button, .admin-action-button {
+        width: 100%;
+        padding: 0.8rem 1rem;
+        font-size: 0.95rem;
+    }
+
+    .course-list, .year-list, .semester-list, .subject-list, .search-results-list {
+        grid-template-columns: 1fr; /* Stack items on small screens */
+    }
+
+    .back-button {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-content {
+        padding: 0.8rem;
+    }
+
+    .welcome-message {
+        font-size: 1.2rem;
+    }
+
+    .subject-title-header {
+        font-size: 1.4rem;
+    }
 }

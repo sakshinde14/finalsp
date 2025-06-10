@@ -6,7 +6,7 @@
   box-shadow: 0 5px 15px var(--shadow-light);
   padding: var(--spacing-lg);
   margin: var(--spacing-xl) auto; /* Top/bottom margin, auto left/right */
-  max-width: 800px; /* Limit width for readability */
+  max-width: 1000px; /* Limit width for readability */
   width: 100%; /* Take full width within max-width */
   box-sizing: border-box; /* Include padding/border in element's total width/height */
   animation: fadeIn 0.6s ease-out; /* Fade in animation */
@@ -64,11 +64,15 @@
 
 .search-result-item .course-details {
   font-size: 0.95rem;
-  color: var(--text-color-light);
+  color: green;
   margin-top: var(--spacing-xs);
   display: flex;
   align-items: center;
   gap: var(--spacing-xs);
+}
+
+.search-result-item .course-details:hover {
+  color: rgb(235, 248, 235);
 }
 
 .no-results-message {
