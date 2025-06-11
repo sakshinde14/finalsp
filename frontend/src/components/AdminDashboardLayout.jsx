@@ -2,8 +2,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TopNavigation from './TopNavigation';
-import CourseList from './CourseList'; // This is the student/browse view of courses
-import WelcomeMessage from './WelcomeMessage';
+
+// Core Browse/material components
+import CourseList from './CourseList';
+import WelcomeMessage from './WelcomeMessage'; // This can be replaced by a simple h3 in AdminDashboardLayout
 import YearList from './YearList';
 import SemesterList from './SemesterList';
 import SubjectList from './SubjectList';
@@ -12,17 +14,15 @@ import AddMaterial from './AddMaterial';
 import MaterialDisplayList from './MaterialDisplayList'; // For student/Browse view
 import ManageMaterials from './ManageMaterials';       // For admin management view
 
-// --- NEW IMPORTS FOR COURSE MANAGEMENT ---
+// Admin-specific course management components
 import CourseManagementList from './admin/CourseManagementList'; // Admin view to list/edit/delete courses
-import CourseForm from './admin/CourseForm'; // Admin form to add/edit courses
-// --- END NEW IMPORTS ---
+import CourseForm from './admin/CourseForm'; // Admin form to add/edit course
 
+// Styles
 import './AdminDashboardStyles.css';
-// Ensure these styles are in your project
-// import './CourseListStyles.css'; // If not already in AdminDashboardStyles.css
-// import './admin/CourseManagementList.css'; // New styles for admin course list
-// import './admin/CourseForm.css'; // New styles for admin course form
-
+import './CourseListStyles.css';
+import './admin/CourseManagementList.css';
+import './admin/CourseForm.css';
 
 function AdminDashboardLayout() {
     const navigate = useNavigate();
@@ -37,18 +37,19 @@ function AdminDashboardLayout() {
     const [searchLoading, setSearchLoading] = useState(false);
     const [searchError, setSearchError] = useState(null);
 
-    const [logoutMessage, setLogoutMessage] = useState(''); // Unified message state
+    const [logoutMessage, setLogoutMessage] = useState('');
 
-    // States to control which admin panel is visible
+    // --- Unified Admin View States ---
+    // These boolean flags now control which major panel is displayed.
+    // Only ONE of these should ideally be true at any given time.
     const [showAddMaterialForm, setShowAddMaterialForm] = useState(false);
     const [showManageMaterialsPanel, setShowManageMaterialsPanel] = useState(false);
-
-    // --- NEW STATES FOR COURSE MANAGEMENT ---
     const [showManageCoursesPanel, setShowManageCoursesPanel] = useState(false);
     const [showCourseForm, setShowCourseForm] = useState(false); // True for add/edit course form
-    const [editingCourseData, setEditingCourseData] = useState(); // Holds data of course being edited
+
+    // States specific to Course Management
+    const [editingCourseData, setEditingCourseData] = useState(null); // Holds data of course being edited
     const [courseListRefreshKey, setCourseListRefreshKey] = useState(0); // To force re-fetch of course list
-    // --- END NEW STATES ---
 
     // States for displaying materials (for the general Browse/student view, not admin management)
     const [currentMaterials, setCurrentMaterials] = useState([]);
@@ -59,12 +60,12 @@ function AdminDashboardLayout() {
     // This context object is crucial for passing selected navigation state to other components
     const selectedContext = selectedCourse && selectedYear && selectedSemester && selectedSubject
         ? {
-              courseCode: selectedCourse.code,
-              courseName: selectedCourse.title,
-              year: selectedYear,
-              semester: selectedSemester,
-              subject: selectedSubject
-          }
+            courseCode: selectedCourse.code,
+            courseName: selectedCourse.title,
+            year: selectedYear,
+            semester: selectedSemester,
+            subject: selectedSubject
+        }
         : null;
 
     // Effect for Subject Search
@@ -81,8 +82,8 @@ function AdminDashboardLayout() {
                 setSelectedSubject(null);
                 setShowAddMaterialForm(false);
                 setShowManageMaterialsPanel(false);
-                setShowManageCoursesPanel(false); // NEW
-                setShowCourseForm(false); // NEW
+                setShowManageCoursesPanel(false);
+                setShowCourseForm(false);
                 setCurrentMaterials([]);
 
                 try {
@@ -113,7 +114,7 @@ function AdminDashboardLayout() {
     useEffect(() => {
         const fetchMaterialsForBrowse = async () => {
             // Only fetch materials for Browse if a subject is selected AND no admin panel is active
-            if (selectedContext && selectedContext.subject && !showAddMaterialForm && !showManageMaterialsPanel && !showManageCoursesPanel && !showCourseForm) { // NEW checks
+            if (selectedContext && selectedContext.subject && !showAddMaterialForm && !showManageMaterialsPanel && !showManageCoursesPanel && !showCourseForm) {
                 setMaterialsLoading(true);
                 setMaterialsError(null);
                 try {
@@ -146,29 +147,31 @@ function AdminDashboardLayout() {
         materialRefreshKey, // Trigger refresh if materials are added/managed
         showAddMaterialForm, // Re-evaluate when add form is hidden
         showManageMaterialsPanel, // Re-evaluate when manage panel is hidden
-        showManageCoursesPanel, // NEW
-        showCourseForm // NEW
+        showManageCoursesPanel, // Re-evaluate when course manage panel is hidden
+        showCourseForm // Re-evaluate when course form is hidden
     ]);
 
     // Helper to reset all navigation and admin form states to initial dashboard state (CourseList)
-    const resetAllViews = () => { // Renamed for clarity
-        setSelectedCourse(null);setSelectedYear(null);setSelectedSemester(null);
-        setSelectedSubject(null);setShowSearchResults(false);setSearchTerm('');
+    const resetAllViews = () => {
+        setSelectedCourse(null); setSelectedYear(null); setSelectedSemester(null);
+        setSelectedSubject(null); setShowSearchResults(false); setSearchTerm('');
         setSearchResults([]);
-        setShowAddMaterialForm(false);setShowManageMaterialsPanel(false);
-        setShowManageCoursesPanel(false); // NEW
-        setShowCourseForm(false); // NEW
-        setEditingCourseData(null); // NEW
-        setCurrentMaterials([]);setLogoutMessage(''); // Clear messages on full reset
+        setShowAddMaterialForm(false); setShowManageMaterialsPanel(false);
+        setShowManageCoursesPanel(false);
+        setShowCourseForm(false);
+        setEditingCourseData(null);
+        setCurrentMaterials([]); setLogoutMessage(''); // Clear messages on full reset
     };
 
     // Handlers for navigation clicks
     const handleSearchChange = (event) => {
         setSearchTerm(event.target.value);
-        setShowAddMaterialForm(false); // Hide admin forms when typing in search
+        // Hide admin forms when typing in search
+        setShowAddMaterialForm(false);
         setShowManageMaterialsPanel(false);
-        setShowManageCoursesPanel(false); // NEW
-        setShowCourseForm(false); // NEW
+        setShowManageCoursesPanel(false);
+        setShowCourseForm(false);
+        // showSearchResults will be set by the useEffect
     };
 
     const handleCourseSelect = (course) => {
@@ -179,8 +182,8 @@ function AdminDashboardLayout() {
         setShowSearchResults(false); // Hide search results if navigating
         setShowAddMaterialForm(false); // Hide admin forms
         setShowManageMaterialsPanel(false);
-        setShowManageCoursesPanel(false); // NEW
-        setShowCourseForm(false); // NEW
+        setShowManageCoursesPanel(false);
+        setShowCourseForm(false);
         setSearchTerm(''); // Clear search bar
         setCurrentMaterials([]);
     };
@@ -192,8 +195,8 @@ function AdminDashboardLayout() {
         setShowSearchResults(false);
         setShowAddMaterialForm(false);
         setShowManageMaterialsPanel(false);
-        setShowManageCoursesPanel(false); // NEW
-        setShowCourseForm(false); // NEW
+        setShowManageCoursesPanel(false);
+        setShowCourseForm(false);
         setCurrentMaterials([]);
     };
 
@@ -203,8 +206,8 @@ function AdminDashboardLayout() {
         setShowSearchResults(false);
         setShowAddMaterialForm(false);
         setShowManageMaterialsPanel(false);
-        setShowManageCoursesPanel(false); // NEW
-        setShowCourseForm(false); // NEW
+        setShowManageCoursesPanel(false);
+        setShowCourseForm(false);
         setCurrentMaterials([]);
     };
 
@@ -215,8 +218,8 @@ function AdminDashboardLayout() {
         setSearchResults([]);
         setShowAddMaterialForm(false); // Hide admin forms initially
         setShowManageMaterialsPanel(false);
-        setShowManageCoursesPanel(false); // NEW
-        setShowCourseForm(false); // NEW
+        setShowManageCoursesPanel(false);
+        setShowCourseForm(false);
         // Materials will be fetched by useEffect based on selectedContext
     };
 
@@ -231,8 +234,8 @@ function AdminDashboardLayout() {
         setSearchResults([]); // Clear search results
         setShowAddMaterialForm(false); // Hide any open admin forms
         setShowManageMaterialsPanel(false);
-        setShowManageCoursesPanel(false); // NEW
-        setShowCourseForm(false); // NEW
+        setShowManageCoursesPanel(false);
+        setShowCourseForm(false);
         // materials will be fetched by useEffect
     };
 
@@ -249,7 +252,7 @@ function AdminDashboardLayout() {
             if (response.ok) {
                 console.log("Successfully logged out");
                 setLogoutMessage("Successfully Logged Out!");
-                
+
                 setTimeout(() => {
                     setLogoutMessage('');
                     navigate('/login/admin');
@@ -271,46 +274,7 @@ function AdminDashboardLayout() {
         }
     };
 
-    // Handlers for admin action buttons
-    // NEW: Handle to view/edit courses
-    const handleManageCoursesClick = () => {
-        resetAllViews(); // Reset everything first
-        setShowManageCoursesPanel(true); // Show the CourseManagementList
-        setCourseListRefreshKey(prev => prev + 1); // Trigger re-fetch for the list
-        setLogoutMessage(''); // Clear any previous messages
-    };
-
-    // NEW: Handle to add a new course
-    const handleAddCourseClick = () => {
-        resetAllViews(); // Reset everything first
-        setEditingCourseData(null); // Ensure we are adding, not editing
-        setShowCourseForm(true); // Show the CourseForm
-        setLogoutMessage('');
-    };
-
-    // NEW: Callback from CourseManagementList when 'Edit' is clicked
-    const handleEditCourseFromList = (course) => {
-        resetAllViews(); // Reset all views
-        setEditingCourseData(course); // Set the course data to populate the form
-        setShowCourseForm(true); // Show the CourseForm
-        setLogoutMessage('');
-    };
-
-    // NEW: Callback from CourseForm when submission is successful
-    const handleCourseFormSubmitSuccess = (message) => {
-        resetAllViews(); // Go back to a clean state
-        setShowManageCoursesPanel(true); // Show the CourseManagementList
-        setCourseListRefreshKey(prev => prev + 1); // Trigger re-fetch of the list
-        setLogoutMessage(message || 'Course action successful!');
-        setTimeout(() => setLogoutMessage(''), 3000);
-    };
-
-    // NEW: Callback from CourseForm when cancelled
-    const handleCourseFormCancel = () => {
-        resetAllViews(); // Go back to a clean state (e.g., initial CourseList browse view)
-    };
-
-
+    // --- Admin Action Handlers (Material Management) ---
     const handleAddMaterialClick = () => {
         if (!selectedContext || !selectedContext.subject) {
             setLogoutMessage('Please select a Course, Year, Semester, and Subject first.');
@@ -318,9 +282,9 @@ function AdminDashboardLayout() {
             return;
         }
         // Hide other panels before showing this one
-        setShowManageCoursesPanel(false); // NEW
-        setShowCourseForm(false); // NEW
-        setShowManageMaterialsPanel(false);
+        setShowManageCoursesPanel(false);
+        setShowCourseForm(false);
+        setShowManageMaterialsPanel(false); // Make sure manage materials is hidden
 
         setShowAddMaterialForm(true);
         setLogoutMessage(''); // Clear any previous messages
@@ -333,11 +297,12 @@ function AdminDashboardLayout() {
             return;
         }
         // Hide other panels before showing this one
-        setShowManageCoursesPanel(false); // NEW
-        setShowCourseForm(false); // NEW
-        setShowAddMaterialForm(false);
+        setShowManageCoursesPanel(false);
+        setShowCourseForm(false);
+        setShowAddMaterialForm(false); // Make sure add material is hidden
 
         setShowManageMaterialsPanel(true);
+        setMaterialRefreshKey(prevKey => prevKey + 1); // Trigger re-fetch for ManageMaterials list
         setLogoutMessage(''); // Clear any previous messages
     };
 
@@ -347,6 +312,8 @@ function AdminDashboardLayout() {
         setMaterialRefreshKey(prevKey => prevKey + 1); // Trigger re-fetch for Browse mode and ManageMaterials
         setLogoutMessage(message || 'Material added successfully!');
         setTimeout(() => setLogoutMessage(''), 3000);
+        // After adding, you might want to automatically go back to the material display view
+        // The useEffect will handle re-fetching if selectedContext is still valid.
     };
 
     const handleMaterialManaged = (message) => {
@@ -358,12 +325,47 @@ function AdminDashboardLayout() {
 
     const handleCancelAddMaterial = () => {
         setShowAddMaterialForm(false);
-        // materials will re-appear if selectedSubject is still set, via useEffect
+        // Materials will re-appear if selectedSubject is still set, via useEffect
     };
 
     const handleCancelManageMaterials = () => {
         setShowManageMaterialsPanel(false);
-        // materials will re-appear if selectedSubject is still set, via useEffect
+        // Materials will re-appear if selectedSubject is still set, via useEffect
+    };
+
+    // --- Admin Action Handlers (Course Management) ---
+    const handleManageCoursesClick = () => {
+        resetAllViews(); // Reset everything first to clear other views
+        setShowManageCoursesPanel(true); // Show the CourseManagementList
+        setCourseListRefreshKey(prev => prev + 1); // Trigger re-fetch for the list
+        setLogoutMessage(''); // Clear any previous messages
+    };
+
+    const handleAddCourseClick = () => {
+        resetAllViews(); // Reset everything first
+        setEditingCourseData(null); // Ensure we are adding, not editing
+        setShowCourseForm(true); // Show the CourseForm
+        setLogoutMessage('');
+    };
+
+    const handleEditCourseFromList = (course) => {
+        resetAllViews(); // Reset all views
+        setEditingCourseData(course); // Set the course data to populate the form
+        setShowCourseForm(true); // Show the CourseForm
+        setLogoutMessage('');
+    };
+
+    const handleCourseFormSubmitSuccess = (message) => {
+        resetAllViews(); // Go back to a clean state
+        setShowManageCoursesPanel(true); // Show the CourseManagementList
+        setCourseListRefreshKey(prev => prev + 1); // Trigger re-fetch of the list
+        setLogoutMessage(message || 'Course action successful!');
+        setTimeout(() => setLogoutMessage(''), 3000);
+    };
+
+    const handleCourseFormCancel = () => {
+        resetAllViews(); // Go back to a clean state
+        setShowManageCoursesPanel(true); // Typically return to the course list after cancel
     };
 
     // Determine what to display based on current state
@@ -379,7 +381,7 @@ function AdminDashboardLayout() {
                     onResultClick={handleSearchResultClick}
                 />
             );
-        } else if (showCourseForm) { // NEW: Render Course Form
+        } else if (showCourseForm) { // Render Course Form
             return (
                 <CourseForm
                     courseToEdit={editingCourseData}
@@ -387,13 +389,16 @@ function AdminDashboardLayout() {
                     onCancel={handleCourseFormCancel}
                 />
             );
-        } else if (showManageCoursesPanel) { // NEW: Render Course Management List
+        } else if (showManageCoursesPanel) { // Render Course Management List
             return (
-                <CourseManagementList
-                    onEdit={handleEditCourseFromList}
-                    // Pass a key to force re-render/re-fetch when an update happens
-                    key={courseListRefreshKey}
-                />
+                <>
+                    <button onClick={handleAddCourseClick} className="admin-add-button">Add New Course</button>
+                    <CourseManagementList
+                        onEdit={handleEditCourseFromList}
+                        // Pass a key to force re-render/re-fetch when an update happens
+                        key={courseListRefreshKey}
+                    />
+                </>
             );
         } else if (showAddMaterialForm) {
             return (
@@ -483,18 +488,18 @@ function AdminDashboardLayout() {
                 {/* --- End Message Display --- */}
 
                 {/* Welcome message for the Admin Dashboard */}
-                {!showSearchResults && !selectedCourse && !showManageCoursesPanel && !showCourseForm && !showAddMaterialForm && !showManageMaterialsPanel && (
-                    <WelcomeMessage message="Welcome, Admin!" />
-                )}
 
+                {!showSearchResults && !selectedCourse && !showManageCoursesPanel && !showCourseForm && !showAddMaterialForm && !showManageMaterialsPanel && (
+                    <WelcomeMessage message="Welcome, Admin!" />
+                )}
 
-                {/* Search bar is visible unless a specific admin form/panel is open */}
+                {/* Search bar is visible unless a specific admin form/panel is open, or a subject is already selected for material display */}
                 {!showAddMaterialForm && !showManageMaterialsPanel && !showManageCoursesPanel && !showCourseForm && !selectedSubject && (
                     <div className="search-bar-container">
                         <h3>Search for your subject: </h3>
                         <input
                             type="text"
-                            placeholder="e.g., Database Management Systems" // <--- ADD THIS LINE
+                            placeholder="e.g., Database Management Systems"
                             value={searchTerm}
                             onChange={handleSearchChange}
                             className="search-input"
@@ -511,10 +516,9 @@ function AdminDashboardLayout() {
                     <div className="admin-actions-bottom">
                         <button
                             className="admin-action-button"
-                            onClick={handleAddMaterialClick}  >
+                            onClick={handleAddMaterialClick} >
                             Add New Material for {selectedContext.subject}
                         </button>
-                        
                         <button
                             className="admin-action-button"
                             onClick={handleManageMaterialsClick} >
@@ -524,16 +528,33 @@ function AdminDashboardLayout() {
                 )}
 
                 {/* Admin Control Buttons - always visible at the top of the main content */}
-                {/* These buttons should reset other views when clicked */}
-                
                 <div className="admin-primary-actions">
-                {!selectedSubject &&(
-                    <button className="admin-action-button primary-admin-button" onClick={handleManageCoursesClick}>
+                    {!showManageCoursesPanel && !showCourseForm &&(
+                    <button
+                        className="admin-action-button primary-admin-button"
+                        onClick={handleManageCoursesClick}
+                        // Disable if already on course list or course form
+                        disabled={showManageCoursesPanel || showCourseForm}
+                    >
                         Manage Courses (Add/Edit/Delete)
                     </button>
-                )}
+                    )}
+
+                    {showManageCoursesPanel &&(
+                    <button
+                        className="admin-action-button primary-admin-button"
+                        onClick={() => {
+                            resetAllViews(); // Reset all views to start material Browse fresh
+                            // No specific state needs to be set, as the renderContent will
+                            // default to CourseList when selectedCourse is null.
+                        }}
+                        // Disable if currently in a material-related form or search results
+                        disabled={showAddMaterialForm || showManageMaterialsPanel || showSearchResults}
+                    >
+                        Back to Course List
+                    </button>
+                    )}
                 </div>
-                
 
             </main>
         </div>

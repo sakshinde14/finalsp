@@ -1,13 +1,13 @@
-// frontend/src/utils/auth.js
-export const getAuthToken = () => {
-    // Replace 'adminToken' with the actual key you use to store the admin's JWT
-    return localStorage.getItem('adminToken');
-};
+// frontend/src/utils/auth.js (Assuming this is where you handle tokens)
 
 export const setAuthToken = (token) => {
-    localStorage.setItem('adminToken', token);
+    localStorage.setItem('authToken', token); // Or sessionStorage
+};
+
+export const getAuthToken = () => {
+    return localStorage.getItem('authToken'); // Make sure the key 'authToken' matches
 };
 
 export const removeAuthToken = () => {
-    localStorage.removeItem('adminToken');
+    localStorage.removeItem('authToken');
 };

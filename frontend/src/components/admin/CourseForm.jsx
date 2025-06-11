@@ -97,6 +97,7 @@ function CourseForm({ courseToEdit, onSubmitSuccess, onCancel }) {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
+                credentials: 'include', 
                 body: JSON.stringify(courseData)
             });
 
@@ -117,6 +118,7 @@ function CourseForm({ courseToEdit, onSubmitSuccess, onCancel }) {
 
     return (
         <form onSubmit={handleSubmit} className="course-form-container">
+            <button type="button" onClick={onCancel} className="cancel-button">back</button>
             <h2>{courseToEdit ? 'Edit Course' : 'Add New Course'}</h2>
             {error && <div className="error-message">{error}</div>}
             {message && <div className="success-message">{message}</div>}

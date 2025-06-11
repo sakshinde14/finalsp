@@ -54,6 +54,7 @@ function StudentLogin() {
 
     return (
             <div className="auth-container">
+            <a href="/" class="back-link"><i data-feather="arrow-left"></i>Back to Home</a> 
             <h2 className="auth-title">Student Login</h2>
 
             {/* --- NEW: Conditional rendering for the custom popup message --- */}

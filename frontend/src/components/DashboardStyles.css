@@ -102,42 +102,42 @@
   }
 }
 
-/* --- Logout Popup Message --- */
+/* Logout/Info Popup Messages */
 .logout-popup {
   position: fixed;
-  top: calc(var(--top-nav-height) + var(--spacing-md));
-  left: 50%;
-  transform: translateX(-50%);
-  width: auto;
-  max-width: 90%;
-  padding: var(--spacing-sm) var(--spacing-md);
-  border-radius: var(--border-radius-medium);
-  font-size: 1rem;
-  font-weight: 500;
-  color: var(--text-color-inverted);
+  top: var(--spacing-xl);
+  right: var(--spacing-xl);
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--border-radius-large);
+  font-weight: 600;
   text-align: center;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
   z-index: 1000;
-  animation: slideDownFadeIn 0.5s ease-out forwards;
-  will-change: transform, opacity;
+  min-width: 300px;
+  max-width: 400px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  animation: slideInRight 0.5s ease-out;
 }
 
 .logout-popup.success {
-  background: linear-gradient(90deg, var(--primary-color), var(--primary-color-dark)); /* Green gradient for success */
+  background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+  color: var(--primary-color-dark);
+  border: 2px solid var(--primary-color-light);
 }
 
 .logout-popup.error {
-  background: linear-gradient(90deg, var(--danger-color), var(--danger-color-dark)); /* Red gradient for errors */
+  background: linear-gradient(135deg, #ffebee, #ffcdd2);
+  color: var(--danger-color-dark);
+  border: 2px solid var(--danger-color);
 }
 
-@keyframes slideDownFadeIn {
+@keyframes slideInRight {
   from {
     opacity: 0;
-    transform: translateX(-50%) translateY(-50px);
+    transform: translateX(100%);
   }
   to {
     opacity: 1;
-    transform: translateX(-50%) translateY(0);
+    transform: translateX(0);
   }
 }
 

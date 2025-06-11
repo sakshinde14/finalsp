@@ -3,7 +3,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 12px 24px;
-    background: linear-gradient(to right, #552b7c, #f9f3ff); /* soft purple gradient */
+    background: rgba(255, 255, 255, 0.842); /* soft purple gradient */
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
     font-family: 'Segoe UI', sans-serif;
     position: sticky;
@@ -11,10 +11,10 @@
     z-index: 1000;
 }
 
-.nav-left h2 {
+.nav-left a {
     margin: 0;
     font-size: 24px;
-    color: #ffffff;
+    color: #4b4b4bc5;
     font-weight: 600;
     letter-spacing: 1px;
 }
@@ -36,6 +36,9 @@
     cursor: pointer;
 }
 
+.nav-link:hover {
+    background-color: #f3e8ff;
+}
 
 /*.logout-link {
     background-color: #fce4ec;
