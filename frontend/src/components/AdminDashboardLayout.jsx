@@ -479,6 +479,7 @@ function AdminDashboardLayout() {
         <div className="admindashboard-container">
             <TopNavigation onLogout={handleAdminLogout} />
             <main className="main-content">
+                
                 {/* --- Display logout/info message --- */}
                 {logoutMessage && (
                     <div className={`logout-popup ${logoutMessage.includes('Failed') || logoutMessage.includes('Error') ? 'error' : 'success'}`}>
@@ -529,7 +530,7 @@ function AdminDashboardLayout() {
 
                 {/* Admin Control Buttons - always visible at the top of the main content */}
                 <div className="admin-primary-actions">
-                    {!showManageCoursesPanel && !showCourseForm &&(
+                    {!showAddMaterialForm && !showManageMaterialsPanel && !showManageCoursesPanel && !showCourseForm && !selectedSubject && (
                     <button
                         className="admin-action-button primary-admin-button"
                         onClick={handleManageCoursesClick}

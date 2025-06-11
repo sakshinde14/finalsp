@@ -1,11 +1,10 @@
 /* src/components/MaterialDisplayListStyles.css */
 
 .material-display-list-container {
-  background-color: var(--bg-color-white);
   border-radius: var(--border-radius-large);
   box-shadow: 0 5px 15px var(--shadow-light);
   padding: var(--spacing-xl);
-  margin: var(--spacing-xl) auto; /* Top/bottom margin, auto left/right */
+  margin: 1px auto; /* Top/bottom margin, auto left/right */
   max-width: var(--content-max-width); /* Use global max-width */
   width: 100%;
   box-sizing: border-box;
