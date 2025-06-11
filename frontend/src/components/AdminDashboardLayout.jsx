@@ -543,7 +543,7 @@ function AdminDashboardLayout() {
 
                     {showManageCoursesPanel &&(
                     <button
-                        className="admin-action-button primary-admin-button"
+                        className=" back-button"
                         onClick={() => {
                             resetAllViews(); // Reset all views to start material Browse fresh
                             // No specific state needs to be set, as the renderContent will
