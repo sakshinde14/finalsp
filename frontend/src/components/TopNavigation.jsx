@@ -1,7 +1,7 @@
-// frontend/src/components/TopNavigation.jsx
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom'; // Assuming you use react-router-dom for navigation
 import './TopNavigationStyles.css'; // Your existing CSS for top navigation
+import ProfileManagement from './ProfileManagement';
 
 
 function TopNavigation({ onLogout }) {
@@ -16,7 +16,7 @@ function TopNavigation({ onLogout }) {
             <div className="nav-left">
                 <h2><Link to="/LandingPage">STUDY PORTAL</Link></h2>
             </div>
-            
+
             <div className="nav-right">
                 <Link to="/favs" className="nav-link">Favorites</Link>
                 <div className="nav-profile-dropdown">

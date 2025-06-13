@@ -739,5 +739,181 @@ def serve_user_note(filename):
         return jsonify({'message': 'File not found'}), 404
 
 # One line analysis: The code adds missing imports for password hashing to the flask app.
+# --- Profile Management Endpoints ---
+@app.route('/api/profile', methods=['GET'])
+@login_required()
+def get_profile():
+    """Get current user's profile data"""
+    try:
+        user_id = session.get('user_id')
+        role = session.get('role')
+        
+        if role == 'admin':
+            user = admins_collection.find_one({'_id': ObjectId(user_id)})
+            if user:
+                return jsonify({
+                    'role': 'admin',
+                    'username': user.get('username'),
+                    'id': str(user['_id'])
+                }), 200
+        elif role == 'student':
+            user = students_collection.find_one({'_id': ObjectId(user_id)})
+            if user:
+                return jsonify({
+                    'role': 'student',
+                    'email': user.get('email'),
+                    'fullName': user.get('fullName'),
+                    'id': str(user['_id'])
+                }), 200
+        
+        return jsonify({'message': 'User not found'}), 404
+    except Exception as e:
+        print(f"Error fetching profile: {e}")
+        return jsonify({'message': 'Failed to fetch profile'}), 500
+
+@app.route('/api/admin/change-password', methods=['POST'])
+@login_required(role='admin')
+def admin_change_password():
+    """Change admin password"""
+    data = request.get_json()
+    current_password = data.get('currentPassword')
+    new_password = data.get('newPassword')
+    
+    if not current_password or not new_password:
+        return jsonify({'message': 'Current password and new password are required'}), 400
+    
+    try:
+        user_id = session.get('user_id')
+        admin = admins_collection.find_one({'_id': ObjectId(user_id)})
+        
+        if not admin:
+            return jsonify({'message': 'Admin not found'}), 404
+        
+        # Verify current password
+        stored_password = admin.get('password')
+        if not checkpw(current_password.encode('utf-8'), stored_password):
+            return jsonify({'message': 'Current password is incorrect'}), 401
+        
+        # Hash new password
+        new_hashed_password = hashpw(new_password.encode('utf-8'), gensalt())
+        
+        # Update password in database
+        admins_collection.update_one(
+            {'_id': ObjectId(user_id)},
+            {'$set': {'password': new_hashed_password}}
+        )
+        
+        return jsonify({'message': 'Password changed successfully'}), 200
+    except Exception as e:
+        print(f"Error changing admin password: {e}")
+        return jsonify({'message': 'Failed to change password'}), 500
+
+@app.route('/api/admin/change-username', methods=['POST'])
+@login_required(role='admin')
+def admin_change_username():
+    """Change admin username"""
+    data = request.get_json()
+    new_username = data.get('newUsername')
+    
+    if not new_username:
+        return jsonify({'message': 'New username is required'}), 400
+    
+    try:
+        user_id = session.get('user_id')
+        
+        # Check if username already exists
+        existing_admin = admins_collection.find_one({'username': new_username})
+        if existing_admin and str(existing_admin['_id']) != user_id:
+            return jsonify({'message': 'Username already exists'}), 409
+        
+        # Update username
+        result = admins_collection.update_one(
+            {'_id': ObjectId(user_id)},
+            {'$set': {'username': new_username}}
+        )
+        
+        if result.modified_count == 0:
+            return jsonify({'message': 'No changes made or admin not found'}), 404
+        
+        # Update session username
+        session['username'] = new_username
+        
+        return jsonify({'message': 'Username updated successfully'}), 200
+    except Exception as e:
+        print(f"Error changing admin username: {e}")
+        return jsonify({'message': 'Failed to update username'}), 500
+
+@app.route('/api/student/change-password', methods=['POST'])
+@login_required(role='student')
+def student_change_password():
+    """Change student password"""
+    data = request.get_json()
+    current_password = data.get('currentPassword')
+    new_password = data.get('newPassword')
+    
+    if not current_password or not new_password:
+        return jsonify({'message': 'Current password and new password are required'}), 400
+    
+    try:
+        user_id = session.get('user_id')
+        student = students_collection.find_one({'_id': ObjectId(user_id)})
+        
+        if not student:
+            return jsonify({'message': 'Student not found'}), 404
+        
+        # Verify current password
+        stored_password = student.get('password')
+        if isinstance(stored_password, str):
+            stored_password = stored_password.encode('utf-8')
+        
+        if not checkpw(current_password.encode('utf-8'), stored_password):
+            return jsonify({'message': 'Current password is incorrect'}), 401
+        
+        # Hash new password
+        new_hashed_password = hashpw(new_password.encode('utf-8'), gensalt())
+        
+        # Update password in database
+        students_collection.update_one(
+            {'_id': ObjectId(user_id)},
+            {'$set': {'password': new_hashed_password}}
+        )
+        
+        return jsonify({'message': 'Password changed successfully'}), 200
+    except Exception as e:
+        print(f"Error changing student password: {e}")
+        return jsonify({'message': 'Failed to change password'}), 500
+
+@app.route('/api/student/change-email', methods=['POST'])
+@login_required(role='student')
+def student_change_email():
+    """Change student email"""
+    data = request.get_json()
+    new_email = data.get('newEmail')
+    
+    if not new_email:
+        return jsonify({'message': 'New email is required'}), 400
+    
+    try:
+        user_id = session.get('user_id')
+        
+        # Check if email already exists
+        existing_student = students_collection.find_one({'email': new_email})
+        if existing_student and str(existing_student['_id']) != user_id:
+            return jsonify({'message': 'Email already exists'}), 409
+        
+        # Update email
+        result = students_collection.update_one(
+            {'_id': ObjectId(user_id)},
+            {'$set': {'email': new_email}}
+        )
+        
+        if result.modified_count == 0:
+            return jsonify({'message': 'No changes made or student not found'}), 404
+        
+        return jsonify({'message': 'Email updated successfully'}), 200
+    except Exception as e:
+        print(f"Error changing student email: {e}")
+        return jsonify({'message': 'Failed to update email'}), 500
+
 if __name__ == '__main__':
-    app.run(debug=True, host='localhost', port=5000)
+    app.run(debug=True, host='0.0.0.0', port=5000)
