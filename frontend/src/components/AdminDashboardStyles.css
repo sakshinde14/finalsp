@@ -13,7 +13,6 @@
     --danger-color: #dc3545;
     --success-color: #28a745;
 }
-
 /* In your AdminDashboardStyles.css or a relevant CSS file */
 
 .admindashboard-container {
@@ -40,7 +39,7 @@
     padding: 2px;
     max-width: 1190px;
     margin: 30px auto 50px auto;
-    background-color: rgba(255, 255, 255, 0.85); /* White with 85% opacity */
+    background-color: rgba(255, 255, 255, 0.65); /* White with 85% opacity */
     /* You can adjust the last value (0.85) from 0 (fully transparent) to 1 (fully opaque) */
     border-radius: 8px;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
@@ -152,7 +151,7 @@
 }
 
 .course-list-item, .year-list-item, .semester-list-item, .subject-list-item, .search-result-item {
-    background-color: #e9f5e9; /* Light green */
+    background-color: #d6e4d68a; /* Light green */
     border: 1px solid var(--primary-color);
     border-radius: 5px;
     padding: 1rem;

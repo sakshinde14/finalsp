@@ -56,13 +56,24 @@
 
 /* --- Main Dashboard Container --- */
 .dashboard-container {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  background-color: var(--bg-color-light);
-  font-family: var(--font-body);
-  color: var(--text-color-dark);
+    /* Existing styles */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    color: var(--text-color-dark); /* Keep your text color */
+
+    /* --- Background Image Styles --- */
+    background-image: url('../assets/booksack1.jpg'); /* Relative path from CSS to image */
+    background-size: cover; /* Ensures the image covers the entire element */
+    background-position: center center; /* Centers the image */
+    background-repeat: no-repeat; /* Prevents the image from repeating */
+    background-attachment: fixed; /* Keeps the background fixed when scrolling */
+    /* --- End Background Image Styles --- */
+
+    /* If you want a fallback color in case the image fails to load or for better contrast */
+    background-color: #f4f7f6; /* Your original background-color as a fallback */
 }
+
 
 /* --- Main Content Area (Adjusted for Top Navigation) --- */
 .main-content {
@@ -281,6 +292,7 @@
   border: 1px solid var(--border-color-light);
   border-radius: var(--border-radius-medium);
   padding: var(--spacing-md);
+  margin-left: 20px;
   margin-bottom: var(--spacing-sm);
   cursor: pointer;
   box-shadow: 0 2px 8px var(--shadow-light);

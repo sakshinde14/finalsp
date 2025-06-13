@@ -2,7 +2,7 @@
 /* Landing Page Styles */
 .landing-page {
     min-height: 100vh;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: whitesmoke;
     color: #333;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
@@ -12,11 +12,11 @@
     position: fixed;
     top: 0;
     left: 0;
-    right: 0;
-    background: rgba(255, 255, 255, 0.95);
+    right: 0;background: linear-gradient(135deg, #667eea, #764ba2);
+    
     backdrop-filter: blur(10px);
     z-index: 1000;
-    padding: 1rem 0;
+    padding: 10px 0;
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
@@ -31,14 +31,16 @@
 
 .nav-brand h2 {
     margin: 0;
-    color: #667eea;
-    font-size: 1.8rem;
-    font-weight: 700;
+    text-shadow: -1px 0 rgb(255, 255, 255), 0 2px rgb(255, 255, 255), 2px 0 rgb(0, 0, 0), 0 -1px black;
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 450;
+    color: #dde3fa;
 }
 
 .brand-tagline {
     font-size: 0.9rem;
-    color: #666;
+    color: #fafafac7;
     font-style: italic;
 }
 
@@ -50,7 +52,7 @@
 
 .nav-link {
     text-decoration: none;
-    color: #333;
+    color: #ffffff;
     font-weight: 500;
     transition: color 0.3s ease;
     padding: 0.5rem 1rem;
@@ -62,7 +64,6 @@
 }
 
 .nav-cta {
-    background: #667eea;
     color: white !important;
     transition: all 0.3s ease;
 }
@@ -76,21 +77,32 @@
 
 /* How It Works Section */
 .how-it-works {
-    margin-top: 50px;
-    padding: 6rem 2rem;
+    margin-top: 40px;
+    padding: 5rem 2rem 3rem 2rem;
     background: white;
 }
 
 .container {
     width: 1200px;
-    margin: 0 auto;
+    margin: 10px auto;
 }
 
 .section-title {
+    text-shadow: -1px 0 rgb(255, 255, 255), 0 2px rgb(255, 255, 255), 2px 0 rgb(0, 0, 0), 0 -1px black;
     text-align: center;
     font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 1rem;
+    font-weight: 550;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    color: #5a1fff;
+    border-bottom: 2px dashed #7357d6;
+}
+
+.section-n{
+    text-align: center;
+    font-size: 30px;
+    font-weight: 500;
+    margin-bottom: 2px;
     color: #333;
 }
 
@@ -98,14 +110,15 @@
     text-align: center;
     font-size: 1.2rem;
     color: #666;
-    margin-bottom: 3rem;
+    margin-bottom: 2rem;
 }
 
 .steps-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 2rem;
-    margin-top: 3rem;
+    margin-top: 1rem;
+    margin-bottom: 2rem;
 }
 
 .step-card {
@@ -114,7 +127,7 @@
     border-radius: 16px;
     background: #f8f9ff;
     transition: all 0.3s ease;
-    border: 1px solid #e0e6ff;
+    border: 2px dashed #e0e6ff;
 }
 
 .step-card:hover {
@@ -127,8 +140,8 @@
 }
 
 .icon-circle {
-    width: 80px;
-    height: 80px;
+    width: 70px;
+    height: 70px;
     border-radius: 50%;
     background: linear-gradient(135deg, #667eea, #764ba2);
     color: white;
@@ -222,14 +235,13 @@
 .landing-footer {
     background: #1a1a1a;
     color: white;
-    padding: 3rem 2rem 1rem;
+    padding: 5px;
 }
 
 .footer-content {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 3rem;
-    margin-bottom: 2rem;
+    grid-template-columns: 3fr 1fr;
+    margin-bottom: 10px;
 }
 
 .footer-brand h3 {
@@ -242,21 +254,14 @@
     line-height: 1.6;
 }
 
+.footer-brand li {
+    color: #ccc;
+    line-height: 1.6;
+}
+
 .footer-section h4 {
     margin-bottom: 1rem;
     color: white;
-}
-
-.footer-section a {
-    display: block;
-    color: #ccc;
-    text-decoration: none;
-    margin-bottom: 0.5rem;
-    transition: color 0.3s ease;
-}
-
-.footer-section a:hover {
-    color: #667eea;
 }
 
 .footer-bottom {
