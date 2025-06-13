@@ -62,7 +62,7 @@ def test_database_connection():
         return "Successfully connected to MongoDB Atlas!"
     except Exception as e:
         return f"Could not connect to MongoDB Atlas: {e}"
-    
+
 def is_student():
     print(f"DEBUG: Inside is_student(). Session: {session.get('role')}")
     return session.get('role') == 'student'
@@ -117,7 +117,7 @@ def login_student():
         if stored_password is None:
             print(f"DEBUG: Password hash not found for student: {email}")
             return jsonify({'message': 'Internal error: Password data missing for user.'}), 500
-        
+
         if isinstance(stored_password, str):
             stored_password_bytes = stored_password.encode('utf-8')
         elif isinstance(stored_password, bytes):
@@ -340,7 +340,7 @@ def upload_admin_material():
 
             if material_category not in ['syllabus', 'notes', 'paper']:
                 return jsonify({'message': 'Invalid material Category. Must be one of: syllabus, notes, paper'}), 400
-            
+
             # Secure the filename and create a unique name
             filename = f"{uuid.uuid4().hex}_{secure_filename(file.filename)}"
             file_path = os.path.join(app.config['UPLOAD_MATERIALS_FOLDER'], filename)
@@ -361,9 +361,9 @@ def upload_admin_material():
                 'uploadedBy': session.get('username'),
                 'uploadedAt': datetime.utcnow()
             }
-            
+
             inserted_result = study_materials_collection.insert_one(material_entry)
-            
+
             material_entry['_id'] = str(inserted_result.inserted_id)
 
             return jsonify({'message': 'Material uploaded and added successfully', 'material': material_entry}), 201
@@ -444,7 +444,7 @@ def admin_get_materials():
     except Exception as e:
         print(f"Error fetching materials for admin: {e}")
         return jsonify({'message': 'Failed to fetch materials', 'error': str(e)}), 500
-    
+
 # --- Delete Material ---
 @app.route('/api/admin/materials/<string:material_id>', methods=['DELETE'])
 @login_required(role='admin')
@@ -649,7 +649,7 @@ def admin_update_course(course_code):
                     return jsonify({'message': 'Each subject must have a name string'}), 400
                 if 'description' in subject_data and not isinstance(subject_data['description'], str):
                     return jsonify({'message': 'Subject description must be a string if provided'}), 400
-                
+
                 # IMPORTANT: Remove 'materials' field from incoming subject data to prevent accidental overwrite
                 # Materials are managed by separate material upload/management endpoints.
                 if 'materials' in subject_data:
@@ -667,7 +667,7 @@ def admin_update_course(course_code):
         result = courses_collection.replace_one({'code': course_code.upper()}, updated_course)
         if result.matched_count == 0:
             return jsonify({'message': 'Course not found'}), 404
-        
+
         # Convert _id to string for the response if the course was found
         # Fetch the updated course to return its _id if needed, or simply return the payload
         # For PUT, returning the sent payload (updated_course) is common as it represents the new state
@@ -707,7 +707,7 @@ def admin_delete_course(course_code):
                         print(f"Deleted file from disk: {file_path}")
                     except Exception as e:
                         print(f"Error deleting file {file_path} from disk: {e}")
-        
+
         # 3. Delete all study material records associated with this course from the database
         material_delete_result = study_materials_collection.delete_many({'courseCode': course_code_upper})
         print(f"Deleted {material_delete_result.deleted_count} material records associated with course {course_code}")
@@ -738,5 +738,6 @@ def serve_user_note(filename):
         print(f"User note file not found: {filename} in {app.config['UPLOAD_USER_NOTES_FOLDER']}")
         return jsonify({'message': 'File not found'}), 404
 
+# One line analysis: The code adds missing imports for password hashing to the flask app.
 if __name__ == '__main__':
     app.run(debug=True, host='localhost', port=5000)

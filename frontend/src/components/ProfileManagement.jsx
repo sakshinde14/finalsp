@@ -1,36 +1,46 @@
+
 // frontend/src/components/ProfileManagement.jsx
 import React, { useState, useEffect } from 'react';
-import './ProfileManagementStyles.css'; // We will create this CSS file next
+import './ProfileManagementStyles.css';
 
 function ProfileManagement({ onClose }) {
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmNewPassword, setConfirmNewPassword] = useState('');
-    const [newUsername, setNewUsername] = useState(''); // Assuming username can be changed
+    const [newUsername, setNewUsername] = useState('');
+    const [newEmail, setNewEmail] = useState('');
     const [message, setMessage] = useState('');
-    const [messageType, setMessageType] = useState(''); // 'success' or 'error'
+    const [messageType, setMessageType] = useState('');
+    const [userRole, setUserRole] = useState('');
+    const [currentUser, setCurrentUser] = useState({});
 
-    // Fetch initial user data (optional, but good for displaying current username/email if needed)
-    // useEffect(() => {
-    //     const fetchUserData = async () => {
-    //         try {
-    //             const response = await fetch('http://localhost:5000/api/admin/profile', {
-    //                 credentials: 'include'
-    //             });
-    //             if (response.ok) {
-    //                 const data = await response.json();
-    //                 setNewUsername(data.username); // Assuming your backend returns current username
-    //             } else {
-    //                 setMessage('Failed to fetch user data.');
-    //                 setMessageType('error');
-    //             }
-    //         } catch (error) {
-    //             setMessage('Network error fetching user data.');
-    //             setMessageType('error');
-    //         }
-    //     };
-    //     fetchUserData();
-    // }, []); // Run once on component mount
+    // Fetch initial user data
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const response = await fetch('http://localhost:5000/api/profile', {
+                    credentials: 'include'
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    setUserRole(data.role);
+                    setCurrentUser(data);
+                    if (data.role === 'admin') {
+                        setNewUsername(data.username || '');
+                    } else if (data.role === 'student') {
+                        setNewEmail(data.email || '');
+                    }
+                } else {
+                    setMessage('Failed to fetch user data.');
+                    setMessageType('error');
+                }
+            } catch (error) {
+                setMessage('Network error fetching user data.');
+                setMessageType('error');
+            }
+        };
+        fetchUserData();
+    }, []);
 
     // Effect to clear messages
     useEffect(() => {
@@ -58,14 +68,18 @@ function ProfileManagement({ onClose }) {
             setMessageType('error');
             return;
         }
-        if (newPassword.length < 6) { // Example: Minimum password length
+        if (newPassword.length < 6) {
             setMessage('New password must be at least 6 characters long.');
             setMessageType('error');
             return;
         }
 
+        const endpoint = userRole === 'admin' 
+            ? 'http://localhost:5000/api/admin/change-password'
+            : 'http://localhost:5000/api/student/change-password';
+
         try {
-            const response = await fetch('http://localhost:5000/api/admin/change-password', {
+            const response = await fetch(endpoint, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ currentPassword, newPassword }),
@@ -89,40 +103,67 @@ function ProfileManagement({ onClose }) {
         }
     };
 
-    const handleChangeUsername = async (e) => {
+    const handleChangeUsernameOrEmail = async (e) => {
         e.preventDefault();
         setMessage('');
         setMessageType('');
 
-        if (!newUsername.trim()) {
-            setMessage('Username cannot be empty.');
-            setMessageType('error');
-            return;
-        }
+        if (userRole === 'admin') {
+            if (!newUsername.trim()) {
+                setMessage('Username cannot be empty.');
+                setMessageType('error');
+                return;
+            }
 
-        try {
-            const response = await fetch('http://localhost:5000/api/admin/change-username', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ newUsername: newUsername.trim() }),
-                credentials: 'include'
-            });
+            try {
+                const response = await fetch('http://localhost:5000/api/admin/change-username', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ newUsername: newUsername.trim() }),
+                    credentials: 'include'
+                });
 
-            if (response.ok) {
-                setMessage('Username updated successfully!');
-                setMessageType('success');
-                // You might want to update the displayed username in TopNavigation if it's shown there
-            } else {
-                const errorData = await response.json();
-                setMessage(errorData.message || 'Failed to update username.');
+                if (response.ok) {
+                    setMessage('Username updated successfully!');
+                    setMessageType('success');
+                } else {
+                    const errorData = await response.json();
+                    setMessage(errorData.message || 'Failed to update username.');
+                    setMessageType('error');
+                }
+            } catch (error) {
+                setMessage('Network error. Could not update username.');
                 setMessageType('error');
             }
-        } catch (error) {
-            setMessage('Network error. Could not update username.');
-            setMessageType('error');
+        } else if (userRole === 'student') {
+            if (!newEmail.trim()) {
+                setMessage('Email cannot be empty.');
+                setMessageType('error');
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:5000/api/student/change-email', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ newEmail: newEmail.trim() }),
+                    credentials: 'include'
+                });
+
+                if (response.ok) {
+                    setMessage('Email updated successfully!');
+                    setMessageType('success');
+                } else {
+                    const errorData = await response.json();
+                    setMessage(errorData.message || 'Failed to update email.');
+                    setMessageType('error');
+                }
+            } catch (error) {
+                setMessage('Network error. Could not update email.');
+                setMessageType('error');
+            }
         }
     };
-
 
     return (
         <div className="profile-management-container">
@@ -132,20 +173,32 @@ function ProfileManagement({ onClose }) {
             {message && <div className={`profile-message ${messageType}`}>{message}</div>}
 
             <div className="profile-section">
-                <h4>Change Username/Email</h4>
-                <form onSubmit={handleChangeUsername}>
+                <h4>
+                    {userRole === 'admin' ? 'Change Username' : 'Change Email'}
+                </h4>
+                <form onSubmit={handleChangeUsernameOrEmail}>
                     <div className="form-group">
-                        <label htmlFor="newUsername">New Username/Email:</label>
+                        <label htmlFor={userRole === 'admin' ? 'newUsername' : 'newEmail'}>
+                            {userRole === 'admin' ? 'New Username:' : 'New Email:'}
+                        </label>
                         <input
-                            type="text"
-                            id="newUsername"
-                            value={newUsername}
-                            onChange={(e) => setNewUsername(e.target.value)}
-                            placeholder="Enter new username or email"
+                            type={userRole === 'admin' ? 'text' : 'email'}
+                            id={userRole === 'admin' ? 'newUsername' : 'newEmail'}
+                            value={userRole === 'admin' ? newUsername : newEmail}
+                            onChange={(e) => userRole === 'admin' 
+                                ? setNewUsername(e.target.value) 
+                                : setNewEmail(e.target.value)
+                            }
+                            placeholder={userRole === 'admin' 
+                                ? 'Enter new username' 
+                                : 'Enter new email address'
+                            }
                             required
                         />
                     </div>
-                    <button type="submit" className="profile-submit-button">Update Username/Email</button>
+                    <button type="submit" className="profile-submit-button">
+                        {userRole === 'admin' ? 'Update Username' : 'Update Email'}
+                    </button>
                 </form>
             </div>
 
