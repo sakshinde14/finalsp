@@ -1,15 +1,28 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom'; // Assuming you use react-router-dom for navigation
-import './TopNavigationStyles.css'; // Your existing CSS for top navigation
+import { Link } from 'react-router-dom';
+import './TopNavigationStyles.css';
 import ProfileManagement from './ProfileManagement';
 
-
 function TopNavigation({ onLogout }) {
-    const [showProfileOptions, setShowProfileOptions] = useState(false);
+    const [showProfileDropdown, setShowProfileDropdown] = useState(false);
+    const [showProfileForm, setShowProfileForm] = useState(false);
+    const [selectedProfileAction, setSelectedProfileAction] = useState('');
 
     const handleProfileClick = () => {
-        setShowProfileOptions(!showProfileOptions); // Toggle visibility
-    };   
+        setShowProfileDropdown(!showProfileDropdown);
+        setShowProfileForm(false);
+    };
+
+    const handleProfileActionSelect = (action) => {
+        setSelectedProfileAction(action);
+        setShowProfileForm(true);
+        setShowProfileDropdown(false);
+    };
+
+    const handleCloseProfileForm = () => {
+        setShowProfileForm(false);
+        setSelectedProfileAction('');
+    };
 
     return (
         <nav className="top-navigation">
@@ -21,11 +34,28 @@ function TopNavigation({ onLogout }) {
                 <Link to="/favs" className="nav-link">Favorites</Link>
                 <div className="nav-profile-dropdown">
                     <span className="nav-link profile-toggle" onClick={handleProfileClick}>
-                        Profile {/* This is the clickable element */}
+                        Profile
                     </span>
+                    {showProfileDropdown && (
+                        <div className="profile-dropdown-content">
+                            <a href="#" onClick={() => handleProfileActionSelect('password')}>
+                                Change Password
+                            </a>
+                            <a href="#" onClick={() => handleProfileActionSelect('username-email')}>
+                                Change Username/Email
+                            </a>
+                        </div>
+                    )}
                 </div>
                 <span className="nav-link logout-link" onClick={onLogout}>Logout</span>
             </div>
+            
+            {showProfileForm && (
+                <ProfileManagement 
+                    onClose={handleCloseProfileForm}
+                    selectedAction={selectedProfileAction}
+                />
+            )}
         </nav>
     );
 }
