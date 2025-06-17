@@ -1,116 +1,91 @@
 /* src/components/SearchResultsListStyles.css */
-
+/* Container */
 .search-results-container {
-  background-color: var(--bg-color-white);
-  border-radius: var(--border-radius-large);
-  box-shadow: 0 5px 15px var(--shadow-light);
-  padding: var(--spacing-lg);
-  margin: var(--spacing-xl) auto; /* Top/bottom margin, auto left/right */
-  max-width: 1000px; /* Limit width for readability */
-  width: 100%; /* Take full width within max-width */
-  box-sizing: border-box; /* Include padding/border in element's total width/height */
-  animation: fadeIn 0.6s ease-out; /* Fade in animation */
+    padding: 3rem 2rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    border-top: 2px dashed rgb(179, 179, 255);
+    margin: 2rem auto;
+    max-width: 1200px;
 }
 
+/* Heading */
 .search-results-container h2 {
-  text-align: center;
-  color: var(--gradient-blue-end); /* Consistent heading color */
-  margin-bottom: var(--spacing-lg);
-  font-size: 2rem;
-  font-weight: 700;
-  padding-bottom: var(--spacing-sm);
-  border-bottom: 2px solid var(--border-color-light); /* Separator */
+    text-align: center;
+    font-size: 2.5rem;
+    border-radius: 100px;
+    background-color: rgba(0, 0, 0, 0.322);
+    border: 2px dashed;
+    font-weight: 450;
+    color: #c3d8ff;
+    margin-bottom: 2rem;
+    text-shadow: -1px 0 #e8f0ff;
 }
 
+/* Search Result Cards Grid */
 .search-results-list {
-  list-style: none; /* Remove default list bullets */
-  padding: 0;
-  margin: 0;
-  display: grid; /* Use CSS Grid for responsive layout */
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Adjust minmax as needed */
-  gap: var(--spacing-md); /* Space between results */
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
 }
 
+/* Search Result Card */
 .search-result-item {
-  /* Adapting the .list-item-card style for search results */
-  background-color: var(--bg-color-white);
-  border: 1px solid var(--border-color-light);
-  border-radius: var(--border-radius-medium);
-  padding: var(--spacing-md);
-  cursor: pointer;
-  box-shadow: 0 2px 8px var(--shadow-light);
-  transition: all 0.3s ease;
-  display: flex; /* Use flexbox for internal layout */
-  flex-direction: column;
-  justify-content: space-between;
-  text-align: left; /* Align text within the card */
+    background: #ffffff;
+    padding: 1.5rem;
+    border: 2px dashed #ccd8ff;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    text-align: center;
 }
 
 .search-result-item:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 5px 15px var(--shadow-medium);
-  border-color: var(--gradient-blue-start); /* Border highlight on hover */
+    transform: scale(1.03) rotate(-1deg);
+    box-shadow: 8px 8px 0 #889eff;
+    background: #f3f8ff;
 }
 
-.search-result-item .subject-name {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--text-color-dark);
-  margin-bottom: var(--spacing-xs);
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-xs);
+/* Subject Title */
+.subject-name {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #20005f;
+    margin-bottom: 0.6rem;
 }
 
-.search-result-item .course-details {
-  font-size: 0.95rem;
-  color: green;
-  margin-top: var(--spacing-xs);
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-xs);
+/* Course-Year-Semester Info */
+.course-details {
+    font-size: 1rem;
+    color: #555;
+    font-style: italic;
 }
 
-.search-result-item .course-details:hover {
-  color: rgb(235, 248, 235);
-}
-
+/* No Results Message */
 .no-results-message {
-  text-align: center;
-  font-size: 1.2rem;
-  color: var(--text-color-light);
-  padding: var(--spacing-xl);
-  background-color: var(--bg-color-white);
-  border-radius: var(--border-radius-medium);
-  box-shadow: var(--shadow-light);
-  margin: var(--spacing-md) auto;
-  max-width: 500px;
+    text-align: center;
+    font-size: 1.1rem;
+    color: #666;
+    background: #fefcff;
+    border: 2px dashed #ddd;
+    padding: 1.5rem;
+    border-radius: 16px;
+    margin-top: 2rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: 4px 4px 0 #ddd;
 }
 
-/* Responsive adjustments */
+/* Responsive */
 @media (max-width: 768px) {
-  .search-results-container {
-    padding: var(--spacing-md);
-    margin: var(--spacing-lg) auto;
-  }
+    .search-results-container h2 {
+        font-size: 1.6rem;
+    }
 
-  .search-results-container h2 {
-    font-size: 1.7rem;
-  }
+    .subject-name {
+        font-size: 1.1rem;
+    }
 
-  .search-results-list {
-    grid-template-columns: 1fr; /* Stack items on small screens */
-  }
-
-  .search-result-item {
-    padding: var(--spacing-sm);
-  }
-
-  .search-result-item .subject-name {
-    font-size: 1.1rem;
-  }
-
-  .search-result-item .course-details {
-    font-size: 0.85rem;
-  }
+    .course-details {
+        font-size: 0.95rem;
+    }
 }

@@ -1,106 +1,137 @@
 .admin-course-list-container {
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    margin-top: 20px;
+    padding: 3rem 2rem;
+    background: linear-gradient(to right, #fffefc, #eaf3ff);
+    border-radius: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    box-shadow: 6px 6px 0 #bfd8ff;
+    border: 3px dashed #a3c3ff;
+    max-width: 1000px;
+    margin: 2rem auto;
 }
 
 .admin-course-list-container h2 {
-    color: #333;
-    margin-bottom: 25px;
     text-align: center;
-    font-size: 1.8em;
+    font-size: 2rem;
+    color: #4a4ae0;
+    margin-bottom: 2rem;
+    text-shadow: 1px 1px #ffffff;
 }
 
 .course-cards-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
 }
 
+/* Individual Card */
 .admin-course-card {
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    background: #ffffff;
+    border: 2px dashed #ccd8ff;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 4px 4px 0 #bbcaff;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-align: center;
 }
 
 .admin-course-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    transform: scale(1.02);
+    box-shadow: 6px 6px 0 #889eff;
+    background: #f3f8ff;
 }
 
 .admin-course-card h3 {
-    color: #0056b3;
-    margin-top: 0;
-    margin-bottom: 10px;
-    font-size: 1.4em;
+    font-size: 1.4rem;
+    color: #444;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
 }
 
-.admin-course-card .course-description {
-    font-size: 0.95em;
-    color: #555;
-    line-height: 1.5;
-    margin-bottom: 15px;
-    flex-grow: 1; /* Allows description to take available space */
+.course-description {
+    font-size: 0.95rem;
+    color: #666;
+    margin-bottom: 1rem;
 }
 
+/* Buttons */
 .admin-course-actions {
     display: flex;
+    justify-content: center;
     gap: 10px;
-    margin-top: 15px;
-    justify-content: flex-end; /* Align buttons to the right */
+    flex-wrap: wrap;
 }
 
 .admin-button {
-    padding: 10px 15px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
     font-weight: bold;
-    transition: background-color 0.2s ease;
+    font-size: 0.9rem;
+    cursor: pointer;
+    border: none;
+    box-shadow: 2px 2px 0 #aaa;
+    transition: all 0.3s ease-in-out;
 }
 
 .edit-button {
-    background-color: #007bff;
-    color: white;
-}
-
-.edit-button:hover {
-    background-color: #0056b3;
+    background: #d9f0ff;
+    color: #006eaa;
+    border: 2px solid #b0e1ff;
 }
 
 .delete-button {
-    background-color: #dc3545;
-    color: white;
+    background: #ffe1e1;
+    color: #d14242;
+    border: 2px solid #f9bcbc;
 }
 
+.edit-button:hover,
 .delete-button:hover {
-    background-color: #c82333;
+    transform: scale(1.05);
 }
 
+/* Messages */
+.loading-message,
+.error-message,
 .success-message {
-    background-color: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
-    padding: 10px;
-    border-radius: 5px;
-    margin-bottom: 20px;
     text-align: center;
+    font-weight: 500;
+    font-size: 1rem;
+    border-radius: 16px;
+    padding: 1rem;
+    margin: 1rem auto;
+    max-width: 600px;
+}
+
+.loading-message {
+    background: #fdfdfd;
+    border: 2px dashed #ccc;
+    color: #333;
 }
 
 .error-message {
-    background-color: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
-    padding: 10px;
-    border-radius: 5px;
-    margin-bottom: 20px;
-    text-align: center;
+    background: #ffe6e6;
+    border: 2px dashed #ffb3b3;
+    color: #b00020;
+}
+
+.success-message {
+    background: #e6ffe6;
+    border: 2px dashed #aaffaa;
+    color: #2e7d32;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .admin-course-list-container h2 {
+        font-size: 1.6rem;
+    }
+
+    .admin-button {
+        font-size: 0.85rem;
+        padding: 0.4rem 0.8rem;
+    }
+
+    .admin-course-card h3 {
+        font-size: 1.2rem;
+    }
 }

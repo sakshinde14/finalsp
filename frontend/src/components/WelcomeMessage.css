@@ -1,0 +1,51 @@
+/* WelcomeMessage.css */
+
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+
+.welcome-message {
+
+    text-align: center;
+    font-size: 2.5rem;
+    padding-bottom: 2px;
+    font-weight: 550;
+    text-decoration-line: underline;
+    color: #5a1fff;
+
+  /* Fancy Gradient Text */
+  background: linear-gradient(90deg, #7700ff, #e22323, #08f800);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shineText 5s ease infinite;
+
+  /* Fun Bounce */
+  animation: bounceIn 1s ease-out, shineText 8s ease-in-out infinite;
+}
+
+/* Text Gradient Animation */
+@keyframes shineText {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Bounce Entrance */
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.8) translateY(-50px);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.1) translateY(10px);
+  }
+  100% {
+    transform: scale(1) translateY(0);
+  }
+}

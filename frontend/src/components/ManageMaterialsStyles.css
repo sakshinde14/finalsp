@@ -1,305 +1,187 @@
 /* src/components/ManageMaterialsStyles.css */
-
+/* Wrapper and Container */
 .manage-materials-wrapper {
-  /* This wrapper helps position the back button outside the main container */
-  position: relative;
-  padding-bottom: var(--spacing-xl); /* Space for the back button */
+    min-height: 100vh;
+    padding: 40px 20px;
+    background: linear-gradient(135deg, #f0f8ff 0%, #fefefe 100%);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .manage-materials-container {
-  background-color: var(--bg-color-white);
-  border-radius: var(--border-radius-large);
-  box-shadow: 0 5px 15px var(--shadow-light);
-  padding: var(--spacing-xl);
-  margin: var(--spacing-xl) auto; /* Top/bottom margin, auto left/right */
-  max-width: var(--content-max-width);
-  width: 100%;
-  box-sizing: border-box;
-  animation: fadeIn 0.6s ease-out;
+    background-color: #fffdfd;
+    border: 3px dashed #c4d2ff;
+    padding: 30px 40px;
+    border-radius: 25px;
+    box-shadow: 6px 6px 0 #c7d6ff;
+    max-width: 850px;
+    width: 100%;
 }
 
+/* Heading */
 .manage-materials-header {
-  text-align: center;
-  color: var(--gradient-blue-end);
-  margin-bottom: var(--spacing-lg);
-  font-size: 2rem;
-  font-weight: 700;
-  padding-bottom: var(--spacing-sm);
-  border-bottom: 2px solid var(--border-color-light);
-  line-height: 1.3; /* Ensure text wraps nicely */
+    font-size: 26px;
+    color: #3b43aa;
+    text-align: center;
+    margin-bottom: 24px;
+    text-shadow: 1px 1px 0 #fff;
 }
 
-/* --- Messages (Loading, Error, System) --- */
+/* Loading, Error, Message */
 .loading-message,
 .error-message,
 .system-message {
-  text-align: center;
-  padding: var(--spacing-md);
-  margin: var(--spacing-md) auto;
-  border-radius: var(--border-radius-medium);
-  font-size: 1.1rem;
-  font-weight: 500;
-  max-width: 600px;
+    padding: 12px 20px;
+    border-radius: 16px;
+    margin-bottom: 15px;
+    font-weight: bold;
+    text-align: center;
 }
 
 .loading-message {
-  background-color: #e0f2f7; /* Light blue */
-  color: var(--secondary-color-dark);
-  border: 1px solid #b3e5fc;
+    background-color: #fff8e1;
+    color: #ff9800;
+    border: 2px dashed #ffd54f;
 }
 
-.error-message {
-  background-color: #ffebee; /* Light red */
-  color: var(--danger-color-dark);
-  border: 1px solid #ef9a9a;
+.error-message,
+.system-message.error {
+    background-color: #ffe6e6;
+    color: #b30000;
+    border: 2px dashed #e06666;
 }
 
 .system-message.success {
-  background-color: #e8f5e9; /* Light green */
-  color: var(--primary-color-dark);
-  border: 1px solid #c8e6c9;
+    background-color: #e6ffe6;
+    color: #256d25;
+    border: 2px dashed #57d057;
 }
 
-.system-message.error { /* For messages explicitly indicating error, e.g., 'Failed to delete' */
-  background-color: #ffebee;
-  color: var(--danger-color-dark);
-  border: 1px solid #ef9a9a;
-}
-
-/* --- Material Filters Section (Reusing from MaterialDisplayList) --- */
+/* Filters */
 .material-filters {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: var(--spacing-lg);
-  margin-bottom: var(--spacing-xl);
-  padding: var(--spacing-md);
-  background-color: var(--bg-color-light);
-  border-radius: var(--border-radius-medium);
-  box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
 }
 
 .material-filters label {
-  font-weight: 600;
-  color: var(--text-color-dark);
-  margin-right: var(--spacing-xs);
-  align-self: center;
+    font-weight: bold;
+    color: #4c51bf;
+    margin-right: 8px;
 }
 
 .material-filters select {
-  padding: var(--spacing-sm) var(--spacing-md);
-  border: 1px solid var(--border-color-light);
-  border-radius: var(--border-radius-medium);
-  background-color: var(--bg-color-white);
-  font-size: 1rem;
-  color: var(--text-color-dark);
-  cursor: pointer;
-  transition: all 0.3s ease;
-  min-width: 120px;
+    padding: 6px 12px;
+    border-radius: 10px;
+    border: 2px dashed #a5b9ff;
+    background-color: #f0f4ff;
+    font-size: 14px;
 }
 
-.material-filters select:hover {
-  border-color: var(--secondary-color);
-  box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
-}
-
-.material-filters select:focus {
-  outline: none;
-  border-color: var(--secondary-color-dark);
-  box-shadow: 0 0 0 4px rgba(33, 150, 243, 0.2);
-}
-
-/* --- No Materials Found Message (Reusing) --- */
-.no-materials-found {
-  text-align: center;
-  padding: var(--spacing-xl);
-  margin: var(--spacing-lg) auto;
-  background-color: #fff3e0;
-  border: 1px solid #ffcc80;
-  border-radius: var(--border-radius-medium);
-  color: var(--text-color-dark);
-  font-size: 1.1rem;
-  box-shadow: var(--shadow-light);
-}
-
-.no-materials-found p {
-  margin: var(--spacing-sm) 0;
-}
-
-/* --- Materials List (Grid for Material Items) --- */
+/* Materials List */
 .materials-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); /* Adjust minmax as needed */
-  gap: var(--spacing-md);
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
 }
 
 .material-item {
-  background-color: var(--bg-color-white);
-  border: 1px solid var(--border-color-light);
-  border-radius: var(--border-radius-medium);
-  padding: var(--spacing-md);
-  box-shadow: 0 2px 8px var(--shadow-light);
-  transition: all 0.3s ease;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  text-align: left;
+    background-color: #f8faff;
+    border: 2px dashed #bbcaff;
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 3px 3px 0 #dce3ff;
+    transition: transform 0.2s ease;
 }
 
 .material-item:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 5px 15px var(--shadow-medium);
-  border-color: var(--primary-color); /* Highlight on hover, maybe green for admin */
+    transform: scale(1.01);
 }
 
-.material-item .material-details h4 {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--text-color-dark);
-  margin-top: 0;
-  margin-bottom: var(--spacing-sm);
+.material-details h4 {
+    margin: 0 0 8px;
+    color: #3b43aa;
+    font-size: 18px;
 }
 
-.material-item .material-details p {
-  font-size: 0.95rem;
-  color: darkblue;
-  margin: var(--spacing-xs) 0;
-  line-height: 1.4;
+.material-details p {
+    margin: 4px 0;
+    font-size: 14px;
+    color: #444;
 }
 
-.material-item .material-details a {
-  color: var(--secondary-color-dark);
-  text-decoration: none;
-  font-weight: 500;
-}
-
-.material-item .material-details a:hover {
-  text-decoration: underline;
-}
-
-/* --- Material Actions (Buttons) --- */
+/* Action Buttons */
 .material-actions {
-  display: flex;
-  justify-content: flex-end; /* Align buttons to the right */
-  gap: var(--spacing-sm);
-  margin-top: var(--spacing-md);
-  padding-top: var(--spacing-sm);
-  border-top: 1px solid var(--border-color-light); /* Separator above buttons */
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
 }
 
-.material-actions button {
-  padding: var(--spacing-sm) var(--spacing-md);
-  border: none;
-  border-radius: var(--border-radius-small);
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
+.edit-button,
+.delete-button {
+    padding: 8px 14px;
+    font-weight: bold;
+    font-size: 14px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.3s;
 }
 
 .edit-button {
-  background-color: var(--secondary-color); /* Blue for edit */
-  color: var(--text-color-inverted);
+    background-color: #a5b9ff;
+    color: #fff;
+    box-shadow: 2px 2px 0 #8ea9ff;
 }
 
 .edit-button:hover {
-  background-color: var(--secondary-color-dark);
-  transform: translateY(-1px);
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    background-color: #859dff;
+    transform: scale(1.05);
 }
 
 .delete-button {
-  background-color: var(--danger-color); /* Red for delete */
-  color: var(--text-color-inverted);
+    background-color: #ffb6c1;
+    color: white;
+    box-shadow: 2px 2px 0 #ffa6b2;
 }
 
 .delete-button:hover {
-  background-color: var(--danger-color-dark);
-  transform: translateY(-1px);
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    background-color: #ff8fa4;
+    transform: scale(1.05);
 }
 
-/* --- Back Button (at the bottom of the page) --- */
+/* Back Button */
 .back-button {
-  display: block; /* Make it block level to center */
-  margin: var(--spacing-xl) auto; /* Center it below the main container */
-  background: linear-gradient(90deg, var(--gradient-blue-start), var(--gradient-blue-end)); /* Blue to Purple Gradient */
-  color: var(--text-color-inverted);
-  padding: var(--spacing-md) var(--spacing-xl);
-  border-radius: var(--border-radius-large);
-  font-size: 1.1rem;
-  font-weight: 600;
-  text-decoration: none;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-  transition: all 0.3s ease;
-  border: none;
-  cursor: pointer;
-  max-width: fit-content; /* Only take content width */
+    margin-top: 30px;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 15px;
+    background-color: #e0e7ff;
+    color: #3b43aa;
+    border: 2px dashed #a5b9ff;
+    box-shadow: 3px 3px 0 #cbd5ff;
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.3s;
 }
 
 .back-button:hover {
-  background: linear-gradient(90deg, #303F9F, #311B92); /* Darker shade on hover */
-  transform: translateY(-2px);
-  box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+    background-color: #d6e2ff;
+    transform: scale(1.05);
 }
 
-
-/* Responsive adjustments */
-@media (max-width: 900px) {
-  .manage-materials-container {
-    padding: var(--spacing-lg);
-  }
-  .manage-materials-header {
-    font-size: 1.8rem;
-  }
-}
-
-@media (max-width: 768px) {
-  .manage-materials-container {
-    padding: var(--spacing-md);
-    margin: var(--spacing-lg) auto;
-  }
-  .manage-materials-header {
-    font-size: 1.6rem;
-  }
-  .material-filters {
-    flex-direction: column;
-    align-items: center;
-    gap: var(--spacing-md);
-  }
-  .material-filters label {
-    margin-right: 0;
-  }
-  .material-filters select {
-    width: 80%;
-    max-width: 250px;
-  }
-  .materials-list {
-    grid-template-columns: 1fr; /* Stack materials on smaller screens */
-  }
-  .material-item {
-    padding: var(--spacing-sm);
-  }
-}
-
-@media (max-width: 480px) {
-  .manage-materials-header {
-    font-size: 1.4rem;
-  }
-  .material-item .material-details h4 {
-    font-size: 1.1rem;
-  }
-  .material-item .material-details p {
-    font-size: 0.85rem;
-  }
-  .material-actions button {
-    padding: var(--spacing-xs) var(--spacing-sm);
-    font-size: 0.9rem;
-  }
-  .back-button {
-    padding: var(--spacing-sm) var(--spacing-lg);
-    font-size: 1rem;
-  }
+/* No Materials Message */
+.no-materials-found {
+    text-align: center;
+    font-size: 15px;
+    color: #888;
+    background-color: #fff8f8;
+    padding: 16px;
+    border: 2px dashed #ffc0cb;
+    border-radius: 16px;
 }

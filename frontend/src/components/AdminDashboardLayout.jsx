@@ -511,28 +511,33 @@ function AdminDashboardLayout() {
                 {/* Render the appropriate content based on state */}
                 {renderContent()}
 
+
+
+
                 {/* Admin-specific action buttons for Materials - conditional display */}
                 {/* These buttons ONLY appear if a subject is selected AND no other admin forms/panels are active */}
                 {selectedContext && selectedContext.subject && !showAddMaterialForm && !showManageMaterialsPanel && !showManageCoursesPanel && !showCourseForm && (
-                    <div className="admin-actions-bottom">
+                    <div className="admin-b">
                         <button
-                            className="admin-action-button"
+                            className="am-button"
                             onClick={handleAddMaterialClick} >
                             Add New Material for {selectedContext.subject}
                         </button>
                         <button
-                            className="admin-action-button"
+                            className="am-button"
                             onClick={handleManageMaterialsClick} >
                             Manage Materials for {selectedContext.subject}
                         </button>
                     </div>
                 )}
 
+
+
                 {/* Admin Control Buttons - always visible at the top of the main content */}
                 <div className="admin-primary-actions">
                     {!showAddMaterialForm && !showManageMaterialsPanel && !showManageCoursesPanel && !showCourseForm && !selectedSubject && (
                     <button
-                        className="admin-action-button primary-admin-button"
+                        className="admin-button primary-button"
                         onClick={handleManageCoursesClick}
                         // Disable if already on course list or course form
                         disabled={showManageCoursesPanel || showCourseForm}

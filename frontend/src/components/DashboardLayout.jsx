@@ -10,13 +10,13 @@ import SubjectList from './SubjectList';
 import SearchResultsList from './SearchResultsList';
 import MaterialDisplayList from './MaterialDisplayList';
 
-import './AdminDashboardStyles.css';
 import './DashboardStyles.css'; // Ensure this contains your new message styles
-import './CourseListStyles.css';
+
 function DashboardLayout() {
     const navigate = useNavigate();
 
     // Existing states
+    const [studentName, setStudentName] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCourse, setSelectedCourse] = useState(null);
     const [selectedYear, setSelectedYear] = useState(null);
@@ -221,6 +221,7 @@ function DashboardLayout() {
         }
     };
 
+
     return (
         <div className="dashboard-container">
             <TopNavigation onLogout={handleLogout} />
@@ -235,21 +236,24 @@ function DashboardLayout() {
 
                 {/* Welcome message */}
                 {!showSearchResults && !selectedCourse && (
-                    <WelcomeMessage message="Welcome, Student." /> /* Correctly passing the message prop */
+                    <WelcomeMessage message={`Welcome, Student!`} />/* Correctly passing the message prop */
                 )}
                 
                 
-                <div className="search-bar-container">
-                    {!selectedSubject && (
-                    <input
-                        type="text"
-                        placeholder="Search for subjects..."
-                        value={searchTerm}
-                        onChange={handleSearchChange}
-                        className="search-input"
-                    />
-                    )}
-                </div>
+                {/* Search bar is visible unless a specific admin form/panel is open, or a subject is already selected for material display */}
+                {!selectedSubject && (
+                    <div className="search-bar-container">
+                        <h3>Search for your subject: </h3>
+                        <input
+                            type="text"
+                            placeholder="e.g., Database Management Systems"
+                            value={searchTerm}
+                            onChange={handleSearchChange}
+                            className="search-input"
+                        />
+                    </div>
+                )}
+
 
                 {/* Conditional Rendering based on state */}
                 {showSearchResults ? (

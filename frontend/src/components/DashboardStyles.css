@@ -1,350 +1,139 @@
 /* src/components/DashboardStyles.css */
-
-/* --- Root Variables for Global Styling (ensure these are in an accessible global CSS file, e.g., src/index.css) --- */
-/* If you don't have a global variables file, you can place this at the very top of DashboardStyles.css or AdminDashboardStyles.css */
-:root {
-  --primary-color: #4CAF50; /* Green - Used for general accents if no gradient */
-  --primary-color-dark: #388E3C;
-  --primary-color-light: #81C784;
-
-  --secondary-color: #2196F3; /* Blue - Base for some gradients */
-  --secondary-color-dark: #1976D2;
-
-  --accent-color: #FFC107; /* Amber/Yellow */
-  --accent-color-dark: #FFA000;
-
-  --danger-color: #F44336; /* Red for errors/logout */
-  --danger-color-dark: #D32F2F;
-
-  /* Gradient colors */
-  --gradient-blue-start: #647af7; /* Indigo */
-  --gradient-blue-end: #2600ff;   /* Dark Purple */
-  --gradient-red-start: #eb0f97;  /* Pink */
-  --gradient-red-end: #e203ff;    /* Deep Purple */
-
-  --bg-color-light: #f5f5f5; /* Light gray background for page */
-  --bg-color-white: #ffffff; /* White background for cards/panels */
-
-  --text-color-dark: #333333;
-  --text-color-light: #757575;
-  --text-color-inverted: #ffffff; /* White text for dark/gradient backgrounds */
-
-  --border-color-light: #e0e0e0;
-  --border-color-dark: #9e9e9e; /* New: for gradient borders */
-
-  --shadow-light: rgba(0, 0, 0, 0.08);
-  --shadow-medium: rgba(0, 0, 0, 0.15);
-  --shadow-dark: rgba(0, 0, 0, 0.25);
-
-  --spacing-xs: 4px;
-  --spacing-sm: 8px;
-  --spacing-md: 16px;
-  --spacing-lg: 24px;
-  --spacing-xl: 32px;
-
-  --border-radius-small: 4px;
-  --border-radius-medium: 8px;
-  --border-radius-large: 12px;
-
-  --font-heading: 'Roboto', sans-serif;
-  --font-body: 'Open Sans', sans-serif;
-
-  --content-max-width: 1200px; /* Max width for main content */
-  --top-nav-height: 10px; /* Approximate height of your TopNavigation. Adjust if needed. */
-}
-
-
-/* --- Main Dashboard Container --- */
+/* Container for the whole dashboard */
 .dashboard-container {
-    /* Existing styles */
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    color: var(--text-color-dark); /* Keep your text color */
-
-    /* --- Background Image Styles --- */
-    background-image: url('../assets/booksack1.jpg'); /* Relative path from CSS to image */
-    background-size: cover; /* Ensures the image covers the entire element */
-    background-position: center center; /* Centers the image */
-    background-repeat: no-repeat; /* Prevents the image from repeating */
-    background-attachment: fixed; /* Keeps the background fixed when scrolling */
-    /* --- End Background Image Styles --- */
-
-    /* If you want a fallback color in case the image fails to load or for better contrast */
-    background-color: #f4f7f6; /* Your original background-color as a fallback */
+     min-height: 100vh;
+    background: linear-gradient(to bottom right, #eaf2ff, #ffffff);
+    color: #333;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-
-/* --- Main Content Area (Adjusted for Top Navigation) --- */
+/* Main content area */
 .main-content {
-  flex-grow: 1;
-  /* Crucial: Add top padding to clear the fixed TopNavigation */
-  /*padding: calc(var(--top-nav-height) + var(--spacing-lg)) var(--spacing-md) var(--spacing-lg);
-  */position: relative;
-  max-width: var(--content-max-width);
-  margin: 0 auto;
-  width: 100%;
-  box-sizing: border-box;
+    padding: 3px;
+    max-width: 1200px;
+    background: rgba(182, 226, 255, 0.5);
+    border: 2px dashed rgb(158, 197, 219);
+    border-radius: 20px;
+    margin: 70px 70px 10px 70px;
 }
 
-/* --- Welcome Message --- */
-.welcome-message {
-  text-align: center;
-  padding: var(--spacing-xs);
-  margin-bottom: var(--spacing-xs);
-  /*background: linear-gradient(135deg, var(--gradient-red-start) 10%, var(--gradient-red-end) 100%); /* Blue/Purple Gradient */
-  color: rgb(134, 12, 108);
-  border-radius: var(--border-radius-large);
-  box-shadow: 0 10px 30px var(--shadow-medium);
-  font-size: 2.2rem;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  animation: fadeInScale 0.8s ease-out;
+
+/* Search Bar */
+.search-bar-container {
+    
+    margin-bottom: 2px;
+    padding: 0px 40px;
+    /*text-align: center;*/
 }
 
-@keyframes fadeInScale {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+.search-bar-container h3 {
+    color: var(--secondary-dark);
+    margin-bottom: 1rem;
+}
+
+.search-input {
+    width: 80%;
+    max-width: 600px;
+    padding: 2rem 1rem;
+    border-radius: 2rem; 
+    background-color: #fff;
+    font-size: 1rem;
+    outline: none;
+    box-shadow: 4px 4px 0 #abbdfc;
+    transition: all 0.3s ease-in-out;
+}
+
+.search-input:focus {
+    box-shadow: 0 4px 10px rgba(103, 0, 238, 0.582);
+}
+
+
+
+/* Loading and error messages */
+.loading-message, .error-message {
+    text-align: center;
+    font-size: 1.1rem;
+    padding: 1rem;
+    margin: 1rem 0;
+    border-radius: 1rem;
+}
+
+.loading-message {
+    background-color: #fffde7;
+    color: #f9a825;
+}
+
+.error-message {
+    background-color: #ffebee;
+    color: #d32f2f;
+}
+
+/* Subject materials view */
+.subject-materials-view {
+    padding: 2rem;
+    margin-top: 2rem;
+}
+
+.subject-title-header {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: #6a1b9a;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+/* Back button style */
+.back-button {
+    display: inline-block;
+    margin: 15px 60px;
+    padding: 1.5rem 1.5rem;
+    border: none;
+    border-radius: 2rem;
+    background: #ffffff;
+    color: rgb(0, 0, 0);
+    font-weight: bold;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+}
+
+.back-button:hover {
+    background: #512da8;
 }
 
 /* Logout/Info Popup Messages */
 .logout-popup {
-  position: fixed;
-  top: var(--spacing-xl);
-  right: var(--spacing-xl);
-  padding: var(--spacing-md) var(--spacing-lg);
-  border-radius: var(--border-radius-large);
-  font-weight: 600;
-  text-align: center;
-  z-index: 1000;
-  min-width: 300px;
-  max-width: 400px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  animation: slideInRight 0.5s ease-out;
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    min-width: 250px;
+    padding: 14px 20px;
+    border-radius: 18px;
+    font-size: 14px;
+    font-weight: bold;
+    z-index: 9999;
+    animation: slideInRight 0.5s ease-out;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
 .logout-popup.success {
-  background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
-  color: var(--primary-color-dark);
-  border: 2px solid var(--primary-color-light);
+     background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+    border: 2px dashed #57d057;
+    color: #256d25;
 }
 
 .logout-popup.error {
-  background: linear-gradient(135deg, #ffebee, #ffcdd2);
-  color: var(--danger-color-dark);
-  border: 2px solid var(--danger-color);
-}
-
-@keyframes slideInRight {
-  from {
-    opacity: 0;
-    transform: translateX(100%);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-/* --- Search Bar Container --- */
-.search-bar-container {
-  max-width: 600px;
-  margin: var(--spacing-md) auto var(--spacing-lg) auto;
-  padding: 0 var(--spacing-sm);
-}
-
-.search-input {
-  width: 100%;
-  padding: var(--spacing-sm);
-  border: 1px solid var(--border-color-light);
-  border-radius: 70px;
-  font-size: 1.1rem;
-  font-family: var(--font-body);
-  color: var(--text-color-dark);
-  box-shadow: 0 2px 8px var(--shadow-light);
-  transition: all 0.3s ease;
-}
-
-.search-input:focus {
-  border-color: var(--secondary-color);
-  box-shadow: 0 0 0 4px rgba(33, 150, 243, 0.2);
-  outline: none;
-}
-
-.search-input::placeholder {
-  color: var(--text-color-light);
-  opacity: 0.8;
-}
-
-/* --- General Message Styles (Loading, Error) --- */
-.loading-message,
-.error-message {
-  text-align: center;
-  padding: var(--spacing-md);
-  margin: var(--spacing-lg) auto;
-  border-radius: var(--border-radius-medium);
-  font-size: 1.1rem;
-  font-weight: 500;
-  max-width: 500px;
-  box-shadow: 0 2px 8px var(--shadow-light);
-  animation: fadeIn 0.5s ease-out;
-}
-
-.loading-message {
-  background-color: var(--bg-color-white);
-  color: var(--text-color-light);
-  border: 1px solid var(--border-color-light);
-}
-
-.error-message {
-  background-color: #ffebee;
-  color: var(--danger-color);
-  border: 1px solid var(--danger-color);
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-/* --- Subject Materials View Specifics --- */
-.subject-materials-view {
-  background-color: var(--bg-color-white);
-  border-radius: var(--border-radius-large);
-  box-shadow: 0 5px 15px var(--shadow-light);
-  padding: var(--spacing-xl);
-  margin: var(--spacing-lg) auto;
-  max-width: 900px;
-  width: 100%;
-  text-align: center;
-  animation: fadeIn 0.6s ease-out;
-}
-
-.subject-title-header {
-  font-size: 2rem;
-  color: var(--gradient-blue-end); /* Use a darker purple from the gradient */
-  margin-bottom: var(--spacing-lg);
-  padding-bottom: var(--spacing-sm);
-  border-bottom: 2px solid var(--border-color-light);
-}
-
-/* --- Back Buttons (Now with Gradient) --- */
-.back-button {
-  background: linear-gradient(90deg, var(--gradient-blue-start), var(--gradient-blue-end)); /* Blue to Purple Gradient */
-  color: var(--text-color-inverted);
-  padding: var(--spacing-sm) var(--spacing-md);
-  border-radius: var(--border-radius-medium);
-  font-weight: 500;
-  margin-top: var(--spacing-lg);
-  display: inline-block;
-  text-align: center;
-  box-shadow: 0 2px 5px var(--shadow-light);
-  transition: all 0.3s ease;
-  cursor: pointer;
-  border: none;
-}
-
-.back-button:hover {
-  background: linear-gradient(90deg, #303F9F, #311B92); /* Darker shade on hover */
-  transform: translateY(-2px);
-  box-shadow: 0 4px 10px var(--shadow-medium);
-}
-
-/* --- Navigation Section (for CourseList, YearList, etc.) --- */
-.navigation-section {
-  padding: var(--spacing-lg);
-  background-color: var(--bg-color-white);
-  border-radius: var(--border-radius-large);
-  box-shadow: 0 5px 15px var(--shadow-light);
-  margin: var(--spacing-lg) auto;
-  max-width: 800px;
-  animation: fadeIn 0.6s ease-out;
-}
-
-.navigation-section h3 {
-  text-align: center;
-  color: var(--gradient-blue-end); /* Use a darker purple from the gradient */
-  margin-bottom: var(--spacing-lg);
-  font-size: 1.8rem;
-  font-weight: 600;
-}
-
-/* Ensure the h3 "Search for your subject:" is styled nicely */
-.main-content h3 {
-    text-align: center;
-    color: var(--text-color-dark);
-    margin-top: var(--spacing-lg);
-    margin-bottom: var(--spacing-md);
-    font-size: 1.5rem;
+    background: linear-gradient(135deg, #ffebee, #ffcdd2);
+    border: 2px dashed #e06666;
+    color: #b30000;
 }
 
 
-/* --- List Item Styles (e.g., CourseListItem, YearListItem, SubjectListItem) --- */
-/* Assuming a common class for clickable list items in your components */
-.list-item-card {
-  background-color: var(--bg-color-white);
-  border: 1px solid var(--border-color-light);
-  border-radius: var(--border-radius-medium);
-  padding: var(--spacing-md);
-  margin-left: 20px;
-  margin-bottom: var(--spacing-sm);
-  cursor: pointer;
-  box-shadow: 0 2px 8px var(--shadow-light);
-  transition: all 0.3s ease;
-  text-align: center; /* Center content in list items */
-  font-size: 1.1rem;
-  font-weight: 500;
-  color: var(--text-color-dark);
-}
-
-.list-item-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 5px 15px var(--shadow-medium);
-  border-color: var(--gradient-blue-start); /* Border highlight on hover */
-}
-
-/* If you have specific active/selected states for list items, you can add: */
-.list-item-card.active {
-  background: linear-gradient(45deg, var(--gradient-blue-start), var(--gradient-blue-end));
-  color: var(--text-color-inverted);
-  border-color: var(--gradient-blue-end);
-}
-
-/* --- Responsive Adjustments --- */
-@media (max-width: 768px) {
-  .main-content {
-    padding: calc(var(--top-nav-height) + var(--spacing-md)) var(--spacing-sm) var(--spacing-md);
-  }
-
-  .welcome-message {
-    font-size: 1.75rem;
-    padding: var(--spacing-lg);
-    margin-bottom: var(--spacing-lg);
-  }
-
-  .subject-materials-view {
-    padding: var(--spacing-md);
-    margin: var(--spacing-md) var(--spacing-sm);
-  }
-
-  .subject-title-header {
-    font-size: 1.75rem;
-    margin-bottom: var(--spacing-md);
-  }
-
-  .back-button {
-    width: 100%;
-    padding: var(--spacing-md);
-  }
-
-  .list-item-card {
-    font-size: 1rem;
-    padding: var(--spacing-sm);
-  }
+/* Animation */
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translateY(-20px); }
+    20% { opacity: 1; transform: translateY(0); }
+    80% { opacity: 1; }
+    100% { opacity: 0; transform: translateY(-20px); }
 }

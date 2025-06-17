@@ -1,99 +1,146 @@
-/* General container for the section */
-.container {
-    max-width: 1130px; /* Or whatever maximum width you prefer */
-    margin: 5px;
-    padding: 5px;
+/* Container */
+.courses-overview.container {
+    padding: 2rem 2rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Card styling */
+/* Card Wrapper */
 .card {
-    /*background-image: url("frontend/src/assets/btg cs.jpg");*/
-    border-radius: 8px;
-    box-shadow: 0px 0px 20px rgba(105, 99, 99, 0.575);
-    padding: 30px;
-    margin-bottom: 30px;
+    background: #ffffff;
+    border: 3px dashed #a3c3ff;
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 5px 5px 0 #a3c3ff;
+    transition: all 0.3s ease-in-out;
 }
 
+.card:hover {
+    box-shadow: 8px 8px 0 #7ba5f9;
+}
+
+/* Header */
 .card-header {
     text-align: center;
-    margin-bottom: 30px;
+    margin-bottom: 2rem;
 }
 
 .card-title {
-    text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
-    font-size: 2.2em;
-    font-family: "Georgia", Times, serif;
-    color: #1fbbae;
-    margin-bottom: 10px;
+    font-size: 2.2rem;
+    font-weight: 600;
+    color: #554ce7;
+    margin-bottom: 0.5rem;
+    text-shadow: -1px 0 rgb(255, 255, 255), 0 2px rgb(255, 255, 255), 2px 0 rgb(0, 0, 0), 0 -1px black;
+    text-align: center;
+    border-bottom: 2px dashed #7357d6;
 }
 
 .card-subtitle {
-    font-size: 1.1em;
-    color: #0e7259;
+    font-size: 1.1rem;
+    color: #666;
+    font-style: italic;
 }
 
-/* Grid for courses */
-.grid {
+/* Grid Layout */
+.grid.grid-2 {
     display: grid;
-    gap: 25px; /* Space between grid items */
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
 }
 
-.grid-2 {
-    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); /* Responsive 2-column grid */
-}
-
-/* Individual course overview card */
+/* Individual Course Card */
 .course-overview {
-    background-color: #ffffff;
-    border: 1px solid #e0e0e0;
-    border-radius: 10px;
-    padding: 15px;
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-    cursor: pointer; /* Indicates it's clickable */
+    background: #fffdfd;
+    border: 2px dashed #ccd8ff;
+    padding: 1.5rem;
+    border-radius: 16px;
+    box-shadow: 4px 4px 0 #bbcaff;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    text-align: center;
 }
 
 .course-overview:hover {
-    transform: translateY(-5px); /* Lift effect on hover */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    transform: scale(1.03) rotate(-1deg);
+    box-shadow: 8px 8px 0 #889eff;
+    background: #f3f8ff;
 }
 
+/* Course Title */
 .course-overview h3 {
-    font-size: 1.6em;
-    color: #21568f; /* A nice blue for titles */
-    margin-bottom: 10px;
+    font-size: 1.4rem;
+    color: #4a4a4a;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
 }
 
+/* Course Description */
 .course-overview p {
-    font-size: 0.95em;
+    font-size: 0.95rem;
     color: #555;
-    line-height: 1.6;
-    margin-bottom: 15px;
+    margin-bottom: 1rem;
 }
 
+/* Course Tags */
 .course-details {
     display: flex;
-    gap: 15px; /* Space between tags */
-    flex-wrap: wrap; /* Allow tags to wrap */
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
 .tag {
-    background-color: #e0f2f7; /* Light blue background for tags */
-    color: #007bff; /* Blue text for tags */
-    padding: 8px 15px;
+    padding: 6px 12px;
+    font-size: 0.85rem;
     border-radius: 20px;
-    font-size: 0.85em;
-    font-weight: 600;
-    white-space: nowrap; /* Prevent tags from breaking lines awkwardly */
+    font-weight: bold;
+    box-shadow: 2px 2px 0 #999;
 }
 
-/* Messages for loading/error states */
+.tag-format {
+    background: #ffe1e1;
+    color: #d14242;
+    border: 2px solid #f9bcbc;
+}
+
+.tag-category {
+    background: #d9f0ff;
+    color: #006eaa;
+    border: 2px solid #b0e1ff;
+}
+
+/* Status Messages */
 .course-list-message {
     text-align: center;
-    font-size: 1.2em;
-    color: #777;
-    padding: 20px;
+    padding: 1.5rem;
+    border-radius: 16px;
+    font-weight: 500;
+    font-size: 1.1rem;
+    margin-top: 2rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    background: #fefcff;
+    border: 2px dashed #ddd;
+    color: #333;
 }
 
 .course-list-error {
-    color: #d9534f; /* Red for error messages */
+    background: #ffe6e6;
+    border: 2px dashed #ffb3b3;
+    color: #b00020;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .card-title {
+        font-size: 1.8rem;
+    }
+
+    .course-overview h3 {
+        font-size: 1.2rem;
+    }
+
+    .tag {
+        font-size: 0.8rem;
+    }
 }

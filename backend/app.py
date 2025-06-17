@@ -23,6 +23,10 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'a_very_long_and_random_secret_key_here_that_is_unique_and_not_guessable'
 CORS(app, supports_credentials=True)
 
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+app.config['SESSION_COOKIE_SECURE'] = False  # Set to True if using HTTPS
+
+
 # --- File Upload Configuration for Admin Materials ---
 UPLOAD_MATERIALS_FOLDER = os.path.join(app.root_path, 'static', 'uploads', 'admin_materials')
 if not os.path.exists(UPLOAD_MATERIALS_FOLDER):
@@ -95,7 +99,7 @@ def signup_student():
     salt = gensalt()
     hashed_password = hashpw(password.encode('utf-8'), salt)
 
-    student_data = {'fullName': full_name, 'email': email, 'password': hashed_password, 'salt': salt}
+    student_data = {'fullName': full_name, 'email': email, 'password': hashed_password, 'salt': salt, 'role': 'student'}
     students_collection.insert_one(student_data)
 
     return jsonify({'message': 'Student registered successfully'}), 201
@@ -128,7 +132,7 @@ def login_student():
 
         if checkpw(password.encode('utf-8'), stored_password_bytes):
             session['user_id'] = str(student['_id'])
-            session['username'] = student['fullName']
+            session['email'] = student['email']
             session['role'] = 'student'
             print(f"DEBUG: Student login successful for {email}. Session after login: {session}")
             return jsonify({'message': 'Student login successful', 'role': 'student'}), 200
@@ -138,6 +142,7 @@ def login_student():
     else:
         print(f"DEBUG: Student login failed for {email} - user not found. Session: {session}")
         return jsonify({'message': 'Invalid credentials'}), 401
+
 
 @app.route('/api/auth/login/admin', methods=['POST'])
 def login_admin():
@@ -741,13 +746,14 @@ def serve_user_note(filename):
 # One line analysis: The code adds missing imports for password hashing to the flask app.
 # --- Profile Management Endpoints ---
 @app.route('/api/profile', methods=['GET'])
-@login_required()
+@login_required(role=None)
 def get_profile():
     """Get current user's profile data"""
     try:
         user_id = session.get('user_id')
         role = session.get('role')
-        
+        print(f"user_id", user_id)
+        print(f"role", role)
         if role == 'admin':
             user = admins_collection.find_one({'_id': ObjectId(user_id)})
             if user:
@@ -762,7 +768,6 @@ def get_profile():
                 return jsonify({
                     'role': 'student',
                     'email': user.get('email'),
-                    'fullName': user.get('fullName'),
                     'id': str(user['_id'])
                 }), 200
         

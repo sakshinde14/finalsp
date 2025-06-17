@@ -1,78 +1,77 @@
 /* src/components/SubjectListStyles.css */
-
-.subject-list-container { /* Renamed from .list-container for clarity */
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* Adjust minmax for subject items */
-  gap: var(--spacing-md);
-  padding: var(--spacing-md);
-  margin-top: var(--spacing-lg);
-  justify-content: center;
-  align-items: stretch; /* Ensures cards are same height */
-  background-color: var(--bg-color-white); /* Add background for the whole list container */
-  border-radius: var(--border-radius-large);
-  box-shadow: 0 5px 15px var(--shadow-light);
-  padding-bottom: var(--spacing-lg); /* Add some bottom padding */
+/* Container for the subject list */
+.subject-list-container {
+    padding: 2.5rem 1.5rem;
+    background: linear-gradient(to right, #fffdfc, #e3f7ff);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    border-radius: 20px;
+    box-shadow: 6px 6px 0 #cce7ff;
+    margin: 2rem auto;
+    max-width: 800px;
 }
 
-/* Style for the heading inside SubjectList */
+/* Heading */
 .subject-list-container h3 {
-  grid-column: 1 / -1; /* Make the heading span all columns */
-  text-align: center;
-  color: var(--gradient-blue-end); /* Consistent heading color */
-  margin: var(--spacing-md) 0 var(--spacing-lg) 0; /* Adjust margin for spacing */
-  font-size: 1.8rem;
-  font-weight: 600;
-  padding-bottom: var(--spacing-sm);
-  border-bottom: 1px solid var(--border-color-light); /* Subtle separator */
+    text-align: center;
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #005f99;
+    margin-bottom: 2rem;
+    text-shadow: 1px 1px #fff;
 }
 
-/* Specific styles for messages within SubjectList (consistent with others) */
-.subject-list-message {
-  text-align: center;
-  font-size: 1.2rem;
-  color: var(--text-color-light);
-  padding: var(--spacing-xl);
-  grid-column: 1 / -1; /* Make messages span all columns */
+/* Subject item card */
+.list-item-card {
+    background: #fefeff;
+    border: 2px dashed #a3d8ff;
+    border-radius: 16px;
+    padding: 1rem 2rem;
+    margin: 1rem auto;
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #0277bd;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    box-shadow: 4px 4px 0 #addfff;
+    max-width: 300px;
+}
+
+.list-item-card:hover {
+    background: #e0f7ff;
+    transform: scale(1.04) rotate(-1deg);
+    box-shadow: 7px 7px 0 #84caff;
+}
+
+/* Status messages (loading, error, no data) */
+.subject-list-message,
+.no-data-message {
+    text-align: center;
+    padding: 1.2rem;
+    border-radius: 14px;
+    font-weight: 500;
+    font-size: 1rem;
+    margin: 2rem auto;
+    max-width: 600px;
+    background: #fefeff;
+    border: 2px dashed #ddd;
+    color: #444;
 }
 
 .subject-list-error {
-  color: var(--danger-color);
-  font-weight: 600;
+    background: #ffe6e6;
+    border: 2px dashed #f5b7b7;
+    color: #b71c1c;
 }
 
-.no-data-message {
-    text-align: center;
-    font-size: 1.2rem;
-    color: var(--text-color-light);
-    padding: var(--spacing-xl);
-    grid-column: 1 / -1; /* Make messages span all columns */
-    background-color: var(--bg-color-white); /* Ensure background is white for no-data card */
-    border-radius: var(--border-radius-medium);
-    box-shadow: var(--shadow-light);
-    margin: var(--spacing-md) auto;
-    max-width: 500px;
-}
-
-/* Inherit styles from .list-item-card defined in DashboardStyles.css */
-/* Ensure DashboardStyles.css is loaded before this component's CSS for .list-item-card */
-.subject-list-container .list-item-card {
-  /* No specific overrides needed here unless unique styling is desired */
-}
-
-/* Responsive adjustments specific to the subject list */
+/* Responsive tweaks */
 @media (max-width: 768px) {
-  .subject-list-container {
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    padding: var(--spacing-md);
-  }
-  .subject-list-container h3 {
-    font-size: 1.5rem;
-  }
-}
+    .subject-list-container h3 {
+        font-size: 1.5rem;
+    }
 
-@media (max-width: 480px) {
-  .subject-list-container {
-    grid-template-columns: 1fr; /* Stack items vertically on very small screens */
-    padding: var(--spacing-sm);
-  }
+    .list-item-card {
+        font-size: 1rem;
+        padding: 0.8rem 1.5rem;
+    }
 }

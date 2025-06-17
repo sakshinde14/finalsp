@@ -1,27 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './TopNavigationStyles.css';
 import ProfileManagement from './ProfileManagement';
 
-function TopNavigation({ onLogout }) {
+function TopNavigation({ isAuthenticated, role, username, onLogout }) {
     const [showProfileDropdown, setShowProfileDropdown] = useState(false);
-    const [showProfileForm, setShowProfileForm] = useState(false);
-    const [selectedProfileAction, setSelectedProfileAction] = useState('');
+    const [showProfileModal, setShowProfileModal] = useState(false);
+    const [selectedAction, setSelectedAction] = useState('');
+    const [authStatus, setAuthStatus] = useState({ isAuthenticated, role, username });
 
-    const handleProfileClick = () => {
+    useEffect(() => {
+        setAuthStatus({ isAuthenticated, role, username });
+    }, [isAuthenticated, role, username]);
+
+    const toggleProfileDropdown = () => {
         setShowProfileDropdown(!showProfileDropdown);
-        setShowProfileForm(false);
     };
 
-    const handleProfileActionSelect = (action) => {
-        setSelectedProfileAction(action);
-        setShowProfileForm(true);
+    const handleProfileAction = (action) => {
+        setSelectedAction(action);
+        setShowProfileModal(true);
         setShowProfileDropdown(false);
     };
 
-    const handleCloseProfileForm = () => {
-        setShowProfileForm(false);
-        setSelectedProfileAction('');
+    const closeProfileModal = () => {
+        setShowProfileModal(false);
+        setSelectedAction('');
     };
 
     return (
@@ -31,29 +35,30 @@ function TopNavigation({ onLogout }) {
             </div>
 
             <div className="nav-right">
-                <Link to="/favs" className="nav-link">Favorites</Link>
+                <Link to="/favs" className="soft-button">⭐ Favorites</Link>
                 <div className="nav-profile-dropdown">
-                    <span className="nav-link profile-toggle" onClick={handleProfileClick}>
-                        Profile
+                    <span className="soft-button profile-toggle" onClick={toggleProfileDropdown}>
+                        👤 Profile
                     </span>
                     {showProfileDropdown && (
                         <div className="profile-dropdown-content">
-                            <a href="#" onClick={() => handleProfileActionSelect('password')}>
+                            <a href="#" onClick={() => handleProfileAction('password')}>
                                 Change Password
                             </a>
-                            <a href="#" onClick={() => handleProfileActionSelect('username-email')}>
+                            <a href="#" onClick={() => handleProfileAction('username-email')}>
                                 Change Username/Email
                             </a>
                         </div>
                     )}
                 </div>
-                <span className="nav-link logout-link" onClick={onLogout}>Logout</span>
+                <span className="soft-button logout-button" onClick={onLogout}>🚪 Logout</span>
+
             </div>
-            
-            {showProfileForm && (
+
+            {showProfileModal && (
                 <ProfileManagement 
-                    onClose={handleCloseProfileForm}
-                    selectedAction={selectedProfileAction}
+                    onClose={closeProfileModal}
+                    selectedAction={selectedAction}
                 />
             )}
         </nav>

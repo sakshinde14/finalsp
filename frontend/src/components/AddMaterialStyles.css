@@ -1,183 +1,144 @@
-/* src/components/AddMaterialStyles.css */
+/* src/components/AddMaterialStyles.css *//* AddMaterialStyles.css */
 
 .add-material-container {
-  background-color: var(--bg-color-white);
-  border-radius: var(--border-radius-large);
-  box-shadow: 0 5px 15px var(--shadow-medium);
-  padding: var(--spacing-xl);
-  margin: var(--spacing-xl) auto;
-  max-width: 650px;
-  width: 100%;
-  box-sizing: border-box;
-  animation: fadeIn 0.5s ease-out;
+  padding: 3rem 2rem;
+  background: linear-gradient(to right, #fffef9, #e8f0ff);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  border-radius: 20px;
+  border: 3px dashed #a3c3ff;
+  box-shadow: 6px 6px 0 #a3c3ff;
+  max-width: 700px;
+  margin: 2rem auto;
 }
 
-.add-material-header {
-  text-align: center;
-  color: var(--gradient-blue-end);
-  margin-bottom: var(--spacing-sm);
+.add-material-container h2 {
   font-size: 2rem;
-  font-weight: 700;
+  color: #554ce7;
+  text-align: center;
+  margin-bottom: 1.2rem;
+  text-shadow: 1px 1px #fff;
 }
 
 .context-info {
+  font-size: 1rem;
+  background: #e0f0ff;
+  padding: 0.8rem;
+  border-radius: 14px;
   text-align: center;
-  color: var(--text-color-dark);
-  font-size: 1.1rem;
-  margin-bottom: var(--spacing-lg);
-  padding-bottom: var(--spacing-md);
-  border-bottom: 2px solid var(--border-color-light);
+  margin-bottom: 2rem;
+  color: #333;
+  border: 2px dashed #b4d2ff;
 }
 
-/* --- Form Messages (Success/Error) --- */
 .message {
   text-align: center;
-  padding: var(--spacing-md);
-  margin-bottom: var(--spacing-lg);
-  border-radius: var(--border-radius-medium);
-  font-size: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
   font-weight: 500;
-  opacity: 1; /* Default visible */
-  transition: opacity 0.3s ease-out; /* Fade out effect */
+  font-size: 1rem;
+  margin-bottom: 1rem;
 }
 
 .message.success {
-  background-color: #e8f5e9; /* Light green */
-  color: var(--primary-color-dark);
-  border: 1px solid #c8e6c9;
+  background: #d2f8d2;
+  border: 2px dashed #98e798;
+  color: #2e7d32;
 }
 
 .message.error {
-  background-color: #ffebee; /* Light red */
-  color: var(--danger-color-dark);
-  border: 1px solid #ef9a9a;
+  background: #ffe6e6;
+  border: 2px dashed #ffb3b3;
+  color: #b00020;
 }
 
-/* --- Form Groups --- */
+.add-material-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
 .form-group {
-  margin-bottom: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
 }
 
 .form-group label {
-  display: block;
-  margin-bottom: var(--spacing-xs);
   font-weight: 600;
-  color: var(--text-color-dark);
-  font-size: 1rem;
+  margin-bottom: 0.4rem;
+  color: #444;
 }
 
-.form-group input[type="text"],
-.form-group input[type="url"],
+.form-group input,
 .form-group select {
-  width: 100%;
-  padding: var(--spacing-sm) var(--spacing-md);
-  border: 1px solid var(--border-color-light);
-  border-radius: var(--border-radius-small);
+  padding: 0.75rem 1rem;
   font-size: 1rem;
-  color: var(--text-color-dark);
-  background-color: var(--bg-color-white);
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-  box-sizing: border-box;
+  border: 2px dashed #ccd8ff;
+  border-radius: 14px;
+  background: #fdfdfd;
+  box-shadow: 3px 3px 0 #bbcaff;
+  transition: border-color 0.3s ease;
 }
 
-.form-group input[type="file"] {
-  width: 100%;
-  padding: var(--spacing-sm) 0; /* Adjust padding for file input */
-  border: 1px solid var(--border-color-light); /* Give it a subtle border */
-  border-radius: var(--border-radius-small);
-  background-color: var(--bg-color-light);
-  cursor: pointer;
-  font-size: 0.95rem;
-  color: var(--text-color-dark);
-  box-sizing: border-box;
-  transition: background-color 0.3s ease;
-}
-
-.form-group input[type="file"]:hover {
-    background-color: #f5f5f5;
-}
-
-.form-group input[type="text"]:focus,
-.form-group input[type="url"]:focus,
-.form-group select:focus,
-.form-group input[type="file"]:focus {
+.form-group input:focus,
+.form-group select:focus {
   outline: none;
-  border-color: var(--secondary-color);
-  box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+  border-color: #7ba5f9;
+  background: #ffffff;
 }
 
-/* --- Form Actions (Buttons) --- */
 .form-actions {
   display: flex;
-  justify-content: flex-end;
-  gap: var(--spacing-md);
-  margin-top: var(--spacing-xl);
-  padding-top: var(--spacing-md);
-  border-top: 1px solid var(--border-color-light);
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1rem;
 }
 
-.form-actions button {
-  padding: var(--spacing-md) var(--spacing-xl);
-  border: none;
-  border-radius: var(--border-radius-medium);
-  font-size: 1.1rem;
-  font-weight: 600;
+.submit-button,
+.cancel-button {
+  flex: 1;
+  padding: 0.75rem;
+  font-size: 1rem;
+  font-weight: bold;
+  border: 2px dashed transparent;
+  border-radius: 14px;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  transition: all 0.3s ease-in-out;
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.1);
 }
 
 .submit-button {
-  background: linear-gradient(90deg, var(--gradient-blue-start), var(--gradient-blue-end));
-  color: var(--text-color-inverted);
-}
-
-.submit-button:hover {
-  background: linear-gradient(90deg, #303F9F, #311B92);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  background: #c6f6d5;
+  color: #256029;
+  border-color: #a4e7b3;
 }
 
 .cancel-button {
-  background-color: var(--danger-color);
-  color: var(--text-color-inverted);
+  background: #fbdcdc;
+  color: #b00020;
+  border-color: #ffb3b3;
+}
+
+.submit-button:hover {
+  background: #b2efc2;
+  transform: translateY(-2px);
 }
 
 .cancel-button:hover {
-  background-color: var(--danger-color-dark);
+  background: #f9c0c0;
   transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
+@media (max-width: 600px) {
   .add-material-container {
-    padding: var(--spacing-lg);
-    margin: var(--spacing-lg) auto;
+    padding: 2rem 1rem;
   }
-  .add-material-header {
-    font-size: 1.8rem;
-  }
-  .context-info {
-    font-size: 1rem;
-  }
+
   .form-actions {
     flex-direction: column;
-    align-items: center;
-    gap: var(--spacing-sm);
   }
-  .form-actions button {
-    width: 80%;
-    max-width: 250px;
-    padding: var(--spacing-sm) var(--spacing-md);
-    font-size: 1rem;
-  }
-}
-@media (max-width: 480px) {
-  .add-material-container {
-    padding: var(--spacing-md);
-  }
-  .add-material-header {
-    font-size: 1.5rem;
+
+  .submit-button,
+  .cancel-button {
+    width: 100%;
   }
 }

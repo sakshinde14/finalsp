@@ -1,12 +1,11 @@
 // frontend/src/components/MaterialDisplayList.jsx
 import React, { useState } from 'react';
-import './MaterialDisplayListStyles.css'; // Import the new CSS file
+import './MaterialDisplayListStyles.css';
 
 function MaterialDisplayList({ materials }) {
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [selectedFormat, setSelectedFormat] = useState('All');
 
-    // Define your backend's base URL
     const BASE_URL = 'http://localhost:5000';
 
     const handleCategoryChange = (e) => {
@@ -17,7 +16,6 @@ function MaterialDisplayList({ materials }) {
         setSelectedFormat(e.target.value);
     };
 
-    // Filter materials based on selected category and format (case-insensitive)
     const filteredMaterials = materials.filter((material) => {
         const categoryMatch =
             selectedCategory === 'All' ||
@@ -30,31 +28,44 @@ function MaterialDisplayList({ materials }) {
         return categoryMatch && formatMatch;
     });
 
+    const categoryEmojis = {
+        Notes: '📝',
+        Syllabus: '📘',
+        Paper: '📄',
+    };
+
+    const formatEmojis = {
+        PDF: '📄',
+        Image: '🖼️',
+        Document: '📃',
+        Video: '🎥',
+        Link: '🔗',
+    };
+
     return (
         <div className="material-display-list-container">
-
             <h4>Study Materials</h4>
 
             <div className="material-filters">
-                <div> {/* Group label and select for category */}
+                <div>
                     <label htmlFor="category">Material Category:</label>
                     <select id="category" value={selectedCategory} onChange={handleCategoryChange}>
                         <option value="All">All</option>
-                        <option value="Syllabus">Syllabus</option>
-                        <option value="Notes">Notes</option>
-                        <option value="Paper">Papers</option>
+                        <option value="Syllabus">📘 Syllabus</option>
+                        <option value="Notes">📝 Notes</option>
+                        <option value="Paper">📄 Papers</option>
                     </select>
                 </div>
 
-                <div> {/* Group label and select for format */}
+                <div>
                     <label htmlFor="format">Material Format:</label>
                     <select id="format" value={selectedFormat} onChange={handleFormatChange}>
                         <option value="All">All</option>
-                        <option value="PDF">PDF</option>
-                        <option value="Image">Image</option>
-                        <option value="Document">Document</option>
-                        <option value="Video">Video</option>
-                        <option value="Link">Link</option>
+                        <option value="PDF">📄 PDF</option>
+                        <option value="Image">🖼️ Image</option>
+                        <option value="Document">📃 Document</option>
+                        <option value="Video">🎥 Video</option>
+                        <option value="Link">🔗 Link</option>
                     </select>
                 </div>
             </div>
@@ -66,43 +77,46 @@ function MaterialDisplayList({ materials }) {
                 </div>
             ) : (
                 <ul className="material-items-grid">
-                    {filteredMaterials.map((material) => (
-                        <li key={material._id || material.contentUrl || material.textContent} className="material-item-card">
-                            <h4>{material.materialCategory?.toUpperCase()}</h4>
-                            <p className="mic-title">{material.title}</p>
+                    {filteredMaterials.map((material) => {
+                        const cat = material.materialCategory;
+                        const format = material.materialFormat;
 
-                            {/* Conditional rendering for different material formats */}
-                            {material.materialFormat === 'PDF' && material.contentUrl && (
-                                <p className='smlink'><a href={`${BASE_URL}${material.contentUrl}`} target="_blank" rel="noopener noreferrer" className="material-action-link">View PDF Document</a></p>
-                            )}
+                        return (
+                            <li key={material._id || material.contentUrl || material.textContent} className="material-item-card">
+                                <h4>{categoryEmojis[cat] || ''} {cat?.toUpperCase()}</h4>
+                                <p className="mic-title">{material.title}</p>
 
-                            {material.materialFormat === 'Image' && material.contentUrl && (
-                                <p><a href={`${BASE_URL}${material.contentUrl}`} target="_blank" rel="noopener noreferrer" className="material-action-link">View Image</a></p>
-                            )}
-
-                            {material.materialFormat === 'Document' && material.contentUrl && (
-                                <p><a href={`${BASE_URL}${material.contentUrl}`} target="_blank" rel="noopener noreferrer" className="material-action-link">View Document</a></p>
-                            )}
-
-                            {material.materialFormat === 'Video' && material.contentUrl && (
-                                <p><a href={material.contentUrl} target="_blank" rel="noopener noreferrer" className="material-action-link">Watch Video</a></p>
-                            )}
-
-                            {material.materialFormat === 'Link' && material.contentUrl && (
-                                <p><a href={material.contentUrl} target="_blank" rel="noopener noreferrer" className="material-action-link">Visit Link</a></p>
-                            )}
-
-                            {/* Added more specific info styling */}
-                            <div className="material-info-section">
-                                {material.uploadedBy && (
-                                    <p className="material-info">Uploaded By: {material.uploadedBy}</p>
+                                {format === 'PDF' && material.contentUrl && (
+                                    <p><a href={`${BASE_URL}${material.contentUrl}`} target="_blank" rel="noopener noreferrer" className="material-action-link">📄 View PDF Document</a></p>
                                 )}
-                                {material.uploadedAt && (
-                                    <p className="material-info">Uploaded: {new Date(material.uploadedAt).toLocaleDateString()}</p>
+
+                                {format === 'Image' && material.contentUrl && (
+                                    <p><a href={`${BASE_URL}${material.contentUrl}`} target="_blank" rel="noopener noreferrer" className="material-action-link">🖼️ View Image</a></p>
                                 )}
-                            </div>
-                        </li>
-                    ))}
+
+                                {format === 'Document' && material.contentUrl && (
+                                    <p><a href={`${BASE_URL}${material.contentUrl}`} target="_blank" rel="noopener noreferrer" className="material-action-link">📃 View Document</a></p>
+                                )}
+
+                                {format === 'Video' && material.contentUrl && (
+                                    <p><a href={material.contentUrl} target="_blank" rel="noopener noreferrer" className="material-action-link">🎥 Watch Video</a></p>
+                                )}
+
+                                {format === 'Link' && material.contentUrl && (
+                                    <p><a href={material.contentUrl} target="_blank" rel="noopener noreferrer" className="material-action-link">🔗 Visit Link</a></p>
+                                )}
+
+                                <div className="material-info-section">
+                                    {material.uploadedBy && (
+                                        <p className="material-info">👤 Uploaded By: {material.uploadedBy}</p>
+                                    )}
+                                    {material.uploadedAt && (
+                                        <p className="material-info">🗓️ Uploaded: {new Date(material.uploadedAt).toLocaleDateString()}</p>
+                                    )}
+                                </div>
+                            </li>
+                        );
+                    })}
                 </ul>
             )}
         </div>
